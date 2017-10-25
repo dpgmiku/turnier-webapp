@@ -1,5 +1,10 @@
 package turnier.webapp.domain;
 
+import javax.persistence.Entity;
+
+
+@Entity
+
 public class Gast {
 
 private String spielerName;

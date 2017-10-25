@@ -1,5 +1,10 @@
 package turnier.webapp.domain;
-@Entity 
+import javax.persistence.Entity;
+import java.sql.Time;
+import java.util.Date;
+
+
+@Entity
 public class Teilnehmer {
 	
 	private SpielerStatistik statistik;
