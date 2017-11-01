@@ -15,11 +15,13 @@ import turnier.webapp.infrastructure.imports.ImportedNutzerJpaRepository;
  * @author se2 letzte Gruppe
  * @since 2017-10-01
  */
+//Komponente ohne Zustand, nur mit Methoden
 @Service
 public class NutzerJpaRepository implements NutzerRepository {
 	
 	private final ImportedNutzerJpaRepository impl;
 	
+	//Für alle Parameter werden typmaessig passende Beans (Komponenten) gesucht oder erzeugt
 	   @Autowired
 	    public NutzerJpaRepository(final ImportedNutzerJpaRepository impl) {
 	        this.impl = impl;

@@ -3,10 +3,13 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-
+//@Entity sag uns bescheid, dass bei der Klasse JPA sich um eine JPA entity handelt
 @Entity
 public class Admin {
 	
+	
+	
+//JPA will recognize this property as the object ID
 @Id
 final String id;
 
