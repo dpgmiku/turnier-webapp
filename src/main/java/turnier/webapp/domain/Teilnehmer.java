@@ -1,19 +1,25 @@
 package turnier.webapp.domain;
-import javax.persistence.Entity;
 import java.sql.Time;
 import java.util.Date;
+
+import javax.persistence.Entity;
+
+import javax.persistence.Id;
 
 
 @Entity
 public class Teilnehmer {
 	
-	private SpielerStatistik statistik;
+	@Id
+	private String id;
+	//private SpielerStatistik statistik;
+
 	
-	public Teilnehmer() {
-		
-		
+	public Teilnehmer(String id, SpielerStatistik statistik) {
+		this.id = id;
+		//this.statistik = statistik;
 	}
-	
+
 	public Turnier turnierErstellen(String name, String adresse, Date date, Time time, int anzahl) {
 		
 		
