@@ -25,6 +25,11 @@ public interface NutzerRepository {
      */
 	Nutzer findEmail(String email);
 	
+	/**
+	 * updates email 
+	 * @param id id of the {@link Nutzer} object, which have to update an email
+	 * @param email new email address
+	 */
 	void updateEmail(Long id, String email);
 	
 	void updatePasswort(Long id, String passwort);

@@ -54,7 +54,7 @@ public class ApplicationController {
      */
 
     //For everyone (guests):
-    
+    //
     @GetMapping(path="/")
     public ResponseEntity<String> home(final WebSecurityConfig config, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -64,7 +64,7 @@ public class ApplicationController {
     
     //For the nutzer role all URIs under /nutzer:
 
-    /*A transaction, which creates two random objects of type nutzer, but the second one should give us .*/
+    /*post a new nutzer object into our db*/
  
     
     @PostMapping("/nutzer/")
@@ -84,6 +84,7 @@ public class ApplicationController {
     /**The nutzer to be created with nutzername {0} must not have an ID, but has {1}*/
     public static class NutzerCreateWithIdExc extends multex.Exc {}
 
+//deletes nutzer object from db with given nutzername as parameter. The given one password in Request Body must be the same as in db to make it possible
 @DeleteMapping("/nutzer/{nutzername}")
 public ResponseEntity<DeleteNutzerCommand> deleteNutzer(
 @RequestBody final DeleteNutzerCommand verifyPassword,
@@ -97,6 +98,7 @@ dummy.nutzerLoeschen(verifyPassword.verifyPasswd);
 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }	
     
+//returns nutzer Object as JSON with the given nutzername as parameter if one was found in DB 
 @GetMapping(path="/nutzer/{nutzername}")
 public ResponseEntity<NutzerResource> findNutzer(
 		@PathVariable  final String nutzername,
@@ -112,7 +114,7 @@ public ResponseEntity<NutzerResource> findNutzer(
      return   new ResponseEntity<>(new NutzerResource(dummy), HttpStatus.OK);    
      }
 
-
+//change the email of the given nutzername as parameter
 @PutMapping(path="/nutzer/email/{nutzername}")
 public ResponseEntity<NutzerResource> updateEmail(
 	@RequestBody   final EmailChangeCommand command,
@@ -129,7 +131,7 @@ public ResponseEntity<NutzerResource> updateEmail(
     dummy = dummy.emailAendern(command.newEmail, command.verifyPasswd);
  return   new ResponseEntity<>(new NutzerResource(dummy), HttpStatus.OK);    
  }
-
+//changes the password of the given nutzername as parameter
 @PutMapping(path="/nutzer/password/{nutzername}")
 public ResponseEntity<NutzerResource> updatePassword(
 	@RequestBody   final PasswordChangeCommand command,

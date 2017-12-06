@@ -16,11 +16,11 @@ import static multex.MultexUtil.create;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @Configurable
 @Service
 @Entity
-//@Secured("NUTZER") //Only role NUTZER may call the methods in this domain class. You can apply this annotation at the class or at the method level.
+// @Secured("NUTZER") //Only role NUTZER may call the methods in this domain
+// class. You can apply this annotation at the class or at the method level.
 public class Nutzer extends EntityBase<Nutzer> {
 
 	private String name;
@@ -28,11 +28,10 @@ public class Nutzer extends EntityBase<Nutzer> {
 	private String nutzername;
 	private String passwort;
 	private String email;
-	
+
 	@Autowired
-	private transient NutzerRepository nutzerRepository;    
-	  
-	
+	private transient NutzerRepository nutzerRepository;
+
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
 	public Nutzer() {
@@ -47,66 +46,127 @@ public class Nutzer extends EntityBase<Nutzer> {
 		this.setEmail(email);
 
 	}
-	
 
-	
-	/**this method was written only for testing and to make the next milestone easier to demonstrate.
-	 *  It will be belonging in the future to the class Gast. It duplicates the code, I didn't want to outsource it to the new
-	 *  private methode, so I don't have to make it back as is it now in the future  **/
-	public void nutzerSpeichern() throws BenutzernameSchonHinterlegtExc, EmailSchonHinterlegtExc, ThatsNotAnEmailExc, NeuesPasswortNotAllowedExc{
+	/**
+	 * this method was written only for testing and to make the next milestone
+	 * easier to demonstrate. It will be belonging in the future to the class Gast.
+	 * It duplicates the code, I didn't want to outsource it to the new private
+	 * methode, so I don't have to make it back as is it now in the future
+	 * 
+	 * @throws BunuterznameSchonHinterlegtExc
+	 *             benutzername befindet sich schon im Datenbank
+	 * @throws EmailSchonHinterlegtExc
+	 *             email hat schon ein anderer Benutzer hinterlegt
+	 * @throws ThatsNotAnEmailExc
+	 *             email entpricht nicht die Email Norm
+	 * @throws NeuesPasswortNotAllowedExc
+	 *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
+	 **/
+	public void nutzerSpeichern() throws BenutzernameSchonHinterlegtExc, EmailSchonHinterlegtExc, ThatsNotAnEmailExc,
+			NeuesPasswortNotAllowedExc {
 		final int passwortLength = this.passwort.length();
-		if (passwortLength > 5 && passwortLength < 255)
-		{
-		final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-				Pattern.CASE_INSENSITIVE);
-		final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(this.email);
-		if (matcher.find()) {
-			 Nutzer findNutzer = nutzerRepository.findEmail(this.email);
-			if (findNutzer == null) 
-			{
-				Nutzer findNutzerNutzername = nutzerRepository.find(this.nutzername);
-			    if (findNutzerNutzername == null) {
-				Nutzer nutzerSave = nutzerRepository.save(this);
-			    }
-			    else throw create(Nutzer.BenutzernameSchonHinterlegtExc.class, nutzername, findNutzerNutzername.getId());
-			}
-			else throw create(Nutzer.EmailSchonHinterlegtExc.class, email, findNutzer.getId());
+		if (passwortLength > 5 && passwortLength < 255) {
+			final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+					Pattern.CASE_INSENSITIVE);
+			final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(this.email);
+			if (matcher.find()) {
+				Nutzer findNutzer = nutzerRepository.findEmail(this.email);
+				if (findNutzer == null) {
+					Nutzer findNutzerNutzername = nutzerRepository.find(this.nutzername);
+					if (findNutzerNutzername == null) {
+						Nutzer nutzerSave = nutzerRepository.save(this);
+					} else
+						throw create(Nutzer.BenutzernameSchonHinterlegtExc.class, nutzername,
+								findNutzerNutzername.getId());
+				} else
+					throw create(Nutzer.EmailSchonHinterlegtExc.class, email, findNutzer.getId());
+			} else
+				throw create(Nutzer.ThatsNotAnEmailExc.class, email);
 		} else
-			throw create(Nutzer.ThatsNotAnEmailExc.class, email);
-		}
-		else 
 			throw create(Nutzer.NeuesPasswortNotAllowedExc.class, this.passwort, this.nutzername);
-		}
+	}
 
-	public void nutzerLoeschen(String passwort) throws PasswortDoesntMatchExc{
+	/**
+	 * löscht den Nutzer aus dem Datenbank.
+	 * 
+	 * @param passwort
+	 *            zum Vergleichen mit dem gespeicherten Passwort im DB
+	 * @throws PasswortDoesntMatchExc
+	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB
+	 *             überein
+	 */
+	public void nutzerLoeschen(String passwort) throws PasswortDoesntMatchExc {
 		if (passwortVerifizieren(passwort)) {
 			nutzerRepository.delete(getId());
 		}
 
 	}
 
-	public Nutzer passwortAendern(String altesPasswort, String neuesPasswort) throws PasswortDoesntMatchExc, NeuesPasswortNotAllowedExc{
+	/**
+	 * ändert das Passwort des Nutzer, wenn die Passwortkriterien erfüllt sind und
+	 * das verifizierte Passwort stimmt mit dem gespeicherten im DB überein.
+	 * 
+	 * @param altesPasswort
+	 *            Passwort zum Verifizierung
+	 * @param neuesPasswort
+	 *            neues Passwort
+	 * @return Nutzer Object mit dem neu gespeicherten Passwort
+	 * @throws PasswortDoesntMatchExc
+	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB
+	 *             überein
+	 * @throws NeuesPasswortNotAllowedExc
+	 *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
+	 **/
+
+	public Nutzer passwortAendern(String altesPasswort, String neuesPasswort)
+			throws PasswortDoesntMatchExc, NeuesPasswortNotAllowedExc {
 		if (passwortVerifizieren(altesPasswort)) {
 			final int passwortLaenge = neuesPasswort.length();
 			if (passwortLaenge > 5 && passwortLaenge < 255) {
 				passwort = neuesPasswort;
-		     nutzerRepository.updatePasswort(getId(), passwort);
-		     return nutzerRepository.find(nutzername);
+				nutzerRepository.updatePasswort(getId(), passwort);
+				return nutzerRepository.find(nutzername);
 			}
 			throw create(Nutzer.NeuesPasswortNotAllowedExc.class, neuesPasswort, this.nutzername);
 
 		}
-		return this; 
+		return this;
 	}
-	
+
+	/**
+	 * this method was written only for testing and to make the next milestone
+	 * easier to demonstrate. It will be belonging in the future to the class Admin.
+	 * It duplicates the code, I didn't want to outsource it to the new private
+	 * methode, so I don't have to make it back as is it now in the future
+	 * 
+	 * @return Nutzer object, wenn es im DB gefunden ist, andernfalls null
+	 */
+
 	public Nutzer findNutzer(String nutzername) {
-		
-	return nutzerRepository.find(nutzername);
-			
+
+		return nutzerRepository.find(nutzername);
+
 	}
 
+	/**
+	 * ändert Email Adresse
+	 * 
+	 * @param neueEmail
+	 *            neue Email die man
+	 * @param passwort
+	 *            passwort zur Verifizierung
+	 * @return Nutzer Nutzer Object mit dem neu gespeicherter Email-Adresse
+	 * @throws PasswortDoesntMatchExc
+	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB
+	 *             überein
+	 * @throws ThatsNotAnEmailExc
+	 *             email entpricht nicht die Email Norm
+	 * @throws EmailSchonHinterlegtExc
+	 *             email hat schon ein anderer Benutzer hinterlegt
+	 */
 
-	public Nutzer emailAendern(String neueEmail, String passwort) throws PasswortDoesntMatchExc, ThatsNotAnEmailExc, EmailSchonHinterlegtExc {
+	public Nutzer emailAendern(String neueEmail, String passwort)
+			throws PasswortDoesntMatchExc, ThatsNotAnEmailExc, EmailSchonHinterlegtExc {
 
 		if (passwortVerifizieren(passwort)) {
 			final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
@@ -115,12 +175,12 @@ public class Nutzer extends EntityBase<Nutzer> {
 			if (matcher.find()) {
 				Nutzer findNutzer = nutzerRepository.findEmail(neueEmail);
 				if (findNutzer == null) {
-					
+
 					this.email = neueEmail;
 					nutzerRepository.updateEmail(getId(), email);
-                    return nutzerRepository.find(nutzername);
-				}
-				else throw create(Nutzer.EmailSchonHinterlegtExc.class, neueEmail, findNutzer.getId());
+					return nutzerRepository.find(nutzername);
+				} else
+					throw create(Nutzer.EmailSchonHinterlegtExc.class, neueEmail, findNutzer.getId());
 			} else
 				throw create(Nutzer.ThatsNotAnEmailExc.class, neueEmail);
 
@@ -129,17 +189,30 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 	}
 
+	/**
+	 * Auslagerung von der Methode zur Passwort Verifizierung (private)
+	 * 
+	 * @param passwortZurVerifizierung
+	 *            Passwort zur Verifizierung
+	 * @return true wenn Passwort übereinstimmt, false wenn nicht
+	 * @throws PasswortDoesntMatchExc
+	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB
+	 *             überein
+	 */
+
 	private Boolean passwortVerifizieren(String passwortZurVerifizierung) throws PasswortDoesntMatchExc {
 		if (this.passwort.equals(passwortZurVerifizierung)) {
 			return true;
 		} else
 			throw create(Nutzer.PasswortDoesntMatchExc.class, passwortZurVerifizierung, this.nutzername);
 	}
-	
+
+	// getter and setter - selfeplenatory
+
 	@Override
 	public String toString() {
 		return String.format("Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s'}",
-				 getId(), name, vorname, nutzername, passwort, email);
+				getId(), name, vorname, nutzername, passwort, email);
 	}
 
 	public String getName() {
@@ -182,6 +255,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		this.email = email;
 	}
 
+	// innere Exception Klassen
 	/**
 	 * Passwort {0} für den Nutzername {1} stimmt nicht mit dem Passwort Attribut
 	 * überein.
@@ -203,15 +277,14 @@ public class Nutzer extends EntityBase<Nutzer> {
 	public static class ThatsNotAnEmailExc extends multex.Exc {
 	}
 
-	/** Es existiert schon ein Nutzer mit dieser Email {0} mit dem ID {1}*/
+	/** Es existiert schon ein Nutzer mit dieser Email {0} mit dem ID {1} */
 	@SuppressWarnings("serial")
 	public static class EmailSchonHinterlegtExc extends multex.Exc {
 	}
 
-	/** Es existiert schon ein Nutzer mit diesem Nutzername {0} mit dem ID {1}*/
+	/** Es existiert schon ein Nutzer mit diesem Nutzername {0} mit dem ID {1} */
 	@SuppressWarnings("serial")
 	public static class BenutzernameSchonHinterlegtExc extends multex.Exc {
 	}
 
-	
 }
