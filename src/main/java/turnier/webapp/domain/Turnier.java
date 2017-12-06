@@ -38,6 +38,15 @@ public class Turnier {
 		return null;
 	}
 		
+	/** Nutzername {0} existiert im Turnier {1} nicht*/
+	@SuppressWarnings("serial")
+	public static class NutzernameNichtImTurnierExc extends multex.Exc {}
+	
+	
+/** Anzahl der Teilnehmer {0} . Es gibe keine Teilnehmer oder nur einen (mindestens 2 Teilnehmer erforderlich, bitte fügen Sie mehrere Teilnehmer hinzu*/
+@SuppressWarnings("serial")
+public static class ZuWenigTeilnehmerExc extends multex.Exc {}
+	
 	
 	
 	

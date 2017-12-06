@@ -20,7 +20,14 @@ public interface NutzerRepository {
      */
 	Nutzer find(String nutzername);
 	
+	/**Returns the {@link Nutzer} object with the given email address, if existing.
+     * @throws IllegalArgumentException  id is null
+     */
+	Nutzer findEmail(String email);
 	
+	void updateEmail(Long id, String email);
+	
+	void updatePasswort(Long id, String passwort);
 	
     /**Deletes all {@link Nutzer} objects. Useful for Test Cases with an empty database*/
     void deleteAll();
@@ -32,4 +39,7 @@ public interface NutzerRepository {
     
     /**Finds all {@link Nutzer}s and returns them ordered by descending Nutzernames.*/
     List<Nutzer> findAll();
+
+    /**Deletes {@link Nutzer} object with given Id*/
+	void delete(Long id);
 }

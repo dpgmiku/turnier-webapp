@@ -34,4 +34,14 @@ public void loescheNutzer(Nutzer nutzer) {
 	
 }
 
+/** Turnier {0} existiert nicht*/
+@SuppressWarnings("serial")
+public static class TurnierGibtEsNichtExc extends multex.Exc {}
+
+/** Nutzer {0} existiert nicht*/
+@SuppressWarnings("serial")
+public static class NutzerGibtEsNichtExc extends multex.Exc {}
+
 }
+
+

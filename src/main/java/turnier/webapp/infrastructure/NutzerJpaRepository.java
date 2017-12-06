@@ -42,13 +42,31 @@ public class NutzerJpaRepository implements NutzerRepository {
 	public Nutzer save(Nutzer nutzer) {
 		return impl.save(nutzer);
 	}
-
 	
-
 	@Override
 	public List<Nutzer> findAll() {
-		// TODO Auto-generated method stub
 		return impl.findAllByOrderByNutzernameAsc();
+	}
+
+	@Override
+	public Nutzer findEmail(String email) {
+		return impl.findOneByEmail(email);
+	}
+
+	@Override
+	public void updateEmail(Long id, String email) {
+	 impl.setEmailById(email, id);
+	}
+
+	@Override
+	public void updatePasswort(Long id, String passwort) {
+      impl.setPasswortById(passwort, id);
+	}
+
+	@Override
+	public void delete(Long id) {
+		impl.deleteById(id);
+		
 	}
 	
 }

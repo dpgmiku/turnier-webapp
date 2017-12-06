@@ -50,5 +50,9 @@ public class SpielerStatistik {
 		
 	}
 	
+	/** Keine Teilnehmer hat sich an das Turnier angemeldet*/
+	@SuppressWarnings("serial")
+	public static class TeilnehmerGibtEsNichtExc extends multex.Exc {}	
+	
 
 }
