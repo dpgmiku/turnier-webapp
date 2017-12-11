@@ -31,11 +31,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
             .authorizeRequests()
-            .antMatchers("/").permitAll()
+             .antMatchers("/").permitAll()
             .antMatchers("/admin/**").hasRole(ADMIN_ROLE)
             .antMatchers("/nutzer/**").hasRole(NUTZER_ROLE)
             .antMatchers("/teilnehmer/**").hasRole(TEILNEHMER_ROLE)
-            .antMatchers("/gast/**").hasRole(GAST_ROLE)
             .anyRequest().authenticated()
             .and().httpBasic() //Authenticate with username and password.
             //For REST services disable CSRF protection. 
@@ -43,6 +42,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and().csrf().disable()
             ;
     }
+	
+	//partnerklasse erzeugen user 
+	//
 	
 	private static final List<String> predefinedUsernames = Arrays.asList("admin", "hans", "nina", "fritz", "lisa");
     
