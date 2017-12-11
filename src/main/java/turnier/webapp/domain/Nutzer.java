@@ -124,8 +124,9 @@ public class Nutzer extends EntityBase<Nutzer> {
 			final int passwortLaenge = neuesPasswort.length();
 			if (passwortLaenge > 5 && passwortLaenge < 255) {
 				passwort = neuesPasswort;
-				nutzerRepository.updatePasswort(getId(), passwort);
-				return nutzerRepository.find(nutzername);
+				//nutzerRepository.updatePasswort(getId(), passwort);
+				
+				return nutzerRepository.save(this);
 			}
 			throw create(Nutzer.NeuesPasswortNotAllowedExc.class, neuesPasswort, this.nutzername);
 
@@ -177,8 +178,8 @@ public class Nutzer extends EntityBase<Nutzer> {
 				if (findNutzer == null) {
 
 					this.email = neueEmail;
-					nutzerRepository.updateEmail(getId(), email);
-					return nutzerRepository.find(nutzername);
+			//		nutzerRepository.updateEmail(getId(), email);
+					return nutzerRepository.save(this);
 				} else
 					throw create(Nutzer.EmailSchonHinterlegtExc.class, neueEmail, findNutzer.getId());
 			} else

@@ -152,51 +152,51 @@ assertEquals(david.getNutzername(), david2.getNutzername());
 			assertEquals(david.getNutzername(), david2.getNutzername());
 	}
 	    
-	@Test
-	public void testUpdateEmail() {
-		final Nutzer michael = nutzerRepository.save(new Nutzer("kubacki", "michal", "miku", "notyourbusiness", "miku@fakeemail.com"));  
-        nutzerRepository.updateEmail(michael.getId(), "newemail@fakeemail.com");
-        final Nutzer michael2  = nutzerRepository.find(michael.getNutzername());
-  		assertEquals(michael.getId(), michael2.getId());
-      		assertEquals(michael.getName(), michael2.getName());
-      		assertEquals(michael.getVorname(), michael2.getVorname());
-      		assertEquals(michael.getPasswort(), michael2.getPasswort());
-      		assertEquals(michael.getNutzername(), michael2.getNutzername());
-            assertNotEquals(michael.getEmail(), michael2.getEmail());
-            assertEquals("newemail@fakeemail.com", michael2.getEmail());
-            nutzerRepository.updateEmail(Long.valueOf(5), "newemail@fakeemail.com");
-        	assertEquals(michael.getId(), michael2.getId());
-      		assertEquals(michael.getName(), michael2.getName());
-      		assertEquals(michael.getVorname(), michael2.getVorname());
-      		assertEquals(michael.getPasswort(), michael2.getPasswort());
-      		assertEquals(michael.getNutzername(), michael2.getNutzername());
-            assertNotEquals(michael.getEmail(), michael2.getEmail());
-            assertEquals("newemail@fakeemail.com", michael2.getEmail());
-
-		
-	}
-     @Test
-     public void testUpdatePasswort() {
- 		final Nutzer michael = nutzerRepository.save(new Nutzer("kubacki", "michal", "miku", "notyourbusiness", "miku@fakeemail.com"));  
-        nutzerRepository.updatePasswort(michael.getId(), "newpasswd123");
-        final Nutzer michael2  = nutzerRepository.find(michael.getNutzername());
-  		assertEquals(michael.getId(), michael2.getId());
-      		assertEquals(michael.getName(), michael2.getName());
-      		assertEquals(michael.getVorname(), michael2.getVorname());
-      		assertNotEquals(michael.getPasswort(), michael2.getPasswort());
-      		assertEquals(michael.getNutzername(), michael2.getNutzername());
-            assertEquals(michael.getEmail(), michael2.getEmail());
-            assertEquals("newpasswd123", michael2.getPasswort());
-            nutzerRepository.updatePasswort(Long.valueOf(5), "newnewnew123");
-      		assertEquals(michael.getId(), michael2.getId());
-      		assertEquals(michael.getName(), michael2.getName());
-      		assertEquals(michael.getVorname(), michael2.getVorname());
-      		assertNotEquals(michael.getPasswort(), michael2.getPasswort());
-      		assertEquals(michael.getNutzername(), michael2.getNutzername());
-            assertEquals(michael.getEmail(), michael2.getEmail());
-            assertEquals("newpasswd123", michael2.getPasswort());
-    	 
-     }
+//	@Test
+//	public void testUpdateEmail() {
+//		final Nutzer michael = nutzerRepository.save(new Nutzer("kubacki", "michal", "miku", "notyourbusiness", "miku@fakeemail.com"));  
+//        nutzerRepository.updateEmail(michael.getId(), "newemail@fakeemail.com");
+//        final Nutzer michael2  = nutzerRepository.find(michael.getNutzername());
+//  		assertEquals(michael.getId(), michael2.getId());
+//      		assertEquals(michael.getName(), michael2.getName());
+//      		assertEquals(michael.getVorname(), michael2.getVorname());
+//      		assertEquals(michael.getPasswort(), michael2.getPasswort());
+//      		assertEquals(michael.getNutzername(), michael2.getNutzername());
+//            assertNotEquals(michael.getEmail(), michael2.getEmail());
+//            assertEquals("newemail@fakeemail.com", michael2.getEmail());
+//            nutzerRepository.updateEmail(Long.valueOf(5), "newemail@fakeemail.com");
+//        	assertEquals(michael.getId(), michael2.getId());
+//      		assertEquals(michael.getName(), michael2.getName());
+//      		assertEquals(michael.getVorname(), michael2.getVorname());
+//      		assertEquals(michael.getPasswort(), michael2.getPasswort());
+//      		assertEquals(michael.getNutzername(), michael2.getNutzername());
+//            assertNotEquals(michael.getEmail(), michael2.getEmail());
+//            assertEquals("newemail@fakeemail.com", michael2.getEmail());
+//
+//		
+//	}
+//     @Test
+//     public void testUpdatePasswort() {
+// 		final Nutzer michael = nutzerRepository.save(new Nutzer("kubacki", "michal", "miku", "notyourbusiness", "miku@fakeemail.com"));  
+//        nutzerRepository.updatePasswort(michael.getId(), "newpasswd123");
+//        final Nutzer michael2  = nutzerRepository.find(michael.getNutzername());
+//  		assertEquals(michael.getId(), michael2.getId());
+//      		assertEquals(michael.getName(), michael2.getName());
+//      		assertEquals(michael.getVorname(), michael2.getVorname());
+//      		assertNotEquals(michael.getPasswort(), michael2.getPasswort());
+//      		assertEquals(michael.getNutzername(), michael2.getNutzername());
+//            assertEquals(michael.getEmail(), michael2.getEmail());
+//            assertEquals("newpasswd123", michael2.getPasswort());
+//            nutzerRepository.updatePasswort(Long.valueOf(5), "newnewnew123");
+//      		assertEquals(michael.getId(), michael2.getId());
+//      		assertEquals(michael.getName(), michael2.getName());
+//      		assertEquals(michael.getVorname(), michael2.getVorname());
+//      		assertNotEquals(michael.getPasswort(), michael2.getPasswort());
+//      		assertEquals(michael.getNutzername(), michael2.getNutzername());
+//            assertEquals(michael.getEmail(), michael2.getEmail());
+//            assertEquals("newpasswd123", michael2.getPasswort());
+//    	 
+//     }
 	
 	
 		

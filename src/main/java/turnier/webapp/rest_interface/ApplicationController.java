@@ -92,9 +92,9 @@ public ResponseEntity<DeleteNutzerCommand> deleteNutzer(
 final HttpMethod method, final WebRequest request
    		){
 		_print(method, request);
-Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-dummy = dummy.findNutzer(nutzername);
-dummy.nutzerLoeschen(verifyPassword.verifyPasswd);
+//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
+Nutzer deleteNutzer = nutzer.findNutzer(nutzername);
+deleteNutzer.nutzerLoeschen(verifyPassword.verifyPasswd);
 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }	
     
@@ -105,13 +105,13 @@ public ResponseEntity<NutzerResource> findNutzer(
 		final HttpMethod method, final WebRequest request
 		   		){
 		_print(method, request);
-		Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-        dummy = dummy.findNutzer(nutzername);
-        if( dummy == null) {
+		//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
+        Nutzer findNutzer = nutzer.findNutzer(nutzername);
+        if( findNutzer == null) {
 			throw create(NutzerArentHereExc.class, nutzername); 	
      
         }
-     return   new ResponseEntity<>(new NutzerResource(dummy), HttpStatus.OK);    
+     return   new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);    
      }
 
 //change the email of the given nutzername as parameter
@@ -122,14 +122,14 @@ public ResponseEntity<NutzerResource> updateEmail(
 	final HttpMethod method, final WebRequest request
 	   		){
 	_print(method, request);
-	Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-    dummy = dummy.findNutzer(nutzername);
-    if( dummy == null) {
+	//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
+    Nutzer findNutzer = nutzer.findNutzer(nutzername);
+    if( nutzer == null) {
 		throw create(NutzerArentHereExc.class, nutzername); 	
  
     }
-    dummy = dummy.emailAendern(command.newEmail, command.verifyPasswd);
- return   new ResponseEntity<>(new NutzerResource(dummy), HttpStatus.OK);    
+    findNutzer = findNutzer.emailAendern(command.newEmail, command.verifyPasswd);
+ return   new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);    
  }
 //changes the password of the given nutzername as parameter
 @PutMapping(path="/nutzer/password/{nutzername}")
@@ -139,14 +139,14 @@ public ResponseEntity<NutzerResource> updatePassword(
 	final HttpMethod method, final WebRequest request
 	   		){
 	_print(method, request);
-	Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-    dummy = dummy.findNutzer(nutzername);
-    if( dummy == null) {
+	//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
+    Nutzer findNutzer = nutzer.findNutzer(nutzername);
+    if( findNutzer == null) {
 		throw create(NutzerArentHereExc.class, nutzername); 	
  
     }
-    dummy = dummy.passwortAendern(command.verifyPasswd, command.newPassword);
- return   new ResponseEntity<>(new NutzerResource(dummy), HttpStatus.OK);    
+    findNutzer = findNutzer.passwortAendern(command.verifyPasswd, command.newPassword);
+ return   new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);    
  }
 
 /**The nutzer with the nutzername {0} doesn't exist in our db*/

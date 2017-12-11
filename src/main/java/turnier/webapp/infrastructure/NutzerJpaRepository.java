@@ -53,15 +53,15 @@ public class NutzerJpaRepository implements NutzerRepository {
 		return impl.findOneByEmail(email);
 	}
 
-	@Override
-	public void updateEmail(Long id, String email) {
-	 impl.setEmailById(email, id);
-	}
+//	@Override
+//	public void updateEmail(Long id, String email) {
+//	 impl.setEmailById(email, id);
+//	}
 
-	@Override
-	public void updatePasswort(Long id, String passwort) {
-      impl.setPasswortById(passwort, id);
-	}
+//	@Override
+//	public void updatePasswort(Long id, String passwort) {
+//      impl.setPasswortById(passwort, id);
+//	}
 
 	@Override
 	public void delete(Long id) {
