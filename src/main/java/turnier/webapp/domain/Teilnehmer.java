@@ -20,11 +20,7 @@ public class Teilnehmer {
 		//this.statistik = statistik;
 	}
 
-	public Turnier turnierErstellen(String name, String adresse, Date date, Time time, int anzahl) {
-		
-		
-		return null;
-	}
+	
 	
 	public void entferneTeilnehmer(Turnier turnier, Teilnehmer teilnehmer) {
 		
@@ -45,13 +41,6 @@ public class Teilnehmer {
 		
 		return null;
 	}
-	/** Turnier {0} name enthält Ziffer, Ort hat weniger als 3 Zeichen und oder maxTeilnehmer ist keine Ziffer*/
-	@SuppressWarnings("serial")
-	public static class KeineRichtigeEingabenTurnierExc extends multex.Exc {}
-		
-	/** maxTeilnehmer {0} ist größer als 32*/
-	@SuppressWarnings("serial")
-	public static class ZuVieleTeilnehmerExc extends multex.Exc {}
 	
 	/** Turnier {0} existiert gar nicht im Turnier*/
 	@SuppressWarnings("serial")
