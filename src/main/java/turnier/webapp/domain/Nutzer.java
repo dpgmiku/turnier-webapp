@@ -252,12 +252,12 @@ public class Nutzer extends EntityBase<Nutzer> {
 	@SuppressWarnings("serial")
 	public static class ZuWenigTeilnehmerExc extends multex.Exc {}
 	
-public void entferneTeilnehmer(Turnier turnier, Nutzer nutzer) {
+public Boolean entferneTeilnehmer(Turnier turnier, Nutzer nutzer) {
 	if ( turnierRepository.find(turnier.getName()) == null) throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
    ArrayList<Nutzer> turnierTeilnehmerList =turnier.getTeilnehmer();
    if (!(turnierTeilnehmerList.contains(nutzer))) throw create(TeilnehmerGibtEsNichtExc.class, nutzer.getNutzername(), turnier.getName()); 
    if (!(this.nutzername.equals(turnier.getOrganisator().getNutzername()))) throw create(EsIstNichtDeinTurnierExc.class, turnier.getName(), this.nutzername);
-		//todo
+		return turnier.entferneTeilnehmerAusDemTurnier(nutzer);
 	}
 
 
@@ -275,8 +275,7 @@ public void entferneTeilnehmer(Turnier turnier, Nutzer nutzer) {
 		if (turnier.getTeilnehmer().contains(this)) throw create(DuBistSchonAngemeldetExc.class, this.nutzername, turnier.getName());
 		final TurnierStatus turnierStatus = turnier.getTurnierStatus();
 		if (turnierStatus != TurnierStatus.OFFEN) throw create(TurnierStatusFailExc.class, turnier.getName(), turnierStatus.toString());
-	//to do
-		return true;
+		return turnier.fuegeTeilnehmerHinzu(this);
 	}
 	
 	/** Nutzername {0} ist schon im Turnier {1} angemeldet*/

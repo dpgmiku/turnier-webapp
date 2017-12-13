@@ -3,15 +3,21 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import turnier.webapp.domain.base.EntityBase;
+
 //@Entity sag uns bescheid, dass bei der Klasse JPA sich um eine JPA entity handelt
 @Entity
-public class Admin {
+public class Admin extends EntityBase<Admin> {
 	
 	
 	
 //JPA will recognize this property as the object ID
-@Id
-final String id;
+private String id;
+
+/** Necessary for JPA entities internally. */
+@SuppressWarnings("unused")
+public Admin() {
+};
 
 public Admin(String id) {
 	

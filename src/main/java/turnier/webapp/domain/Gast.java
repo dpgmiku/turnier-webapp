@@ -3,13 +3,18 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import turnier.webapp.domain.base.EntityBase;
+
 
 @Entity
+public class Gast extends EntityBase<Gast>{
 
-public class Gast {
-
-	@Id
 private String spielerName;
+	
+	/** Necessary for JPA entities internally. */
+	@SuppressWarnings("unused")
+	public Gast() {
+	};
 
 public Gast(String spielerName) {
 	this.spielerName = spielerName;

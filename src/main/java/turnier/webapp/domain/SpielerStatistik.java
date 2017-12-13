@@ -3,16 +3,17 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import turnier.webapp.domain.base.EntityBase;
+
 
 @Entity
 
-public class SpielerStatistik {
+public class SpielerStatistik extends EntityBase<SpielerStatistik>{
 	    
 		//private Teilnehmer spieler;
 		private int gewonneneSpiele;
 		private int verloreneSpiele;
 		private int unentschiedeneSpiele;
-		@Id
 		private int platzierung;
 		private int spieleIngesamtGespielt;
 		private float gewinnWahrscheinlichkeit;
@@ -23,7 +24,10 @@ public class SpielerStatistik {
 		private static float mittlereAbweichung;
 		
 	
-	
+		/** Necessary for JPA entities internally. */
+		@SuppressWarnings("unused")
+		public SpielerStatistik() {
+		};
 	
 	
 	public SpielerStatistik(Teilnehmer spieler, int gewonneneSpiele, int verloreneSpiele, int unentschiedeneSpiele,

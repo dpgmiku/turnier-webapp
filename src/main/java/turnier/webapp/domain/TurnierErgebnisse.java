@@ -2,13 +2,19 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import turnier.webapp.domain.base.EntityBase;
+
 
 @Entity
-public class TurnierErgebnisse {
+public class TurnierErgebnisse extends EntityBase<TurnierErgebnisse>{
 	
-	@Id
 	private Teilnehmer[] teilnehmer;
 	
+	
+	/** Necessary for JPA entities internally. */
+	@SuppressWarnings("unused")
+	public TurnierErgebnisse() {
+	};
 	
 	public TurnierErgebnisse(Teilnehmer[] teilnehmer) {
 		this.teilnehmer = teilnehmer;
