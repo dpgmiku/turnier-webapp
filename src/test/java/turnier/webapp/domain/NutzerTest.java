@@ -3,6 +3,7 @@ package turnier.webapp.domain;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 // @DataJpaTest
 // @AutoConfigureTestDatabase
 @SpringBootTest
+
 public class NutzerTest {
 
 	/** Only for use in the cleanUp method! */
@@ -48,48 +50,77 @@ public class NutzerTest {
 			fail("Nutzer.EmailSchonHinterlegtExc expected");
 		} catch (Nutzer.EmailSchonHinterlegtExc expected) {
 		}
-		Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "yo");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		// TODO Korrekter weg zum testen wegen dem extra Block
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "yo");
+			try {
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
-		nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "@");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		// Nicht korrekter weg zum testen
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "@");
+			try {
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
-		nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "sido@");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "sido@");
+			try {
+				
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
-		nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "@sido");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "@sido");
+			try {
+				
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
-		nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "miku@sido");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "miku@sido");
+			try {
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
-		nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", ".@.");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", ".@.");
+			try {
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
-		nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "@com.de");
-		try {
-			nutzerThatsNotAnEmailExc.nutzerSpeichern();
-			fail("Nutzer.ThatsNotAnEmailExc expected");
-		} catch (Nutzer.ThatsNotAnEmailExc expected) {
+		
+		{
+			final Nutzer nutzerThatsNotAnEmailExc = new Nutzer("yo", "yo", "yoyo", "passwdyo", "@com.de");
+			try {
+				nutzerThatsNotAnEmailExc.nutzerSpeichern();
+				fail("Nutzer.ThatsNotAnEmailExc expected");
+			} catch (Nutzer.ThatsNotAnEmailExc expected) {
+			}
 		}
+		
 		// positive Test for an email.
 		final Nutzer nutzerThatsEmailIsFine = new Nutzer("yo", "yo", "yoyo", "passwdyo", "michal.kubacki@yahoo.de");
 		assertNull(nutzerThatsEmailIsFine.getId());

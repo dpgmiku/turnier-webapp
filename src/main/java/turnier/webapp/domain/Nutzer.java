@@ -35,7 +35,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 	@Autowired
 	private transient NutzerRepository nutzerRepository;
-	
+
 	@Autowired
 	private transient TurnierRepository turnierRepository;
 
@@ -131,8 +131,8 @@ public class Nutzer extends EntityBase<Nutzer> {
 			final int passwortLaenge = neuesPasswort.length();
 			if (passwortLaenge > 5 && passwortLaenge < 255) {
 				passwort = neuesPasswort;
-				//nutzerRepository.updatePasswort(getId(), passwort);
-				
+				// nutzerRepository.updatePasswort(getId(), passwort);
+
 				return nutzerRepository.save(this);
 			}
 			throw create(Nutzer.NeuesPasswortNotAllowedExc.class, neuesPasswort, this.nutzername);
@@ -185,7 +185,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 				if (findNutzer == null) {
 
 					this.email = neueEmail;
-			//		nutzerRepository.updateEmail(getId(), email);
+					// nutzerRepository.updateEmail(getId(), email);
 					return nutzerRepository.save(this);
 				} else
 					throw create(Nutzer.EmailSchonHinterlegtExc.class, neueEmail, findNutzer.getId());
@@ -215,96 +215,116 @@ public class Nutzer extends EntityBase<Nutzer> {
 			throw create(Nutzer.PasswortDoesntMatchExc.class, passwortZurVerifizierung, this.nutzername);
 	}
 
-	//methods from Teilnehmer Klasse - unecessary split, because OneToOne
-	
-	public Turnier turnierErstellen(String name, String adresse, LocalDate datum, LocalTime uhrzeit, int maxTeilnehmer) {
-	if (maxTeilnehmer > 32) throw create(Nutzer.ZuVieleTeilnehmerExc.class, maxTeilnehmer);
-	if (maxTeilnehmer < 2) throw create(Nutzer.ZuWenigTeilnehmerExc.class, maxTeilnehmer);
-	final char[] charArray = name.toCharArray();
-	Boolean zifferInName = false;
-	for(int i=0; i<name.length(); i++) {
-		if (Character.isDigit(charArray[i])) {
-			zifferInName = true;
-			break;
+	// methods from Teilnehmer Klasse - unecessary split, because OneToOne
+
+	public Turnier turnierErstellen(String name, String adresse, LocalDate datum, LocalTime uhrzeit,
+			int maxTeilnehmer) {
+		if (maxTeilnehmer > 32)
+			throw create(Nutzer.ZuVieleTeilnehmerExc.class, maxTeilnehmer);
+		if (maxTeilnehmer < 2)
+			throw create(Nutzer.ZuWenigTeilnehmerExc.class, maxTeilnehmer);
+		final char[] charArray = name.toCharArray();
+		Boolean zifferInName = false;
+		for (int i = 0; i < name.length(); i++) {
+			if (Character.isDigit(charArray[i])) {
+				zifferInName = true;
+				break;
+			}
+
 		}
-		
-	}
-	
-	if (adresse.length() <= 3 || zifferInName) {
-		
-	throw create(Nutzer.KeineRichtigeEingabenTurnierExc.class, name);	
-	}
-	
-	Turnier turnier = new Turnier(name, adresse, datum, uhrzeit, this, maxTeilnehmer);
-	
+
+		if (adresse.length() <= 3 || zifferInName) {
+
+			throw create(Nutzer.KeineRichtigeEingabenTurnierExc.class, name);
+		}
+
+		final Turnier turnier = new Turnier(name, adresse, datum, uhrzeit, this, maxTeilnehmer);
+
 		return turnierRepository.save(turnier);
 	}
-	
-	/** Turnier {0} name enthält Ziffer, Ort hat weniger als 3 Zeichen und oder maxTeilnehmer ist keine Ziffer*/
+
+	/**
+	 * Turnier {0} name enthält Ziffer, Ort hat weniger als 3 Zeichen und oder
+	 * maxTeilnehmer ist keine Ziffer
+	 */
 	@SuppressWarnings("serial")
-	public static class KeineRichtigeEingabenTurnierExc extends multex.Exc {}
-		
-	/** maxTeilnehmer {0} ist größer als 32*/
-	@SuppressWarnings("serial")
-	public static class ZuVieleTeilnehmerExc extends multex.Exc {}
-	
-	/** maxTeilnehmer {0} ist kleiner als 2*/
-	@SuppressWarnings("serial")
-	public static class ZuWenigTeilnehmerExc extends multex.Exc {}
-	
-public Boolean entferneTeilnehmer(Turnier turnier, Nutzer nutzer) {
-	if ( turnierRepository.find(turnier.getName()) == null) throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
-   ArrayList<Nutzer> turnierTeilnehmerList =turnier.getTeilnehmer();
-   if (!(turnierTeilnehmerList.contains(nutzer))) throw create(TeilnehmerGibtEsNichtExc.class, nutzer.getNutzername(), turnier.getName()); 
-   if (!(this.nutzername.equals(turnier.getOrganisator().getNutzername()))) throw create(EsIstNichtDeinTurnierExc.class, turnier.getName(), this.nutzername);
-		return turnier.entferneTeilnehmerAusDemTurnier(nutzer);
+	public static class KeineRichtigeEingabenTurnierExc extends multex.Exc {
 	}
 
+	/** maxTeilnehmer {0} ist größer als 32 */
+	@SuppressWarnings("serial")
+	public static class ZuVieleTeilnehmerExc extends multex.Exc {
+	}
 
+	/** maxTeilnehmer {0} ist kleiner als 2 */
+	@SuppressWarnings("serial")
+	public static class ZuWenigTeilnehmerExc extends multex.Exc {
+	}
 
-	
+	public void entferneTeilnehmer(Turnier turnier, Nutzer nutzer) {
+		if (turnierRepository.find(turnier.getName()) == null)
+			throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
+		ArrayList<Nutzer> turnierTeilnehmerList = turnier.getTeilnehmer();
+		if (!(turnierTeilnehmerList.contains(nutzer)))
+			throw create(TeilnehmerGibtEsNichtExc.class, nutzer.getNutzername(), turnier.getName());
+		if (!(this.nutzername.equals(turnier.getOrganisator().getNutzername())))
+			throw create(EsIstNichtDeinTurnierExc.class, turnier.getName(), this.nutzername);
+		turnier.entferneTeilnehmerAusDemTurnier(nutzer);
+	}
+
 	public void loescheEigenesTurnier(Turnier turnier) {
-		if ( turnierRepository.find(turnier.getName()) == null) throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
-		if (!(this.nutzername.equals(turnier.getOrganisator().getNutzername()))) throw create(EsIstNichtDeinTurnierExc.class, turnier.getName(), this.nutzername);
-        turnierRepository.delete(turnier.getId());
-       		
+		if (turnierRepository.find(turnier.getName()) == null)
+			throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
+		if (!(this.nutzername.equals(turnier.getOrganisator().getNutzername())))
+			throw create(EsIstNichtDeinTurnierExc.class, turnier.getName(), this.nutzername);
+		turnierRepository.delete(turnier.getId());
+
 	}
-	
-	public Boolean anTurnierAnmelden(Turnier turnier) {
-		if ( turnierRepository.find(turnier.getName()) == null) throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
-		if (turnier.getTeilnehmer().contains(this)) throw create(DuBistSchonAngemeldetExc.class, this.nutzername, turnier.getName());
+
+	public void anTurnierAnmelden(Turnier turnier) {
+		//	if (turnierRepository.find(turnier.getName()) == null)
+	//		throw create(Nutzer.TurnierGibtEsNichtExc.class, turnier.getName());
+		if (turnier.getTeilnehmer().contains(this))
+			throw create(DuBistSchonAngemeldetExc.class, this.nutzername, turnier.getName());
 		final TurnierStatus turnierStatus = turnier.getTurnierStatus();
-		if (turnierStatus != TurnierStatus.OFFEN) throw create(TurnierStatusFailExc.class, turnier.getName(), turnierStatus.toString());
-		return turnier.fuegeTeilnehmerHinzu(this);
+		if (turnierStatus != TurnierStatus.OFFEN)
+			throw create(TurnierStatusFailExc.class, turnier.getName(), turnierStatus.toString());
+		turnier.fuegeTeilnehmerHinzu(this);
 	}
-	
-	/** Nutzername {0} ist schon im Turnier {1} angemeldet*/
-	@SuppressWarnings("serial")
-	public static class DuBistSchonAngemeldetExc extends multex.Exc {}
 
-	
-	/** Turnier {0} hat Status {1}. Es ist unmöglich sich mit diesem Status anzumelden*/
+	/** Nutzername {0} ist schon im Turnier {1} angemeldet */
 	@SuppressWarnings("serial")
-	public static class TurnierStatusFailExc extends multex.Exc {}
+	public static class DuBistSchonAngemeldetExc extends multex.Exc {
+	}
 
-
-	/** Turnier {0} existiert gar nicht im Turnier Webapp*/
+	/**
+	 * Turnier {0} hat Status {1}. Es ist unmöglich sich mit diesem Status
+	 * anzumelden
+	 */
 	@SuppressWarnings("serial")
-	public static class TurnierGibtEsNichtExc extends multex.Exc {}
+	public static class TurnierStatusFailExc extends multex.Exc {
+	}
 
-	/** Teilnehmer {0} existiert gar nicht im Turnier {1}*/
+	/** Turnier {0} existiert gar nicht im Turnier Webapp */
 	@SuppressWarnings("serial")
-	public static class TeilnehmerGibtEsNichtExc extends multex.Exc {}
+	public static class TurnierGibtEsNichtExc extends multex.Exc {
+	}
 
-	/** Turnier {0} gehört nicht zu diesem Teilnehmer {1}*/
+	/** Teilnehmer {0} existiert gar nicht im Turnier {1} */
 	@SuppressWarnings("serial")
-	public static class EsIstNichtDeinTurnierExc extends multex.Exc {}
+	public static class TeilnehmerGibtEsNichtExc extends multex.Exc {
+	}
+
+	/** Turnier {0} gehört nicht zu diesem Teilnehmer {1} */
+	@SuppressWarnings("serial")
+	public static class EsIstNichtDeinTurnierExc extends multex.Exc {
+	}
+
 	public SpielerStatistik sieheStatistik(Teilnehmer teilnehmer) {
-		//to do, no clue, what to do here, i dont understand our classdiagramm
+		// to do, no clue, what to do here, i dont understand our classdiagramm
 		return null;
 	}
-	
-	
+
 	// getter and setter - selfeplenatory
 
 	@Override

@@ -10,19 +10,13 @@ import turnier.webapp.domain.base.EntityBase;
 public class Admin extends EntityBase<Admin> {
 	
 	
-	
-//JPA will recognize this property as the object ID
-private String id;
 
 /** Necessary for JPA entities internally. */
 @SuppressWarnings("unused")
 public Admin() {
 };
 
-public Admin(String id) {
-	
-	this.id = id;
-}
+
 	
 public Boolean turnierVerifizieren(Turnier turnier) {
 	

@@ -12,7 +12,6 @@ import turnier.webapp.domain.base.EntityBase;
 @Entity
 public class Teilnehmer extends EntityBase<Teilnehmer> {
 	
-	private String id;
 	//private SpielerStatistik statistik;
 
 	/** Necessary for JPA entities internally. */
@@ -20,8 +19,8 @@ public class Teilnehmer extends EntityBase<Teilnehmer> {
 	public Teilnehmer() {
 	};
 	
-	public Teilnehmer(String id, SpielerStatistik statistik) {
-		this.id = id;
+	public Teilnehmer(SpielerStatistik statistik) {
+		
 		//this.statistik = statistik;
 	}
 
