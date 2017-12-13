@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import turnier.webapp.domain.base.EntityBase;
 import turnier.webapp.domain.imports.NutzerRepository;
+import turnier.webapp.domain.imports.TurnierRepository;
 
 import static multex.MultexUtil.create;
 
@@ -33,6 +34,14 @@ public class Turnier extends EntityBase<Turnier> {
 	private ArrayList<Nutzer> teilnehmer;
 		@ManyToOne
 	private TurnierBracket turnierbaum;
+		
+		@Autowired
+		private transient TurnierRepository turnierRepository;
+		
+		/** Necessary for JPA entities internally. */
+		@SuppressWarnings("unused")
+		public Turnier() {
+		};
 	
 	public Turnier(String name, String adresse, LocalDate datum, LocalTime uhrzeit, Nutzer organisator, int maxTeilnehmer) {
 		this.name = name;
@@ -46,9 +55,51 @@ public class Turnier extends EntityBase<Turnier> {
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
 	
-	public Teilnehmer teilnehmerSuchen(String name) {
+	public Boolean fuegeTeilnehmerHinzu(Nutzer teilnehmer) { 
+	Boolean erfolgreich = false;
+    if (!(turnierStatus == TurnierStatus.OFFEN)) {
+    	throw create(FuegeTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name, turnierStatus.toString());
+    	
+    }
+    this.teilnehmer.add(teilnehmer);
+    erfolgreich = true;
+    
+    if (this.teilnehmer.size() == this.maxTeilnehmer) {
+    	
+    	turnierStatus = TurnierStatus.VOLL;
+    }
+    turnierRepository.save(this);
+    
+    return erfolgreich;	
 		
-		return null;
+	}
+	
+	public Boolean entferneTeilnehmerAusDemTurnier(Nutzer teilnehmer) {
+    Boolean erfolgreich = false;
+    if ( turnierStatus == TurnierStatus.BEENDET || turnierStatus == TurnierStatus.GESTARTET) {
+    throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(),this.name, turnierStatus.toString()); 	
+    }
+    
+    this.teilnehmer.remove(teilnehmer);
+    erfolgreich = true;
+    if (turnierStatus == TurnierStatus.VOLL) {
+    	
+    	turnierStatus = TurnierStatus.OFFEN;
+    }
+    turnierRepository.save(this);
+	return erfolgreich;	
+	}
+	
+	
+	
+	public Nutzer teilnehmerSuchen(String nutzername) {		
+		for(Nutzer nutzer: teilnehmer) {
+		if (nutzer.getNutzername().equals(nutzername))	
+			
+		return nutzer;	
+		}
+		return  null;
+				
 	}
 	
 	
@@ -62,8 +113,9 @@ public class Turnier extends EntityBase<Turnier> {
 	}
 	
 	public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
+     turnierStatus = TurnierStatus.BEENDET;
+     return null;
 		
-		return null;
 	}
 	
 	//getters and setters, selfexplanatory
@@ -155,8 +207,21 @@ public class Turnier extends EntityBase<Turnier> {
 @SuppressWarnings("serial")
 public static class ZuWenigTeilnehmerExc extends multex.Exc {}
 	
+/**
+ * Nutzer{0} könnte sich nicht mehr im Turnier {1} anmelden, denn {2}
+ * 
+ */
+@SuppressWarnings("serial")
+public static class FuegeTeilnehmerNichtZugelassenExc extends multex.Exc {
+}	
 	
-	
+/**
+ * Nutzer{0} könnte nicht mehr aus dem Turnier {1} entfernt werden, denn {2}
+ * 
+ */
+@SuppressWarnings("serial")
+public static class EntferneTeilnehmerNichtZugelassenExc extends multex.Exc {
+}
 	
 
 }

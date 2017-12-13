@@ -6,14 +6,19 @@ import javax.persistence.Entity;
 
 import javax.persistence.Id;
 
+import turnier.webapp.domain.base.EntityBase;
+
 
 @Entity
-public class Teilnehmer {
+public class Teilnehmer extends EntityBase<Teilnehmer> {
 	
-	@Id
 	private String id;
 	//private SpielerStatistik statistik;
 
+	/** Necessary for JPA entities internally. */
+	@SuppressWarnings("unused")
+	public Teilnehmer() {
+	};
 	
 	public Teilnehmer(String id, SpielerStatistik statistik) {
 		this.id = id;
