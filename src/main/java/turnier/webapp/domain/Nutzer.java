@@ -224,16 +224,8 @@ public class Nutzer extends EntityBase<Nutzer> {
 		if (maxTeilnehmer < 2)
 			throw create(Nutzer.ZuWenigTeilnehmerExc.class, maxTeilnehmer);
 		final char[] charArray = name.toCharArray();
-		Boolean zifferInName = false;
-		for (int i = 0; i < name.length(); i++) {
-			if (Character.isDigit(charArray[i])) {
-				zifferInName = true;
-				break;
-			}
-
-		}
-
-		if (adresse.length() <= 3 || zifferInName) {
+	    Boolean containsNumber = name.matches(".*\\d+.*");
+		if (adresse.length() <= 3 || containsNumber) {
 
 			throw create(Nutzer.KeineRichtigeEingabenTurnierExc.class, name);
 		}
