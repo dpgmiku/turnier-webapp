@@ -16,7 +16,7 @@ public class Teilnehmer extends EntityBase<Teilnehmer> {
 
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
-	public Teilnehmer() {
+	private Teilnehmer() {
 	};
 	
 	public Teilnehmer(SpielerStatistik statistik) {

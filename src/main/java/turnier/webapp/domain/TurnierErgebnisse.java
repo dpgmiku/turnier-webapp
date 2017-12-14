@@ -13,7 +13,7 @@ public class TurnierErgebnisse extends EntityBase<TurnierErgebnisse>{
 	
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
-	public TurnierErgebnisse() {
+	private TurnierErgebnisse() {
 	};
 	
 	public TurnierErgebnisse(Teilnehmer[] teilnehmer) {

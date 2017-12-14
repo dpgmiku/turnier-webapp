@@ -11,7 +11,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket>{
 	
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
-	public TurnierBracket() {
+	private TurnierBracket() {
 	};
 	
 	

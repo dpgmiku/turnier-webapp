@@ -7,7 +7,6 @@ import turnier.webapp.domain.base.EntityBase;
 
 
 @Entity
-
 public class SpielerStatistik extends EntityBase<SpielerStatistik>{
 	    
 		//private Teilnehmer spieler;
@@ -26,7 +25,7 @@ public class SpielerStatistik extends EntityBase<SpielerStatistik>{
 	
 		/** Necessary for JPA entities internally. */
 		@SuppressWarnings("unused")
-		public SpielerStatistik() {
+		private SpielerStatistik() {
 		};
 	
 	

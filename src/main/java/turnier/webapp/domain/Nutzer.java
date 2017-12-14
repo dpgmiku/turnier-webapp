@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Configurable
-@Service
+//@Service //Entweder Entity oder Service! 17-12-14 Knabe
 @Entity
 // @Secured("NUTZER") //Only role NUTZER may call the methods in this domain
 // class. You can apply this annotation at the class or at the method level.
@@ -41,7 +41,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
-	public Nutzer() {
+	private Nutzer() {
 	};
 
 	public Nutzer(String name, String vorname, String nutzername, String passwort, String email) {

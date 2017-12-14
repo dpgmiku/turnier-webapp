@@ -40,7 +40,7 @@ public class Turnier extends EntityBase<Turnier> {
 
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
-	public Turnier() {
+	private Turnier() {
 	};
 
 	public Turnier(String name, String adresse, LocalDate datum, LocalTime uhrzeit, Nutzer organisator,

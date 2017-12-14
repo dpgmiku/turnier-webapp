@@ -10,12 +10,12 @@
 /.settings/
 
 #Created by database Derby if derby-db is the database name in the Derby URL:
-/derby-db/
+/turnier-webapp-db/
 /derby.log
 #But file /derby.properties is useful to be versioned!
 
 #Created by Maven:
-/target/
+/target/**
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
