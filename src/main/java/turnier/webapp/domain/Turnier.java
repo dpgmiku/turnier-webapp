@@ -2,8 +2,10 @@ package turnier.webapp.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -33,7 +35,8 @@ public class Turnier extends EntityBase<Turnier> {
 	private Nutzer organisator;
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
-	@OneToMany
+    @OneToMany
+	@JoinColumn(name = "jc_teilnehmer")
 	private List<Nutzer> teilnehmer;
 	//@ManyToOne
 	//private TurnierBracket turnierbaum;

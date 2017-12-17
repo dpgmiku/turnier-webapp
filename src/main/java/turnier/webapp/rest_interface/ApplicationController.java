@@ -149,6 +149,20 @@ public ResponseEntity<NutzerResource> findNutzer(
      return   new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);    
      }
 
+@GetMapping(path="/nutzer/turnier/{turniername}")
+public ResponseEntity<TurnierResource> findTurnier(
+		@PathVariable  final String turniername,
+		final HttpMethod method, final WebRequest request
+		   		){
+		_print(method, request);
+		//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
+      Turnier findTurnier = turnierService.findTurnierByName(turniername);
+      if( findTurnier == null) {
+			throw create(TurnierArentHereExc.class, turniername); 	
+      }
+   return   new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);    
+   }
+
 //change the email of the given nutzername as parameter
 @PutMapping(path="/nutzer/email/{nutzername}")
 public ResponseEntity<NutzerResource> updateEmail(
@@ -186,6 +200,8 @@ public ResponseEntity<NutzerResource> updatePassword(
 
 /**The nutzer with the nutzername {0} doesn't exist in our db*/
 public static class NutzerArentHereExc extends multex.Exc {}
+/**The nutzer with the turnierrname {0} doesn't exist in our db*/
+public static class TurnierArentHereExc extends multex.Exc {}
 //    
 //    //For the client role all URIs under /client:
 //    
