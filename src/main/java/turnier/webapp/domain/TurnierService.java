@@ -143,7 +143,7 @@ public class TurnierService {
 	public void entferneTeilnehmer(Nutzer owner, Turnier turnier, Nutzer nutzer) {
 		if (turnierRepository.find(turnier.getName()) == null)
 			throw create(TurnierGibtEsNichtExc.class, turnier.getName());
-		ArrayList<Nutzer> turnierTeilnehmerList = turnier.getTeilnehmer();
+		List<Nutzer> turnierTeilnehmerList = turnier.getTeilnehmer();
 		if (!(turnierTeilnehmerList.contains(nutzer)))
 			throw create(TeilnehmerGibtEsNichtExc.class, nutzer.getNutzername(), turnier.getName());
 		if (!(owner.getNutzername().equals(turnier.getOrganisator().getNutzername())))
@@ -204,6 +204,10 @@ public class TurnierService {
 	return nutzerRepository.find(nutzername);   
    }
    
+   public Turnier findTurnierByName(final String name) {
+	   
+	   return turnierRepository.find(name);
+   }
 
 
 

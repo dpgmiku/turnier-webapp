@@ -4,6 +4,7 @@ package turnier.webapp.rest_interface;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
@@ -38,7 +39,7 @@ public class TurnierResource {
 		public String turnierStatus;
 		
 		/**All of the Teilnehmer saved in array.*/
-		public ArrayList<Nutzer> teilnehmer;
+		public List<Nutzer> teilnehmer;
 		
 		
 

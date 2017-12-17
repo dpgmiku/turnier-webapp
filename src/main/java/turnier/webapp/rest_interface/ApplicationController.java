@@ -103,11 +103,22 @@ Nutzer nutzerSave = turnierService.createNutzer(nutzerResource.name, nutzerResou
 	  		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.CREATED);
     }   
     
-    /**The turnier to be created with name {0} must not have an ID, but has {1}*/
-    public static class TurnierCreateWithIdExc extends multex.Exc {}
+    @PutMapping("/nutzer/turnier/{turniername}/{nutzername}")
+    public ResponseEntity<TurnierResource> addTeilnehnmerToTurnier(
+    		@PathVariable  final String nutzername,
+    		@PathVariable final String turniername,
+    		final HttpMethod method, final WebRequest request
+    		){
+		_print(method, request);
 
-   
-    
+		   Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+	        if( findNutzer == null) {
+				throw create(NutzerArentHereExc.class, nutzername); 	
+	        }
+	        Turnier findTurnier = turnierService.findTurnierByName(turniername);
+            findTurnier.fuegeTeilnehmerHinzu(findNutzer);        
+	  		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
+    }      
 //deletes nutzer object from db with given nutzername as parameter. The given one password in Request Body must be the same as in db to make it possible
 @DeleteMapping("/nutzer/{nutzername}")
 public ResponseEntity<DeleteNutzerCommand> deleteNutzer(
@@ -247,6 +258,9 @@ public static class NutzerArentHereExc extends multex.Exc {}
 		System.out.printf("%s %s %s\n", className, method, request);
 	}
 	
+	 /**The turnier to be created with name {0} must not have an ID, but has {1}*/
+    public static class TurnierCreateWithIdExc extends multex.Exc {}
+
 //
 //    /**Returns a random birth date ranging from 18 years before now to 100 years before now.*/
 //	private LocalDate _randomClientBirthDate() {

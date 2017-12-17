@@ -3,6 +3,7 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -18,6 +19,7 @@ import static multex.MultexUtil.create;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +33,8 @@ public class Turnier extends EntityBase<Turnier> {
 	private Nutzer organisator;
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
-	private ArrayList<Nutzer> teilnehmer;
+	@OneToMany
+	private List<Nutzer> teilnehmer;
 	//@ManyToOne
 	//private TurnierBracket turnierbaum;
 
@@ -56,7 +59,7 @@ public class Turnier extends EntityBase<Turnier> {
 	}
 
 	// package Sichtbarkeit
-	void fuegeTeilnehmerHinzu(Nutzer teilnehmer) {
+	public void fuegeTeilnehmerHinzu(Nutzer teilnehmer) {
 		
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
 			throw create(FuegeTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
@@ -164,7 +167,7 @@ private Boolean istVoll() {
 		this.maxTeilnehmer = maxTeilnehmer;
 	}
 
-	public ArrayList<Nutzer> getTeilnehmer() {
+	public List<Nutzer> getTeilnehmer() {
 		return teilnehmer;
 	}
 
