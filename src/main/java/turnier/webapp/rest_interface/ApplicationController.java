@@ -1,4 +1,4 @@
-package turnier.webapp.rest_interface;
+	package turnier.webapp.rest_interface;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +28,8 @@ import org.springframework.web.context.request.WebRequest;
 
 import multex.Exc;
 import turnier.webapp.domain.Nutzer;
+import turnier.webapp.domain.Turnier;
+import turnier.webapp.domain.TurnierService;
 
 import static multex.MultexUtil.create;
 
@@ -36,15 +38,14 @@ import static multex.MultexUtil.create;
 @Transactional @RestController
 public class ApplicationController {
     
-	
-	private  Nutzer nutzer;
+	private final TurnierService turnierService;
     
-	private final String className = getClass().getSimpleName();
+ 	private final String className = getClass().getSimpleName();
 	
     @Autowired
-    public ApplicationController(final Nutzer nutzer) {
-    	this.nutzer = nutzer;
-	}
+    public ApplicationController(final TurnierService turnierService) {
+	this.turnierService = turnierService;
+    }
     /*
      * A good resource for the design of REST URIs is https://blog.mwaysolutions.com/2014/06/05/10-best-practices-for-better-restful-api/ 
      * But for simplification of access control we will group the URIs by the roles, which may access them.
@@ -58,7 +59,7 @@ public class ApplicationController {
     @GetMapping(path="/")
     public ResponseEntity<String> home(final WebSecurityConfig config, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-        final ResponseEntity<String> responseEntity = new ResponseEntity<>("Welcome to the Turnier Webapp. Predefined users with empty passwords are " + config.predefinedUsernames() + ". Use URIs under /nutzer/ or /admin/ or /teilnehmer/", HttpStatus.OK);
+        final ResponseEntity<String> responseEntity = new ResponseEntity<>("Welcome to the Turnier Webapp. Predefined users with empty passwords are " + config.predefinedUsernames() + ". Use URIs under /nutzer/ or /admin/", HttpStatus.OK);
 		return responseEntity;
     }
     
@@ -76,14 +77,37 @@ public class ApplicationController {
 		if(nutzerResource.id != null) {
 			throw create(NutzerCreateWithIdExc.class, nutzerResource.nutzername, nutzerResource.id);
 	}
-		final Nutzer nutzerSave = new Nutzer(nutzerResource.name, nutzerResource.vorname, nutzerResource.nutzername, nutzerResource.passwort, nutzerResource.email);
-		nutzerSave.nutzerSpeichern();
-        return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.CREATED);
+Nutzer nutzerSave = turnierService.createNutzer(nutzerResource.name, nutzerResource.vorname, nutzerResource.nutzername, nutzerResource.passwort, nutzerResource.email);
+		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.CREATED);
     }
     
     /**The nutzer to be created with nutzername {0} must not have an ID, but has {1}*/
     public static class NutzerCreateWithIdExc extends multex.Exc {}
 
+    @PostMapping("/nutzer/{nutzername}/turnier/")
+    public ResponseEntity<TurnierResource> createNutzer(
+    		@RequestBody  final TurnierResource turnierResource,
+    		@PathVariable  final String nutzername,
+    		final HttpMethod method, final WebRequest request
+    		){
+		_print(method, request);
+		if(turnierResource.id != null) {
+			throw create(TurnierCreateWithIdExc.class, turnierResource.name, turnierResource.id);
+	}
+		   Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+	        if( findNutzer == null) {
+				throw create(NutzerArentHereExc.class, nutzername); 	
+	        }
+	        Turnier turnier = turnierService.turnierErstellen(turnierResource.name, turnierResource.adresse, turnierResource.datum, turnierResource.uhrzeit, findNutzer, turnierResource.maxTeilnehmer);
+	        
+	  		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.CREATED);
+    }   
+    
+    /**The turnier to be created with name {0} must not have an ID, but has {1}*/
+    public static class TurnierCreateWithIdExc extends multex.Exc {}
+
+   
+    
 //deletes nutzer object from db with given nutzername as parameter. The given one password in Request Body must be the same as in db to make it possible
 @DeleteMapping("/nutzer/{nutzername}")
 public ResponseEntity<DeleteNutzerCommand> deleteNutzer(
@@ -93,8 +117,8 @@ final HttpMethod method, final WebRequest request
    		){
 		_print(method, request);
 //Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-Nutzer deleteNutzer = nutzer.findNutzer(nutzername);
-deleteNutzer.nutzerLoeschen(verifyPassword.verifyPasswd);
+Nutzer deleteNutzer = turnierService.findNutzerByNutzername(nutzername);
+turnierService.deleteNutzer(deleteNutzer, verifyPassword.verifyPasswd);
 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }	
     
@@ -106,7 +130,7 @@ public ResponseEntity<NutzerResource> findNutzer(
 		   		){
 		_print(method, request);
 		//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-        Nutzer findNutzer = nutzer.findNutzer(nutzername);
+        Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
         if( findNutzer == null) {
 			throw create(NutzerArentHereExc.class, nutzername); 	
      
@@ -123,12 +147,12 @@ public ResponseEntity<NutzerResource> updateEmail(
 	   		){
 	_print(method, request);
 	//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-    Nutzer findNutzer = nutzer.findNutzer(nutzername);
-    if( nutzer == null) {
+    Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+    if( findNutzer == null) {
 		throw create(NutzerArentHereExc.class, nutzername); 	
  
     }
-    findNutzer = findNutzer.emailAendern(command.newEmail, command.verifyPasswd);
+   turnierService.updateEmail(findNutzer,command.verifyPasswd, command.newEmail);
  return   new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);    
  }
 //changes the password of the given nutzername as parameter
@@ -140,12 +164,12 @@ public ResponseEntity<NutzerResource> updatePassword(
 	   		){
 	_print(method, request);
 	//Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213", "dummy@dummy.de");
-    Nutzer findNutzer = nutzer.findNutzer(nutzername);
+    Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
     if( findNutzer == null) {
 		throw create(NutzerArentHereExc.class, nutzername); 	
  
     }
-    findNutzer = findNutzer.passwortAendern(command.verifyPasswd, command.newPassword);
+    findNutzer = turnierService.updateNutzerWithPassword(findNutzer,command.verifyPasswd, command.newPassword);
  return   new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);    
  }
 

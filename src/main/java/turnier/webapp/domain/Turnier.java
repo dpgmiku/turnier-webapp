@@ -25,25 +25,24 @@ import java.util.regex.Pattern;
 public class Turnier extends EntityBase<Turnier> {
 	private String name;
 	private String adresse;
-	private LocalDate datum;
-	private LocalTime uhrzeit;
+	private String datum;
+	private String uhrzeit;
 	@ManyToOne
 	private Nutzer organisator;
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
 	private ArrayList<Nutzer> teilnehmer;
-	@ManyToOne
-	private TurnierBracket turnierbaum;
+	//@ManyToOne
+	//private TurnierBracket turnierbaum;
 
-	@Autowired
-	private transient TurnierRepository turnierRepository;
+
 
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
 	private Turnier() {
 	};
 
-	public Turnier(String name, String adresse, LocalDate datum, LocalTime uhrzeit, Nutzer organisator,
+	public Turnier(String name, String adresse, String datum, String uhrzeit, Nutzer organisator,
 			int maxTeilnehmer) {
 		this.name = name;
 		this.adresse = adresse;
@@ -52,7 +51,7 @@ public class Turnier extends EntityBase<Turnier> {
 		this.organisator = organisator;
 		this.maxTeilnehmer = maxTeilnehmer;
 		this.teilnehmer = new ArrayList<>();
-		this.turnierbaum = null;
+	//	this.turnierbaum = null;
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
 
@@ -64,29 +63,23 @@ public class Turnier extends EntityBase<Turnier> {
 					turnierStatus.toString());
 
 		}
-//		if istVoll( ) {
-//			
-//		throw create(IstVollExc)	
-//		}
+		if (istVoll()) {
+			
+		throw create(IstVollExc.class, this.teilnehmer.size(), maxTeilnehmer);	
+		}
 		this.teilnehmer.add(teilnehmer);
-
-
-		turnierRepository.save(this);
-
-	
-
 	}
-	// TODO private methode istVoll()
-	// private istVoll();
-
+	
+private Boolean istVoll() {
+	
+	return (teilnehmer.size() >= maxTeilnehmer);
+}
 	void entferneTeilnehmerAusDemTurnier(Nutzer teilnehmer) {
 		if (turnierStatus == TurnierStatus.BEENDET || turnierStatus == TurnierStatus.GESTARTET) {
 			throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
 					turnierStatus.toString());
 		}
-
 		this.teilnehmer.remove(teilnehmer);
-		turnierRepository.save(this);
 	}
 
 	public Nutzer teilnehmerSuchen(String nutzername) {
@@ -106,6 +99,13 @@ public class Turnier extends EntityBase<Turnier> {
 
 	public void starteTurnier() {
 
+	}
+
+	
+	@Override
+	public String toString() {
+		return String.format("Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
+				getId(), name, name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
 	}
 
 	public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
@@ -132,19 +132,19 @@ public class Turnier extends EntityBase<Turnier> {
 		this.adresse = adresse;
 	}
 
-	public LocalDate getDatum() {
+	public String getDatum() {
 		return datum;
 	}
 
-	public void setDatum(LocalDate datum) {
+	public void setDatum(String datum) {
 		this.datum = datum;
 	}
 
-	public LocalTime getUhrzeit() {
+	public String getUhrzeit() {
 		return uhrzeit;
 	}
 
-	public void setUhrzeit(LocalTime uhrzeit) {
+	public void setUhrzeit(String uhrzeit) {
 		this.uhrzeit = uhrzeit;
 	}
 
@@ -172,13 +172,13 @@ public class Turnier extends EntityBase<Turnier> {
 		this.teilnehmer = teilnehmer;
 	}
 
-	public TurnierBracket getTurnierbaum() {
-		return turnierbaum;
-	}
+	//public TurnierBracket getTurnierbaum() {
+	//	return turnierbaum;
+	//}
 
-	public void setTurnierbaum(TurnierBracket turnierbaum) {
-		this.turnierbaum = turnierbaum;
-	}
+	//public void setTurnierbaum(TurnierBracket turnierbaum) {
+	//	this.turnierbaum = turnierbaum;
+	//}
 
 	public TurnierStatus getTurnierStatus() {
 		return turnierStatus;
@@ -209,6 +209,16 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class FuegeTeilnehmerNichtZugelassenExc extends multex.Exc {
 	}
+	
+
+	/**
+	 * Du kannst sich nicht mehr anmelden. {0} von max {1} sind schon angemeldet.
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public static class IstVollExc extends multex.Exc {
+	}
+
 
 	/**
 	 * Nutzer{0} könnte nicht mehr aus dem Turnier {1} entfernt werden, denn {2}
