@@ -58,7 +58,8 @@ public class TurnierJpaRepository implements TurnierRepository {
 	public void delete(Long id) {
       impl.deleteById(id);		
 	}
-	
+
+
 	
 	
 }

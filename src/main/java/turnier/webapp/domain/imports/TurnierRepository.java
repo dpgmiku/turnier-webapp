@@ -45,4 +45,5 @@ public interface TurnierRepository {
 
     /**Deletes {@link Turnier} object with given Id*/
 	void delete(Long id);
+
 }

@@ -80,7 +80,7 @@ private Boolean istVoll() {
 	
 	return (teilnehmer.size() >= maxTeilnehmer);
 }
-	void entferneTeilnehmerAusDemTurnier(Nutzer teilnehmer) {
+	public void entferneTeilnehmerAusDemTurnier(Nutzer teilnehmer) {
 		if (turnierStatus == TurnierStatus.BEENDET || turnierStatus == TurnierStatus.GESTARTET) {
 			throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
 					turnierStatus.toString());
@@ -94,8 +94,7 @@ private Boolean istVoll() {
 
 				return nutzer;
 		}
-		return null;
-
+		throw create(KeinTeilnehmerInDiesemTurnierExc.class, nutzername, this.name);
 	}
 
 	public TurnierBracket kreireTurnierbaum(Teilnehmer[] teilnehmer) {
@@ -104,9 +103,18 @@ private Boolean istVoll() {
 	}
 
 	public void starteTurnier() {
-
+		if (!(isPowerOfTwo(teilnehmer.size()))) {
+			
+			throw create(AnzahlTeilnehmerNoPowerOfTwoExc.class, teilnehmer.size());
+		}
+		turnierStatus = TurnierStatus.GESTARTET;
 	}
 
+
+	  private boolean isPowerOfTwo(int number) {
+
+	return number >= 2 && ((number & (number - 1)) == 0);
+	}
 	
 	@Override
 	public String toString() {
@@ -224,7 +232,22 @@ private Boolean istVoll() {
 	@SuppressWarnings("serial")
 	public static class IstVollExc extends multex.Exc {
 	}
-
+	
+	
+	/**
+	 * Anzahl der Teilnehmer {0} ist kein Power von 2.
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
+	}
+	/**
+	 * Der Nutzer {0} nimmt in Turnier {1} nicht teil.
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public static class KeinTeilnehmerInDiesemTurnierExc extends multex.Exc {
+	}
 
 	/**
 	 * Nutzer{0} könnte nicht mehr aus dem Turnier {1} entfernt werden, denn {2}

@@ -159,11 +159,16 @@ public class TurnierService {
 			throw create(ZuVieleTeilnehmerExc.class, maxTeilnehmer);
 		if (maxTeilnehmer < 2)
 			throw create(ZuWenigTeilnehmerExc.class, maxTeilnehmer);
-	    Boolean containsNumber = name.matches(".*\\d+.*");
+	    final Boolean containsNumber = name.matches(".*\\d+.*");
 		if (adresse.length() <= 3 || containsNumber) {
 
 			throw create(KeineRichtigeEingabenTurnierExc.class, name);
 		}
+		final Turnier findTurnier = this.findTurnierByName(name);
+		if (findTurnier != null) {
+			
+			throw create(TurniernameSchonHinterlegtExc.class, name, findTurnier.getId());
+		};
 
 		final Turnier turnier = new Turnier(name, adresse, datum, uhrzeit, nutzer, maxTeilnehmer);
 
@@ -208,6 +213,17 @@ public class TurnierService {
 	   
 	   return turnierRepository.find(name);
    }
+   
+ public List<Turnier> findTurniers() {
+	   
+	   return turnierRepository.findAll();
+   }
+ 
+ public List<Turnier> findTurnierByOrganisator(final Nutzer organisator) {
+	 
+	 return turnierRepository.findTurniereVonNutzer(organisator);
+ }
+
 
 
 
@@ -285,6 +301,9 @@ public static class EmailSchonHinterlegtExc extends multex.Exc {
 @SuppressWarnings("serial")
 public static class BenutzernameSchonHinterlegtExc extends multex.Exc {
 }
-
+/** Es existiert schon ein Turnier mit diesem Turniername {0} mit dem ID {1} */
+@SuppressWarnings("serial")
+public static class TurniernameSchonHinterlegtExc extends multex.Exc {
+}
 
 }
