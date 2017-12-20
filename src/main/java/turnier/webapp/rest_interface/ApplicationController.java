@@ -46,6 +46,9 @@ public class ApplicationController {
 
 	private final String className = getClass().getSimpleName();
 
+	//TODO Teilnehmer hinzufügen soll POST sein nicht PUT
+	//TODO Teilnehmer entfernen soll DELETE sein nicht PUT
+	
 	@Autowired
 	public ApplicationController(final TurnierService turnierService) {
 		this.turnierService = turnierService;

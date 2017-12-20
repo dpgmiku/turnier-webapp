@@ -57,6 +57,7 @@ public class TurnierService {
  *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
 
   */
+   //TODO Fehlerbehandlung wie bei EntferneTeilnehmer
    public Nutzer nutzerSpeichern(final String name, final String vorname, final String nutzername, final String passwort, final String email) {
 		final int passwortLength = passwort.length();
 		if (passwortLength > 5 && passwortLength < 255) {
@@ -114,8 +115,7 @@ public class TurnierService {
 	 *            neue Email auf die man das ändern will
 	 * @param passwort
 	 *            passwort zur Verifizierung
-	 * @return Nutzer Nutzer Object mit dem neu gespeicherter Email-Adresse
-	 * @throws PasswortDoesntMatchExc
+	 * @throws Nutzer.PasswortDoesntMatchExc
 	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB
 	 *             überein
 	 * @throws ThatsNotAnEmailExc

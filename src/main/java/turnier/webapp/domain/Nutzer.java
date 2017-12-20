@@ -60,7 +60,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 	/**
 	 * löscht den Nutzer aus dem Datenbank.
 	 * 
-	 * @param passwort
+	 * @param passwortZurVerifizierung
 	 *            zum Vergleichen mit dem gespeicherten Passwort im DB
 	 * @throws PasswortDoesntMatchExc
 	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB

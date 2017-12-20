@@ -34,7 +34,7 @@ public class Gast extends EntityBase<Gast> {
 		return null;
 	}
 
-	/** Spielername {0} ist zu kurz (<3 Zeichen) oder zu lang (>255 Zeichen */
+	/** Spielername {0} ist zu kurz (kleiner 3 Zeichen) oder zu lang (groesser 255 Zeichen */
 	@SuppressWarnings("serial")
 	public static class SpielerNameNotAllowedExc extends multex.Exc {
 	}
