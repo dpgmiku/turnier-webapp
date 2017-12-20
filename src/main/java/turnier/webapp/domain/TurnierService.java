@@ -29,19 +29,24 @@ public class TurnierService {
    private final NutzerRepository nutzerRepository;
    private final TurnierRepository turnierRepository;
    
+   /**
+    * Konstruktor für den TurnierService
+    * @param nutzerRepository Nimmt sich das Nutzer Repository Interface
+    * @param turnierRepository Nimmt sich das Turnier Repository Interface
+    */
    @Autowired
    public TurnierService(final NutzerRepository nutzerRepository, final TurnierRepository turnierRepository) {
 	this.nutzerRepository = nutzerRepository;
 	this.turnierRepository = turnierRepository;   
    }
 
- /**Command: Creates a new Nutzer
-  * @param name the name of the new Nutzer
-  * @param vorname the vorname of the new Nutzer
-  * @param nutzername the unique nutzername of the new Nutzer
-  * @param passwort the password of the nutzer
-  * @param email the email of the nutzer
-  * @return nutzer
+ /**Command: Kreirt einen neuen Nutzer
+  * @param name Der Name vom Nutzer
+  * @param vorname Der Vorname vom Nutzer
+  * @param nutzername Der einzigartige Nutzername vom Nutzer
+  * @param passwort Das Passwort vom Nutzer
+  * @param email Die Email Adresse vom Nutzer
+  * @return nutzer Gibt der erstellten Nutzer zurück.
  * @throws BenutzernameSchonHinterlegtExc
 *             benutzername befindet sich schon im Datenbank
  * @throws EmailSchonHinterlegtExc
@@ -74,14 +79,12 @@ public class TurnierService {
 		} else
 			throw create(NeuesPasswortNotAllowedExc.class, passwort, nutzername);
    }
-  /**Command: updates password of the given {@link Nutzer} with a new one
-   * 
-   * @param nutzer nutzer who wants to update his password
-   * @param altesPasswort  altes password to verify
-   * @param neuesPasswort new Password
-   * @return nutzer with a new password
+  /**Command: updated das Passwort vom gegebenen {@link Nutzer} mit einem neuem Passwort. 
+   * @param nutzer Der Nutzer dessen Passwort geändert wird. 
+   * @param altesPasswort Das alte Passwort das verifiziert werden muss.
+   * @param neuesPasswort Das neue Password was neu gesetzt wird.
+   * @return nutzer Gibt den Nutzer zurück dessen Passwort geändert wurde.
    */
-   
    public Nutzer updateNutzerWithPassword(final Nutzer nutzer, final String altesPasswort, final String neuesPasswort ) {
 	   
 		final int passwortLaenge = neuesPasswort.length();
@@ -93,19 +96,18 @@ public class TurnierService {
 
 
    }
-   /**Command: Deletes the given {@link Nutzer}
-    * @param nutzer nutzer object which we want to delete from db
-    * @param passwort password to verify
+   /**Command: Löscht den gegebenen {@link Nutzer} 
+    * @param nutzer Das Nutzer Objekt was geloescht werden soll.
+    * @param passwort Das passwort das zum verifizieren gebraucht wird.
     */
- 
- 
    public void nutzerLoeschen(final Nutzer nutzer,final  String passwort) throws ThatsNotAnEmailExc{
 	if (nutzer.getPasswort().equals(passwort)) {   
  
     nutzerRepository.delete(nutzer.getId());
 	}
    }
-   /**Command: updates email address of the {@link Nutzer} to the new one
+   
+   /**Command: Updatet die E-Mail Adresse des Nutzern {@link Nutzer} gegen einer neuen E-Mail Adresse.
     * 
     * @throws EmailSchonHinterlegtExc
     * 	 * @param email
@@ -140,6 +142,12 @@ public class TurnierService {
 	}   
    }
    
+   /**
+    * Entfernt den gegeben Nutzer aus dem gegebenen Turnier.
+    * @param owner Der Organisator des Turniers
+    * @param turnier Das Turnier wovon der Teilnehmer entfernt werden soll.
+    * @param nutzer Der Nutzer der Entfernt werden soll
+    */
 	public void entferneTeilnehmer(Nutzer owner, Turnier turnier, Nutzer nutzer) {
 		if (turnierRepository.find(turnier.getName()) == null)
 			throw create(TurnierGibtEsNichtExc.class, turnier.getName());
@@ -153,6 +161,16 @@ public class TurnierService {
 	}
    
 
+	/**
+	 * Erstellt ein Turnier
+	 * @param name Der Name des Turniers
+	 * @param adresse Die Adresse des Turniers
+	 * @param datum Das Datum wann das Turnier anfängt.
+	 * @param uhrzeit Die Uhrzeit wann das Turnier stattfinden soll.
+	 * @param nutzer Der Organisator der das Turnier organisiert.
+	 * @param maxTeilnehmer Die anzahl an erlaubten Nutzer für das Turnier.
+	 * @return Gibt das erstellte Turnier zurück.
+	 */
 	public Turnier turnierErstellen(String name, String adresse, String datum, String uhrzeit, Nutzer nutzer,
 			int maxTeilnehmer) {
 		if (maxTeilnehmer > 32)
@@ -192,33 +210,48 @@ public class TurnierService {
 	@SuppressWarnings("serial")
 	public static class ZuWenigTeilnehmerExc extends multex.Exc {
 	}
-   /**Query: Finds the client with the given email address 
-    * @param email given email, which should be found in nutzerRepository
-    * @return nutzer Object, if not found null
+	
+   /**Query: Findet einen Nutzer mithilfe der E-mail Adresse.
+    * @param email Die gegebene E-Mail, die in der Nutzer Repository gefunden werden soll.
+    * @return Gibt den Nutzer, falls gefunden, zurueck.
     */
-   
    public Nutzer findNutzerByEmail(final String email) {
 	return nutzerRepository.findEmail(email);  
    }
 
-   /**Query: Finds the client with the given nutzername 
-    * @param nutzername given nutzername, which should be found in nutzerRepository
-    * @return nutzer Object, if not found null
+   /**Query: Findet einen Nutzer mithilfe des Nutzernamens.
+    * @param nutzername Der Nutzernamen, der in der Nutzer Repository gefunden werden soll. 
+    * @return Gibt den Nutzer, falls gefunden, zurueck.
     */
    public Nutzer findNutzerByNutzername(final String nutzername) { 
 	return nutzerRepository.find(nutzername);   
    }
    
+   
+   /**
+    * Query: Findet ein Turnier mithilfe des Namens.
+    * @param name Der Name des Turniers
+    * @return Das gefundene Turnier.
+    */
    public Turnier findTurnierByName(final String name) {
 	   
 	   return turnierRepository.find(name);
    }
    
+   /**
+    * Query: Findet alle erstellten Turniere
+    * @return Gibt eine Liste von allen Turnieren zurück.
+    */
  public List<Turnier> findTurniers() {
 	   
 	   return turnierRepository.findAll();
    }
  
+ /**
+  * Findet alle Turniere die vom gegebenen Nutzer erstellt worden sind.
+  * @param organisator Der Organisator wessen Turniere gelistet werden soll.
+  * @return Gibt eine Liste von Turnieren zurück der der gegebene Nutzer erstellt hat.
+  */
  public List<Turnier> findTurnierByOrganisator(final Nutzer organisator) {
 	 
 	 return turnierRepository.findTurniereVonNutzer(organisator);
@@ -226,7 +259,11 @@ public class TurnierService {
 
 
 
-
+/**
+ * Löscht das gegebene Turnier vom gegebenen Nutzer
+ * @param nutzer Der Organisator dessen Turnier geloescht wird.
+ * @param turnier Das Turnier was gelöscht wird.
+ */
 	public void loescheEigenesTurnier(Nutzer nutzer, Turnier turnier) {
 		if (turnierRepository.find(turnier.getName()) == null)
 			throw create(TurnierGibtEsNichtExc.class, turnier.getName());
@@ -236,6 +273,11 @@ public class TurnierService {
 
 	}
 
+	/**
+	 * Meldet ein Nutzer für das Turnier an
+	 * @param turnier Das Turnier wo der Nutzer sich anmeldet.
+	 * @param nutzer Der Nutzer der angemeldet werden soll.
+	 */
 	public void anTurnierAnmelden(Turnier turnier, Nutzer nutzer) {
 		if (turnier.getTeilnehmer().contains(nutzer))
 			throw create(DuBistSchonAngemeldetExc.class, nutzer.getNutzername(), turnier.getName());
@@ -252,7 +294,7 @@ public class TurnierService {
 	}
 	// methods from Teilnehmer Klasse - unecessary split, because OneToOne
    
-/**Query: Finds all Nutzers of the Turnier Webapp. They are ordered by their ascending Nutzernames*/
+/**Query: Findet alle erstellten Nutzer die nach Nutzernamen sortiert sind.*/
 public List<Nutzer> findAllNutzers(){
 return nutzerRepository.findAll();	
 }
