@@ -85,7 +85,7 @@ public class ApplicationController {
 		if (nutzerResource.id != null) {
 			throw create(NutzerCreateWithIdExc.class, nutzerResource.nutzername, nutzerResource.id);
 		}
-		Nutzer nutzerSave = turnierService.createNutzer(nutzerResource.name, nutzerResource.vorname,
+		Nutzer nutzerSave = turnierService.nutzerSpeichern(nutzerResource.name, nutzerResource.vorname,
 				nutzerResource.nutzername, nutzerResource.passwort, nutzerResource.email);
 		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.CREATED);
 	}
@@ -123,7 +123,7 @@ public class ApplicationController {
 			throw create(NutzerArentHereExc.class, nutzername);
 		}
 		Turnier findTurnier = turnierService.findTurnierByName(turniername);
-		findTurnier.fuegeTeilnehmerHinzu(findNutzer);
+		findTurnier.anTurnierAnmelden(findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 	
@@ -156,7 +156,7 @@ public class ApplicationController {
 		_print(method, request);
 		Turnier findTurnierByName = turnierService.findTurnierByName(turniername);
 		Nutzer  findNutzer = findTurnierByName.teilnehmerSuchen(nutzername);
-		findTurnierByName.entferneTeilnehmerAusDemTurnier(findNutzer);
+		findTurnierByName.entferneTeilnehmer(findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnierByName), HttpStatus.ACCEPTED);
 	}
 
@@ -169,7 +169,7 @@ public class ApplicationController {
 		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
 		// "dummy@dummy.de");
 		Nutzer deleteNutzer = turnierService.findNutzerByNutzername(nutzername);
-		turnierService.deleteNutzer(deleteNutzer, verifyPassword.verifyPasswd);
+		turnierService.nutzerLoeschen(deleteNutzer, verifyPassword.verifyPasswd);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 

@@ -42,7 +42,7 @@ public class TurnierService {
   * @param passwort the password of the nutzer
   * @param email the email of the nutzer
   * @return nutzer
- * @throws BunutzernameSchonHinterlegtExc
+ * @throws BenutzernameSchonHinterlegtExc
 *             benutzername befindet sich schon im Datenbank
  * @throws EmailSchonHinterlegtExc
  *             email hat schon ein anderer Benutzer hinterlegt
@@ -52,7 +52,7 @@ public class TurnierService {
  *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
 
   */
-   public Nutzer createNutzer(final String name, final String vorname, final String nutzername, final String passwort, final String email) {
+   public Nutzer nutzerSpeichern(final String name, final String vorname, final String nutzername, final String passwort, final String email) {
 		final int passwortLength = passwort.length();
 		if (passwortLength > 5 && passwortLength < 255) {
 			final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
@@ -99,7 +99,7 @@ public class TurnierService {
     */
  
  
-   public void deleteNutzer(final Nutzer nutzer,final  String passwort){
+   public void nutzerLoeschen(final Nutzer nutzer,final  String passwort) throws ThatsNotAnEmailExc{
 	if (nutzer.getPasswort().equals(passwort)) {   
  
     nutzerRepository.delete(nutzer.getId());
@@ -148,7 +148,7 @@ public class TurnierService {
 			throw create(TeilnehmerGibtEsNichtExc.class, nutzer.getNutzername(), turnier.getName());
 		if (!(owner.getNutzername().equals(turnier.getOrganisator().getNutzername())))
 			throw create(EsIstNichtDeinTurnierExc.class, turnier.getName(), owner.getNutzername());
-		turnier.entferneTeilnehmerAusDemTurnier(nutzer);
+		turnier.entferneTeilnehmer(nutzer);
 		turnierRepository.save(turnier);
 	}
    
@@ -242,7 +242,7 @@ public class TurnierService {
 		final TurnierStatus turnierStatus = turnier.getTurnierStatus();
 		if (turnierStatus != TurnierStatus.OFFEN)
 			throw create(TurnierStatusFailExc.class, turnier.getName(), turnierStatus.toString());
-		turnier.fuegeTeilnehmerHinzu(nutzer);
+		turnier.anTurnierAnmelden(nutzer);
 		turnierRepository.save(turnier);
 	}
 

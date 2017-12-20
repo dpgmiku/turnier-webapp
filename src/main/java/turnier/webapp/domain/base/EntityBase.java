@@ -23,6 +23,12 @@ public abstract class EntityBase<T extends EntityBase<T>> {
     /**Returns the identity of this entity object.*/
     public Long getId(){return id;}
 
+    
+    /*Sets an ID of this entity object, only for tests.*/
+    public void setId(Long id){
+    	this.id = id;
+    	};
+    	
     /**
      * Entities compare by identity, not by attributes.
      *

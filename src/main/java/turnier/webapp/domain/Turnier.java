@@ -35,21 +35,18 @@ public class Turnier extends EntityBase<Turnier> {
 	private Nutzer organisator;
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
-    @OneToMany
+	@OneToMany
 	@JoinColumn(name = "jc_teilnehmer")
 	private List<Nutzer> teilnehmer;
-	//@ManyToOne
-	//private TurnierBracket turnierbaum;
-
-
+	// @ManyToOne
+	// private TurnierBracket turnierbaum;
 
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
 	private Turnier() {
 	};
 
-	public Turnier(String name, String adresse, String datum, String uhrzeit, Nutzer organisator,
-			int maxTeilnehmer) {
+	public Turnier(String name, String adresse, String datum, String uhrzeit, Nutzer organisator, int maxTeilnehmer) {
 		this.name = name;
 		this.adresse = adresse;
 		this.datum = datum;
@@ -57,30 +54,31 @@ public class Turnier extends EntityBase<Turnier> {
 		this.organisator = organisator;
 		this.maxTeilnehmer = maxTeilnehmer;
 		this.teilnehmer = new ArrayList<>();
-	//	this.turnierbaum = null;
+		// this.turnierbaum = null;
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
 
 	// package Sichtbarkeit
-	public void fuegeTeilnehmerHinzu(Nutzer teilnehmer) {
-		
+	public void anTurnierAnmelden(Nutzer teilnehmer) {
+
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
 			throw create(FuegeTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
 					turnierStatus.toString());
 
 		}
 		if (istVoll()) {
-			
-		throw create(IstVollExc.class, this.teilnehmer.size(), maxTeilnehmer);	
+
+			throw create(IstVollExc.class, this.teilnehmer.size(), maxTeilnehmer);
 		}
 		this.teilnehmer.add(teilnehmer);
 	}
-	
-private Boolean istVoll() {
-	
-	return (teilnehmer.size() >= maxTeilnehmer);
-}
-	public void entferneTeilnehmerAusDemTurnier(Nutzer teilnehmer) {
+
+	private Boolean istVoll() {
+
+		return (teilnehmer.size() >= maxTeilnehmer);
+	}
+
+	public void entferneTeilnehmer(Nutzer teilnehmer) {
 		if (turnierStatus == TurnierStatus.BEENDET || turnierStatus == TurnierStatus.GESTARTET) {
 			throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
 					turnierStatus.toString());
@@ -104,26 +102,29 @@ private Boolean istVoll() {
 
 	public void starteTurnier() {
 		if (!(isPowerOfTwo(teilnehmer.size()))) {
-			
+
 			throw create(AnzahlTeilnehmerNoPowerOfTwoExc.class, teilnehmer.size());
 		}
 		turnierStatus = TurnierStatus.GESTARTET;
 	}
 
+	private boolean isPowerOfTwo(int number) {
 
-	  private boolean isPowerOfTwo(int number) {
-
-	return number >= 2 && ((number & (number - 1)) == 0);
+		return number >= 2 && ((number & (number - 1)) == 0);
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format("Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
-				getId(), name, name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
+		return String.format(
+				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
+				getId(), name, name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(),
+				maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
 	}
 
 	public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
+		if (turnierStatus == TurnierStatus.GESTARTET) {
 		turnierStatus = TurnierStatus.BEENDET;
+		}
 		return null;
 
 	}
@@ -186,13 +187,13 @@ private Boolean istVoll() {
 		this.teilnehmer = teilnehmer;
 	}
 
-	//public TurnierBracket getTurnierbaum() {
-	//	return turnierbaum;
-	//}
+	// public TurnierBracket getTurnierbaum() {
+	// return turnierbaum;
+	// }
 
-	//public void setTurnierbaum(TurnierBracket turnierbaum) {
-	//	this.turnierbaum = turnierbaum;
-	//}
+	// public void setTurnierbaum(TurnierBracket turnierbaum) {
+	// this.turnierbaum = turnierbaum;
+	// }
 
 	public TurnierStatus getTurnierStatus() {
 		return turnierStatus;
@@ -223,7 +224,6 @@ private Boolean istVoll() {
 	@SuppressWarnings("serial")
 	public static class FuegeTeilnehmerNichtZugelassenExc extends multex.Exc {
 	}
-	
 
 	/**
 	 * Du kannst sich nicht mehr anmelden. {0} von max {1} sind schon angemeldet.
@@ -232,8 +232,7 @@ private Boolean istVoll() {
 	@SuppressWarnings("serial")
 	public static class IstVollExc extends multex.Exc {
 	}
-	
-	
+
 	/**
 	 * Anzahl der Teilnehmer {0} ist kein Power von 2.
 	 * 
@@ -241,6 +240,7 @@ private Boolean istVoll() {
 	@SuppressWarnings("serial")
 	public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
 	}
+
 	/**
 	 * Der Nutzer {0} nimmt in Turnier {1} nicht teil.
 	 * 
