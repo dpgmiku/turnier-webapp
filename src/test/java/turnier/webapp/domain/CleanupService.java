@@ -14,19 +14,19 @@ import turnier.webapp.domain.imports.TurnierRepository;
 class CleanupService {
 
     private final NutzerRepository nutzerRepository;
-    private final TurnierRepository turnierRepository;
+	private final TurnierRepository turnierRepository;
 
      /**Constructs the cleanup service using the passed required repositories as by Ports and Adapters Pattern.*/
     @Autowired
     public CleanupService(final NutzerRepository nutzerRepository, final TurnierRepository turnierRepository) {
-        this.nutzerRepository = nutzerRepository;
+      this.nutzerRepository = nutzerRepository;
       this.turnierRepository = turnierRepository;
     }
 
     /**Deletes all entities from all used repositories.*/
     void deleteAll(){
+        turnierRepository.deleteAll();
     nutzerRepository.deleteAll();  
-    turnierRepository.deleteAll();
     }
 
 }

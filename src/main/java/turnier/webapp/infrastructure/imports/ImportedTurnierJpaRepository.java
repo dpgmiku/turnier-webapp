@@ -20,6 +20,9 @@ import turnier.webapp.domain.Turnier;
 
 public interface ImportedTurnierJpaRepository extends JpaRepository<Turnier, Long> {
 
+    /**Deletes all Nutzers. Useful for test scenarios in order to start with an empty Nutzer set*/
+	void deleteAll();
+	
 	Turnier findOneByName(String name);
 	
 	@Transactional
@@ -31,7 +34,6 @@ public interface ImportedTurnierJpaRepository extends JpaRepository<Turnier, Lon
 
 	List<Turnier> findByOrganisator(Nutzer organisator);
 
-    /**Deletes all Nutzers. Useful for test scenarios in order to start with an empty Nutzer set*/
-	void deleteAll();
+
 
 }

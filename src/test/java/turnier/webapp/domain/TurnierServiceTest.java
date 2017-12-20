@@ -53,7 +53,6 @@ public class TurnierServiceTest {
 		} catch (TurnierService.EmailSchonHinterlegtExc expected) {
 		}
 
-		// TODO Korrekter weg zum testen wegen dem extra Block
 		{
 			try {
 				final Nutzer nutzerThatsNotAnEmailExc = turnierService.nutzerSpeichern("yo", "yo", "yoyo", "passwdyo",
@@ -171,6 +170,64 @@ public class TurnierServiceTest {
 	}
 
 	@Test
+	public void testLoescheEigenesTurnier() {
+		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
+				"miku@miku.pl");
+		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "notyourbusiness",
+				"maciej@tlen.pl");
+		final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+				michael, 4);
+		try {
+			final Turnier turnierNotInDB = new Turnier("blablabla", "dasfds", "dsfdsa", "dasfdsa", maciej, 32);
+			turnierService.loescheEigenesTurnier(michael, turnierNotInDB);
+			fail("TurnierService.TurnierGibtEsNichtExc excepted");
+		} catch (TurnierService.TurnierGibtEsNichtExc excepted) {
+		}
+		try {
+			turnierService.loescheEigenesTurnier(maciej, turnier);
+			fail("TurnierService.EsIstNichtDeinTurnierExc excepted");
+		} catch (TurnierService.EsIstNichtDeinTurnierExc excepted) {
+		}
+		assertNotNull(turnier);
+		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+		assertEquals(turnier, turnierFound);
+		assertEquals(turnier.getId(), turnierFound.getId());
+		assertEquals(turnier.getName(), turnierFound.getName());
+		assertEquals(turnier.getDatum(), turnierFound.getDatum());
+		assertEquals(michael, turnierFound.getOrganisator());
+		assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFound.getTeilnehmer().isEmpty());
+		assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
+		assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
+		try {
+			turnierService.loescheEigenesTurnier(maciej, turnier);
+			fail("TurnierService.EsIstNichtDeinTurnierExc excepted");
+		} catch (TurnierService.EsIstNichtDeinTurnierExc excepted) {
+		}
+		turnierService.loescheEigenesTurnier(michael, turnier);
+			assertNull(turnierService.findTurnierByName(turnier.getName()));
+		// try to delete a turnier with a logged teilnehmer, should working fine
+		final Turnier turnierWithTeilnehmer = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207",
+				"15:30", michael, 4);
+		turnierService.anTurnierAnmelden(turnierWithTeilnehmer, michael);
+		turnierService.anTurnierAnmelden(turnierWithTeilnehmer, maciej);
+		assertNotNull(turnier);
+		final Turnier turnierWithTeilnehmerFound = turnierService.findTurnierByName(turnier.getName());
+		assertEquals(turnierWithTeilnehmer, turnierWithTeilnehmerFound);
+		assertEquals(turnierWithTeilnehmer.getId(), turnierWithTeilnehmerFound.getId());
+		assertEquals(turnierWithTeilnehmer.getName(), turnierWithTeilnehmerFound.getName());
+		assertEquals(turnierWithTeilnehmer.getDatum(), turnierWithTeilnehmerFound.getDatum());
+		assertEquals(michael, turnierWithTeilnehmerFound.getOrganisator());
+		assertEquals(2, turnierWithTeilnehmer.getTeilnehmer().size(),
+				turnierWithTeilnehmerFound.getTeilnehmer().size());
+		assertEquals(turnierWithTeilnehmer.getMaxTeilnehmer(), turnierWithTeilnehmerFound.getMaxTeilnehmer());
+		assertEquals(turnierWithTeilnehmer.getUhrzeit(), turnierWithTeilnehmerFound.getUhrzeit());
+		turnierService.loescheEigenesTurnier(michael, turnierWithTeilnehmer);
+		assertNull(turnierService.findTurnierByName(turnierWithTeilnehmer.getName()));
+		
+
+	}
+
+	@Test
 	public void testUpdateNutzerWithPassword() {
 		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
 				"miku@miku.pl");
@@ -223,6 +280,183 @@ public class TurnierServiceTest {
 		assertEquals("istdochnichtyourbusiness", michael3.getPasswort(), michael.getPasswort());
 		assertEquals(michael.getEmail(), michael3.getEmail());
 		// yes i can :-)
+
+	}
+
+	@Test
+	public void testFindTurnierByName() {
+		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
+				"miku@miku.pl");
+		System.out.println(michael.toString());
+		{
+			final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+					michael, 32);
+			System.out.println(turnier.toString());
+			assertNotNull(turnier);
+			final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+			assertEquals(turnier, turnierFound);
+			assertEquals(turnier.getId(), turnierFound.getId());
+			assertEquals(turnier.getName(), turnierFound.getName());
+			assertEquals(turnier.getDatum(), turnierFound.getDatum());
+			assertEquals(michael, turnierFound.getOrganisator());
+			assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFound.getTeilnehmer().isEmpty());
+			assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
+			assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
+		}
+		Turnier turnier = turnierService.findTurnierByName("notaname");
+		assertNull(turnier);
+
+	}
+
+	@Test
+	public void testFindTurniers() {
+		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
+				"miku@miku.pl");
+		{
+			final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+					michael, 32);
+			assertNotNull(turnier);
+			final Turnier turnier2 = turnierService.turnierErstellen("turniertwo", "wyszynskiego 2", "20.2.207",
+					"15:30", michael, 32);
+			final List<Turnier> turnierFound = turnierService.findTurniers();
+			final Turnier turnierFirst = turnierFound.get(0);
+			assertEquals(turnier, turnierFirst);
+			assertEquals(turnier.getId(), turnierFirst.getId());
+			assertEquals(turnier.getName(), turnierFirst.getName());
+			assertEquals(turnier.getDatum(), turnierFirst.getDatum());
+			assertEquals(michael, turnierFirst.getOrganisator());
+			assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFirst.getTeilnehmer().isEmpty());
+			assertEquals(turnier.getMaxTeilnehmer(), turnierFirst.getMaxTeilnehmer());
+			assertEquals(turnier.getUhrzeit(), turnierFirst.getUhrzeit());
+			final Turnier turnierSecond = turnierFound.get(1);
+			assertEquals(turnier2, turnierSecond);
+			assertEquals(turnier2.getId(), turnierSecond.getId());
+			assertEquals(turnier2.getName(), turnierSecond.getName());
+			assertEquals(turnier2.getDatum(), turnierSecond.getDatum());
+			assertEquals(michael, turnierSecond.getOrganisator());
+			assertEquals(turnier2.getTeilnehmer().isEmpty(), turnierSecond.getTeilnehmer().isEmpty());
+			assertEquals(turnier2.getMaxTeilnehmer(), turnierSecond.getMaxTeilnehmer());
+			assertEquals(turnier2.getUhrzeit(), turnierSecond.getUhrzeit());
+
+		}
+	}
+
+	@Test
+	public void testAnTurnierAnmelden() {
+		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
+				"miku@miku.pl");
+		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "notyourbusiness",
+				"maciej@tlen.pl");
+		final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+				michael, 4);
+		assertNotNull(turnier);
+		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+		assertEquals(turnier, turnierFound);
+		assertEquals(turnier.getId(), turnierFound.getId());
+		assertEquals(turnier.getName(), turnierFound.getName());
+		assertEquals(turnier.getDatum(), turnierFound.getDatum());
+		assertEquals(michael, turnierFound.getOrganisator());
+		assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFound.getTeilnehmer().isEmpty());
+		assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
+		assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
+		turnierService.anTurnierAnmelden(turnier, michael);
+		assertEquals(1, turnier.getTeilnehmer().size());
+		turnierService.anTurnierAnmelden(turnier, maciej);
+		assertEquals(2, turnier.getTeilnehmer().size());
+		try {
+			turnierService.anTurnierAnmelden(turnier, maciej);
+			fail("TurnierService.DuBistSchonAngemeldetExc expected");
+		} catch (TurnierService.DuBistSchonAngemeldetExc expected) {
+		}
+		turnier.starteTurnier();
+		final Nutzer david = turnierService.nutzerSpeichern("radobenko", "david", "sodrek", "notyourbusiness",
+				"asfdas@asdfds.de");
+
+		try {
+			turnierService.anTurnierAnmelden(turnier, david);
+			fail("TurnierService.TurnierStatusFailExc expected");
+		} catch (TurnierService.TurnierStatusFailExc expected) {
+		}
+
+	}
+
+	@Test
+	public void testEntferneTeilnehmer() {
+		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
+				"miku@miku.pl");
+		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "notyourbusiness",
+				"maciej@tlen.pl");
+		final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+				michael, 4);
+		assertNotNull(turnier);
+		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+		assertEquals(turnier, turnierFound);
+		assertEquals(turnier.getId(), turnierFound.getId());
+		assertEquals(turnier.getName(), turnierFound.getName());
+		assertEquals(turnier.getDatum(), turnierFound.getDatum());
+		assertEquals(michael, turnierFound.getOrganisator());
+		assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFound.getTeilnehmer().isEmpty());
+		assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
+		assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
+		turnierService.anTurnierAnmelden(turnier, michael);
+		assertEquals(1, turnier.getTeilnehmer().size());
+		try {
+			turnierService.entferneTeilnehmer(maciej, turnier, michael);
+			fail("TurnierService.EsIstNichtDeinTurnierExc excepted");
+		} catch (TurnierService.EsIstNichtDeinTurnierExc excepted) {
+		}
+		try {
+			turnierService.entferneTeilnehmer(michael, turnier, maciej);
+			fail("TurnierService.TeilnehmerGibtEsNichtExc excepted");
+		} catch (TurnierService.TeilnehmerGibtEsNichtExc excepted) {
+		}
+		try {
+			final Turnier turnierNotInDB = new Turnier("blablabla", "dasfds", "dsfdsa", "dasfdsa", maciej, 32);
+			turnierService.entferneTeilnehmer(michael, turnierNotInDB, michael);
+			fail("TurnierService.TurnierGibtEsNichtExc excepted");
+		} catch (TurnierService.TurnierGibtEsNichtExc excepted) {
+		}
+
+		turnierService.entferneTeilnehmer(michael, turnier, michael);
+		assertEquals(0, turnier.getTeilnehmer().size());
+
+	}
+
+	@Test
+	public void testFindTurnierByOrganisator() {
+		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
+				"miku@miku.pl");
+		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "notyourbusiness",
+				"maciej@tlen.pl");
+
+		final Turnier turnierNotByOrg = turnierService.turnierErstellen("blabla", "wyszynskiego 2", "20.2.207", "15:30",
+				maciej, 32);
+		assertNotNull(turnierNotByOrg);
+		final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+				michael, 32);
+		assertNotNull(turnier);
+		final Turnier turnier2 = turnierService.turnierErstellen("turniertwo", "wyszynskiego 2", "20.2.207", "15:30",
+				michael, 32);
+		final List<Turnier> turnierFound = turnierService.findTurnierByOrganisator(michael);
+		assertEquals(2, turnierFound.size());
+		final Turnier turnierFirst = turnierFound.get(0);
+		assertEquals(turnier, turnierFirst);
+		assertEquals(turnier.getId(), turnierFirst.getId());
+		assertEquals(turnier.getName(), turnierFirst.getName());
+		assertEquals(turnier.getDatum(), turnierFirst.getDatum());
+		assertEquals(michael, turnierFirst.getOrganisator());
+		assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFirst.getTeilnehmer().isEmpty());
+		assertEquals(turnier.getMaxTeilnehmer(), turnierFirst.getMaxTeilnehmer());
+		assertEquals(turnier.getUhrzeit(), turnierFirst.getUhrzeit());
+		final Turnier turnierSecond = turnierFound.get(1);
+		assertEquals(turnier2, turnierSecond);
+		assertEquals(turnier2.getId(), turnierSecond.getId());
+		assertEquals(turnier2.getName(), turnierSecond.getName());
+		assertEquals(turnier2.getDatum(), turnierSecond.getDatum());
+		assertEquals(michael, turnierSecond.getOrganisator());
+		assertEquals(turnier2.getTeilnehmer().isEmpty(), turnierSecond.getTeilnehmer().isEmpty());
+		assertEquals(turnier2.getMaxTeilnehmer(), turnierSecond.getMaxTeilnehmer());
+		assertEquals(turnier2.getUhrzeit(), turnierSecond.getUhrzeit());
 
 	}
 
@@ -322,56 +556,67 @@ public class TurnierServiceTest {
 	public void testTurnierErstellen() {
 		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
 				"miku@miku.pl");
-//		{
-	//	final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30", michael, 32);
-	//	System.out.println(turnier == null);
-	//	assertNotNull(turnier);
-//		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
-//		assertEquals(turnier, turnierFound);
-//		assertEquals(turnier.getId(), turnierFound.getId());
-//		assertEquals(turnier.getName(), turnierFound.getName());
-//		assertEquals(turnier.getDatum(), turnierFound.getDatum());
-//		assertEquals(michael, turnierFound.getOrganisator());
-//		assertEquals(turnier.getTeilnehmer(), turnierFound.getTeilnehmer());
-//		assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getTeilnehmer());
-//		assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
-//		}
-//		try {
-//			final Turnier turnierZuVielTeilnehmer =  turnierService.turnierErstellen("turniertest", "wyszynskiego 2", "20.2.207", "15:30", michael, 32);
-//		fail("TurnierService.ZuVieleTeilnehmerExc excepted");
-//		} catch (TurnierService.ZuVieleTeilnehmerExc expected) {}
-//		try {
-//			final Turnier turnierZuWenigTeilnehmer =  turnierService.turnierErstellen("turniertt", "wyszynskiego 2", "20.2.207", "15:30", michael, 1);
-//		fail("TurnierService.ZuWenigTeilnehmerExc excepted");
-//		} catch (TurnierService.ZuWenigTeilnehmerExc expected) {}
-//		try {
-//			final Turnier turnierAdresseZuKurz =  turnierService.turnierErstellen("turniertttt", "wy", "20.2.207", "15:30", michael, 4);
-//		fail("TurnierService.KeineRichtigeEingabenTurnierExc excepted");
-//		} catch (TurnierService.KeineRichtigeEingabenTurnierExc expected) {}
-//		try {
-//			final Turnier turnierNameMitZiffer =  turnierService.turnierErstellen("tur12nier", "wyasfasd", "20.2.207", "15:30", michael, 4);
-//		fail("TurnierService.KeineRichtigeEingabenTurnierExc excepted");
-//		} catch (TurnierService.KeineRichtigeEingabenTurnierExc expected) {}
-//		try {
-//			final Turnier turnierMitDemGleichenNamen =  turnierService.turnierErstellen("turnier", "wy", "20.2.207", "15:30", michael, 4);
-//		fail("TurnierService.TurniernameSchonHinterlegtExc excepted");
-//		} catch (TurnierService.TurniernameSchonHinterlegtExc expected) {}
-//		{
-//		final Turnier turnier = turnierService.turnierErstellen("turniertest", "wyszynskiego 2", "20.2.207", "15:30", michael, 32);
-//		assertNotNull(turnier);
-//		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
-//		assertEquals(turnier, turnierFound);
-//		assertEquals(turnier.getId(), turnierFound.getId());
-//		assertEquals(turnier.getName(), turnierFound.getName());
-//		assertEquals(turnier.getDatum(), turnierFound.getDatum());
-//		assertEquals(turnier.getOrganisator(), turnierFound.getOrganisator());
-//		assertEquals(turnier.getTeilnehmer(), turnierFound.getTeilnehmer());
-//		assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getTeilnehmer());
-//		assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
-//		}
-//	
-//		
-		
+		System.out.println(michael.toString());
+		{
+			final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
+					michael, 32);
+			System.out.println(turnier.toString());
+			assertNotNull(turnier);
+			final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+			assertEquals(turnier, turnierFound);
+			assertEquals(turnier.getId(), turnierFound.getId());
+			assertEquals(turnier.getName(), turnierFound.getName());
+			assertEquals(turnier.getDatum(), turnierFound.getDatum());
+			assertEquals(michael, turnierFound.getOrganisator());
+			assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFound.getTeilnehmer().isEmpty());
+			assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
+			assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
+		}
+		try {
+			final Turnier turnierZuVielTeilnehmer = turnierService.turnierErstellen("turniertest", "wyszynskiego 2",
+					"20.2.207", "15:30", michael, 34);
+			fail("TurnierService.ZuVieleTeilnehmerExc excepted");
+		} catch (TurnierService.ZuVieleTeilnehmerExc expected) {
+		}
+		try {
+			final Turnier turnierZuWenigTeilnehmer = turnierService.turnierErstellen("turniertt", "wyszynskiego 2",
+					"20.2.207", "15:30", michael, 1);
+			fail("TurnierService.ZuWenigTeilnehmerExc excepted");
+		} catch (TurnierService.ZuWenigTeilnehmerExc expected) {
+		}
+		try {
+			final Turnier turnierAdresseZuKurz = turnierService.turnierErstellen("turniertttt", "wy", "20.2.207",
+					"15:30", michael, 2);
+			fail("TurnierService.KeineRichtigeEingabenTurnierExc excepted");
+		} catch (TurnierService.KeineRichtigeEingabenTurnierExc expected) {
+		}
+		try {
+			final Turnier turnierNameMitZiffer = turnierService.turnierErstellen("tur12nier", "wyasfasd", "20.2.207",
+					"15:30", michael, 4);
+			fail("TurnierService.KeineRichtigeEingabenTurnierExc excepted");
+		} catch (TurnierService.KeineRichtigeEingabenTurnierExc expected) {
+		}
+		try {
+			final Turnier turnierMitDemGleichenNamen = turnierService.turnierErstellen("turnier", "wy", "20.2.207",
+					"15:30", michael, 4);
+			fail("TurnierService.KeineRichtigeEingabenTurnierExc expected");
+		} catch (TurnierService.KeineRichtigeEingabenTurnierExc expected) {
+		}
+		{
+			final Turnier turnier = turnierService.turnierErstellen("turniertest", "wyszynskiego 2", "20.2.207",
+					"15:30", michael, 32);
+			assertNotNull(turnier);
+			final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+			assertEquals(turnier, turnierFound);
+			assertEquals(turnier.getId(), turnierFound.getId());
+			assertEquals(turnier.getName(), turnierFound.getName());
+			assertEquals(turnier.getDatum(), turnierFound.getDatum());
+			assertEquals(turnier.getOrganisator(), turnierFound.getOrganisator());
+			assertEquals(turnier.getTeilnehmer().size(), turnierFound.getTeilnehmer().size());
+			assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
+			assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
+		}
+
 	}
 
 	@Test

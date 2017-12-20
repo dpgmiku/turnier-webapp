@@ -1,6 +1,7 @@
 package turnier.webapp.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -35,7 +36,7 @@ public class Turnier extends EntityBase<Turnier> {
 	private Nutzer organisator;
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "jc_teilnehmer")
 	private List<Nutzer> teilnehmer;
 	// @ManyToOne
@@ -113,13 +114,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return number >= 2 && ((number & (number - 1)) == 0);
 	}
 
-	@Override
-	public String toString() {
-		return String.format(
-				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
-				getId(), name, name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(),
-				maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
-	}
+
 
 	public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
 		if (turnierStatus == TurnierStatus.GESTARTET) {
@@ -127,6 +122,13 @@ public class Turnier extends EntityBase<Turnier> {
 		}
 		return null;
 
+	}
+	
+
+	@Override
+	public String toString() {
+		return String.format("Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
+				getId(), name,  adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
 	}
 
 	// getters and setters, selfexplanatory
