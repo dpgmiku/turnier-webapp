@@ -31,6 +31,9 @@ public class Nutzer extends EntityBase<Nutzer> {
 	private String nutzername;
 	private String passwort;
 	private String email;
+	private int gewonneneTurniere;
+	private int gewonneneSpiele;
+	private int verloreneSpiele;
 
 	
 //	@Autowired
@@ -48,6 +51,9 @@ public class Nutzer extends EntityBase<Nutzer> {
 		this.setNutzername(nutzername);
 		this.setPasswort(passwort);
 		this.setEmail(email);
+		this.gewonneneSpiele = 0;
+		this.gewonneneTurniere =0;
+		this.verloreneSpiele = 0;
 
 	}
 
@@ -81,6 +87,18 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 		}
 	}
+	
+	public void hatTurnierGewonnen() {
+	this.gewonneneTurniere = gewonneneTurniere+1;
+	}
+	
+	public void hatGewonnen() {
+	this.gewonneneSpiele = gewonneneSpiele+1;	
+	}
+	
+	public void hatVerloren() {
+	this.verloreneSpiele = verloreneSpiele+1;	
+	}
 
 
 	public void emailAendern(String neueEmail, String passwort) throws PasswortDoesntMatchExc {
@@ -92,12 +110,6 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 	
 
-
-//
-//	public SpielerStatistik sieheStatistik(Teilnehmer teilnehmer) {
-//		// to do, no clue, what to do here, i dont understand our classdiagramm
-//		return null;
-//	}
 
 	// getter and setter - selfeplenatory
 

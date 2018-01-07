@@ -22,6 +22,7 @@ import static multex.MultexUtil.create;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +40,7 @@ public class Turnier extends EntityBase<Turnier> {
 	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "jc_teilnehmer")
 	private List<Nutzer> teilnehmer;
+	private List<TurnierBracket> turnierBrackets;
 	// @ManyToOne
 	// private TurnierBracket turnierbaum;
 
@@ -55,6 +57,7 @@ public class Turnier extends EntityBase<Turnier> {
 		this.organisator = organisator;
 		this.maxTeilnehmer = maxTeilnehmer;
 		this.teilnehmer = new ArrayList<>();
+		this.turnierBrackets = new ArrayList<>();
 		// this.turnierbaum = null;
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
@@ -96,10 +99,54 @@ public class Turnier extends EntityBase<Turnier> {
 		throw create(KeinTeilnehmerInDiesemTurnierExc.class, nutzername, this.name);
 	}
 
-	public TurnierBracket kreireTurnierbaum(Teilnehmer[] teilnehmer) {
+	private void fuegeTurnierbracketHinzu() {
+		final int size = turnierBrackets.size();
+		if (size >= (teilnehmer.size() - 1)) {
+			throw create(AlleBracketsSchonErstelltExc.class, this.name);
+		}
+		for (int i = 0; i <= size; i = i + 2) {
+			TurnierBracket turnierBracket1 = turnierBrackets.get(i);
+			TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
+			if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
+				TurnierBracket turnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
+						turnierBracket2.getGewinner());
+				turnierBrackets.add(turnierBracket);
+			}
 
-		return null;
+		}
+
 	}
+
+	@Autowired
+	private transient NutzerRepository nutzerRepository;
+
+	public void setErgebnisse(TurnierBracket turnierBracket, int ergebnis1, int ergebnis2) {
+		turnierBracket.setGewinner(ergebnis1, ergebnis2);
+		final int size = turnierBrackets.size();
+		if (size == (teilnehmer.size() - 1)) {
+			turnierStatus = TurnierStatus.BEENDET;
+			Nutzer nutzerGewinner = nutzerRepository.find(turnierBracket.getGewinner());
+            nutzerGewinner.hatTurnierGewonnen();
+		}
+
+		fuegeTurnierbracketHinzu();
+	}
+	
+	public String getTurnierErgebnisse() {
+		if (!(turnierStatus == TurnierStatus.BEENDET)) {
+		throw create(TurnierIstNochNichtBeendetExc.class, this.name, this.turnierStatus);	
+		}
+		int turnierBracketLaenge = turnierBrackets.size();
+		String gewinner = turnierBrackets.get(turnierBracketLaenge-1).getGewinner();
+		String verlierer =turnierBrackets.get(turnierBracketLaenge-1).getVerlierer();
+		String returnString = gewinner+ "\n"+verlierer+"\n";
+		for(int i = turnierBrackets.size()-2; i>=0; i--) {
+	    TurnierBracket turnierPaar = turnierBrackets.get(i);   
+	    String verliererSchleife = turnierPaar.getVerlierer();
+		returnString = returnString + verliererSchleife + "\n"; 
+		}
+		return returnString;
+		}
 
 	public void starteTurnier() {
 		if (!(isPowerOfTwo(teilnehmer.size()))) {
@@ -107,6 +154,13 @@ public class Turnier extends EntityBase<Turnier> {
 			throw create(AnzahlTeilnehmerNoPowerOfTwoExc.class, teilnehmer.size());
 		}
 		turnierStatus = TurnierStatus.GESTARTET;
+		Collections.shuffle(teilnehmer);
+		for (int i = 0; i <= teilnehmer.size(); i = i + 2) {
+			TurnierBracket turnierBracket = new TurnierBracket(teilnehmer.get(i).getNutzername(),
+					teilnehmer.get(i + 1).getNutzername());
+			turnierBrackets.add(turnierBracket);
+		}
+
 	}
 
 	private boolean isPowerOfTwo(int number) {
@@ -114,21 +168,20 @@ public class Turnier extends EntityBase<Turnier> {
 		return number >= 2 && ((number & (number - 1)) == 0);
 	}
 
-
-
-	public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
-		if (turnierStatus == TurnierStatus.GESTARTET) {
-		turnierStatus = TurnierStatus.BEENDET;
-		}
-		return null;
-
-	}
-	
+	// public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
+	// if (turnierStatus == TurnierStatus.GESTARTET) {
+	// turnierStatus = TurnierStatus.BEENDET;
+	// }
+	// return null;
+	//
+	// }
 
 	@Override
 	public String toString() {
-		return String.format("Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
-				getId(), name,  adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
+		return String.format(
+				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
+				getId(), name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer,
+				turnierStatus.toString(), teilnehmer.toString());
 	}
 
 	// getters and setters, selfexplanatory
@@ -203,6 +256,21 @@ public class Turnier extends EntityBase<Turnier> {
 
 	public void setTurnierStatus(TurnierStatus turnierStatus) {
 		this.turnierStatus = turnierStatus;
+	}
+
+	
+	/**
+	 *Turnier {0} wurde noch nicht beendet. Aktueller Status: {1}.
+	 */
+	@SuppressWarnings("serial")
+	public static class TurnierIstNochNichtBeendetExc extends multex.Exc {
+	}
+	
+	/**
+	 * Es wurden schon alle Brackets im Turnier {0} erstellt.
+	 */
+	@SuppressWarnings("serial")
+	public static class AlleBracketsSchonErstelltExc extends multex.Exc {
 	}
 
 	/** Nutzername {0} existiert im Turnier {1} nicht */
