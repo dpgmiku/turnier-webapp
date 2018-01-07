@@ -92,7 +92,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 		}
 	}
-<<<<<<< HEAD
+
 	
 	public void hatTurnierGewonnen() {
 	this.gewonneneTurniere = gewonneneTurniere+1;
