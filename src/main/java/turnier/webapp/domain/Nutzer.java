@@ -36,14 +36,19 @@ public class Nutzer extends EntityBase<Nutzer> {
 	private int verloreneSpiele;
 
 	
-//	@Autowired
-//	private transient TurnierRepository turnierRepository;
-//
+
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
 	private Nutzer() {
 	};
-
+/**
+ * Konstruktor für Nutzer objekt
+ * @param name  Name vom Nutzer
+ * @param vorname Vorname vom Nutzer
+ * @param nutzername Einzigartiger Nutzername vom Nutzer 
+ * @param passwort Passwwort vom Nutzer
+ * @param email Email vom Nutzer
+ */
 	public Nutzer(String name, String vorname, String nutzername, String passwort, String email) {
 
 		this.setName(name);
@@ -61,7 +66,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 	/**
 	 * löscht den Nutzer aus dem Datenbank.
 	 * 
-	 * @param passwort
+	 * @param passwortZurVerifizierung
 	 *            zum Vergleichen mit dem gespeicherten Passwort im DB
 	 * @throws PasswortDoesntMatchExc
 	 *             passwort stimmt nicht mit dem gespeicherten Passwort im DB
@@ -78,7 +83,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 * 
 	 * @param altesPasswort altes Passwort
 	 * @param neuesPasswort neues Passwort
-	 * @throws PasswortDoesntMatchExc exception when the password to verify doesnt match with the actuall one.
+     * @throws PasswortDoesntMatchExc Passwort stimmt nicht mit dem gespeicherten im DB überein
 	 */
 	public void passwortAendern(String altesPasswort, String neuesPasswort)
 			throws PasswortDoesntMatchExc {
@@ -87,6 +92,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 		}
 	}
+<<<<<<< HEAD
 	
 	public void hatTurnierGewonnen() {
 	this.gewonneneTurniere = gewonneneTurniere+1;
@@ -101,7 +107,14 @@ public class Nutzer extends EntityBase<Nutzer> {
 	}
 
 
-	public void emailAendern(String neueEmail, String passwort) throws PasswortDoesntMatchExc {
+	
+/** ändert die Email Adresse von dem Nutzer
+ * 
+ * @param neueEmail neue Email Addresse
+ * @param passwort Passwort zur Verifizierung
+ * @throws PasswortDoesntMatchExc Passwort stimmt nicht mit dem gespeicherten im DB überein
+ */
+ 	public void emailAendern(String neueEmail, String passwort) throws PasswortDoesntMatchExc {
 		if (passwortVerifizieren(passwort)) {
 		this.email=neueEmail;	    
 	}

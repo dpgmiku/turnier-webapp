@@ -46,6 +46,9 @@ public class ApplicationController {
 
 	private final String className = getClass().getSimpleName();
 
+	//TODO Teilnehmer hinzufügen soll POST sein nicht PUT
+	//TODO Teilnehmer entfernen soll DELETE sein nicht PUT
+	
 	@Autowired
 	public ApplicationController(final TurnierService turnierService) {
 		this.turnierService = turnierService;
@@ -76,7 +79,7 @@ public class ApplicationController {
 
 	// For the nutzer role all URIs under /nutzer:
 
-	/* post a new nutzer object into our db */
+	/* füge ein neuer Nutzer Objekt in unserem DB*/
 
 	@PostMapping("/nutzer/")
 	public ResponseEntity<NutzerResource> createNutzer(@RequestBody final NutzerResource nutzerResource,
@@ -96,6 +99,7 @@ public class ApplicationController {
 	public static class NutzerCreateWithIdExc extends multex.Exc {
 	}
 
+	/* fügt ein neuer Turnier Objekt mit dem  Nutzer mit dem übergebenen nutzername als Organisator*/  
 	@PostMapping("/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource> createNutzer(@RequestBody final TurnierResource turnierResource,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
@@ -113,6 +117,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.CREATED);
 	}
 
+	/*fügt teilnehmer mit dem übergebenen nutzername im Turnier mit übergebenen turniername hinzu*/
 	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}")
 	public ResponseEntity<TurnierResource> addTeilnehnmerToTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
@@ -127,6 +132,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 	
+	/*starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem übergebenen nutzername der organisator von diesem Turnier ist */
 	@PutMapping("/nutzer/turnier/start/{turniername}/{nutzername}/")
 	public ResponseEntity<TurnierResource> starteTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
@@ -149,7 +155,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 
-	
+	/*entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem übergebenen turniername */
 	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}/delete")
 	public ResponseEntity<TurnierResource> entferneTeilnehnmerAusTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
@@ -188,7 +194,7 @@ public class ApplicationController {
 		}
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
-
+   /*finde alle nutzer Objekte im DB*/
 	@GetMapping(path = "/nutzer/")
 	public ResponseEntity<NutzerResource[]> findNutzers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -199,7 +205,7 @@ public class ApplicationController {
 		}
 		return _nutzersToResources(nutzers);
 	}
-
+/*finde alle turnier Objekte im DB*/
 	@GetMapping(path = "/nutzer/turnier/")
 	public ResponseEntity<TurnierResource[]> findTurniers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -211,6 +217,7 @@ public class ApplicationController {
 		return _turniersToResources(turniers);
 	}
 
+/*finde alle Turniere Objekte im DB, wo der Nutzer mit dem übergebenen nutzername der Organisator ist.*/
 	@GetMapping(path = "/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource[]> findOrganisatorTurniers(@PathVariable final String nutzername,
 			final HttpMethod method, final WebRequest request) {
@@ -228,19 +235,20 @@ public class ApplicationController {
 		return _turniersToResources(turniers);
 	}
 
+	/*hilfmethode zum transformation von nutzer objekt ins Nutzer Resource*/
 	private ResponseEntity<NutzerResource[]> _nutzersToResources(List<Nutzer> nutzers) {
 		final Stream<NutzerResource> result = nutzers.stream().map(c -> new NutzerResource(c));
 		final NutzerResource[] resultArray = result.toArray(size -> new NutzerResource[size]);
 		return new ResponseEntity<>(resultArray, HttpStatus.OK);
 	}
-
+	/*hilfmethode zum transformation von turnier objekt ins Turnier Resource*/
 	private ResponseEntity<TurnierResource[]> _turniersToResources(List<Turnier> nutzers) {
 		final Stream<TurnierResource> result = nutzers.stream().map(c -> new TurnierResource(c));
 		final TurnierResource[] resultArray = result.toArray(size -> new TurnierResource[size]);
 		return new ResponseEntity<>(resultArray, HttpStatus.OK);
 
 	}
-
+    /*gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück*/
 	@GetMapping(path = "/nutzer/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> findTurnier(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
@@ -253,7 +261,7 @@ public class ApplicationController {
 		}
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);
 	}
-	
+	/*lösche dem Turnier mit dem übergebenen turniername, wenn der Nutzer mit dem übergebenen nutzername Organisator ist*/
 	@DeleteMapping(path = "/nutzer/{nutzername}/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> deleteTurnier(
 			@PathVariable final String nutzername,

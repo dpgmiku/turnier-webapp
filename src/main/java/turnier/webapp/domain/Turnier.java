@@ -34,7 +34,7 @@ public class Turnier extends EntityBase<Turnier> {
 	private String datum;
 	private String uhrzeit;
 	@ManyToOne
-	private Nutzer organisator;
+	private Nutzer organisator; // Ein Organisator kann mehrere Turniere besitzen
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
 	@OneToMany(fetch = FetchType.EAGER)
@@ -49,6 +49,16 @@ public class Turnier extends EntityBase<Turnier> {
 	private Turnier() {
 	};
 
+	
+	/**
+	 * Konstruktor für das Turnier
+	 * @param name Name vom Turnier
+	 * @param adresse Adresse vom Turnier
+	 * @param datum Datum wann das Turnier stattfinden soll.
+	 * @param uhrzeit Uhrzeit wann das Turnier stattfindet.
+	 * @param organisator Der Organisator des Turniers.
+	 * @param maxTeilnehmer Die Anzahl an erlaubten Teilnehmer
+	 */
 	public Turnier(String name, String adresse, String datum, String uhrzeit, Nutzer organisator, int maxTeilnehmer) {
 		this.name = name;
 		this.adresse = adresse;
@@ -62,7 +72,10 @@ public class Turnier extends EntityBase<Turnier> {
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
 
-	// package Sichtbarkeit
+	/**
+	 * Fügt ein Teilnehmer dem Turnier hinzu.
+	 * @param teilnehmer Der Teilnehmer der zum Turnier hingefügt wird.
+	 */
 	public void anTurnierAnmelden(Nutzer teilnehmer) {
 
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
@@ -77,11 +90,19 @@ public class Turnier extends EntityBase<Turnier> {
 		this.teilnehmer.add(teilnehmer);
 	}
 
+	/**
+	 * Prüft ob das Turnier voll ist.
+	 * @return ein Boolean ob das Turnier voll ist oder nicht.
+	 */
 	private Boolean istVoll() {
 
 		return (teilnehmer.size() >= maxTeilnehmer);
 	}
 
+	/**
+	 * Entfernt ein Teilnehmer aus dem Turnier
+	 * @param teilnehmer Der Teilnehmer der aus dem Turnier entfernt wird.
+	 */
 	public void entferneTeilnehmer(Nutzer teilnehmer) {
 		if (turnierStatus == TurnierStatus.BEENDET || turnierStatus == TurnierStatus.GESTARTET) {
 			throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
@@ -90,6 +111,11 @@ public class Turnier extends EntityBase<Turnier> {
 		this.teilnehmer.remove(teilnehmer);
 	}
 
+	/**
+	 * Sucht und gibt ein Teilnehmer zurück der in diesem Turnier angemeldet ist.
+	 * @param nutzername Der Nutzername des Teilnehmers nachdem gesucht wird.
+	 * @return Gibt den, falls gefundenden, Nutzer zurück.
+	 */
 	public Nutzer teilnehmerSuchen(String nutzername) {
 		for (Nutzer nutzer : teilnehmer) {
 			if (nutzer.getNutzername().equals(nutzername))
@@ -112,10 +138,11 @@ public class Turnier extends EntityBase<Turnier> {
 						turnierBracket2.getGewinner());
 				turnierBrackets.add(turnierBracket);
 			}
-
 		}
 
-	}
+		}
+	
+
 
 	@Autowired
 	private transient NutzerRepository nutzerRepository;
@@ -148,6 +175,10 @@ public class Turnier extends EntityBase<Turnier> {
 		return returnString;
 		}
 
+	/**
+	 * 
+	 * Startet das Turnier falls es nicht schon gestartet wurde.
+	 */
 	public void starteTurnier() {
 		if (!(isPowerOfTwo(teilnehmer.size()))) {
 
@@ -163,20 +194,22 @@ public class Turnier extends EntityBase<Turnier> {
 
 	}
 
+	/**
+	 * Prüft ob die Teilnehmer = 2^x sind. Z.b. 32 oder 64 Teilnehmer. 
+	 * @param number Number ist Teilnehmeranzahl
+	 * @return Gibt zurück ob die Teilnehmer anzahl = 2^x ist.
+	 */
 	private boolean isPowerOfTwo(int number) {
 
 		return number >= 2 && ((number & (number - 1)) == 0);
 	}
 
-	// public TurnierErgebnisse beendeTurnier(TurnierBracket turnierbaum) {
-	// if (turnierStatus == TurnierStatus.GESTARTET) {
-	// turnierStatus = TurnierStatus.BEENDET;
-	// }
-	// return null;
-	//
-	// }
 
-	@Override
+		
+	/**
+	 * Gibt die Attribute des Turnier als String aus.
+	 */
+@Override
 	public String toString() {
 		return String.format(
 				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",

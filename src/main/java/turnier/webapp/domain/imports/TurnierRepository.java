@@ -22,7 +22,7 @@ public interface TurnierRepository {
      */
 	Turnier find(String name);
 	
-	/**Returns all of {@link Turnier} objects as list, which {@link Nutzer) organised , if existing.
+	/**Returns all of {@link Turnier} objects as list, which {@link Nutzer} organised , if existing.
      * @param nutzer nutzer organiser
      * @throws IllegalArgumentException  id is null
      */
