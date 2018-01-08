@@ -151,8 +151,8 @@ public class ApplicationController {
 	     final  String organisator = findTurnier.getOrganisator().getName();
 	    	throw create(NotYourTurnierExc.class, nutzername, turniername, organisator);
 	    }
-	    findTurnier.starteTurnier();
-		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
+Turnier turnier = turnierService.turnierStarten(findTurnier);
+	    return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.ACCEPTED);
 	}
 
 	/*entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem übergebenen turniername */

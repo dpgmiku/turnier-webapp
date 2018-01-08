@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import turnier.webapp.domain.imports.NutzerRepository;
+import turnier.webapp.domain.imports.TurnierBracketRepository;
 import turnier.webapp.domain.imports.TurnierRepository;
 
 /**This is a domain service for creating tourniers.
@@ -28,6 +29,7 @@ public class TurnierService {
     //Required repositories as by Ports and Adapters Pattern:
    private final NutzerRepository nutzerRepository;
    private final TurnierRepository turnierRepository;
+   private final TurnierBracketRepository turnierBracketRepository;
    
    /**
     * Konstruktor für den TurnierService
@@ -35,9 +37,10 @@ public class TurnierService {
     * @param turnierRepository Nimmt sich das Turnier Repository Interface
     */
    @Autowired
-   public TurnierService(final NutzerRepository nutzerRepository, final TurnierRepository turnierRepository) {
+   public TurnierService(final NutzerRepository nutzerRepository, final TurnierBracketRepository turnierBracketRepository, final TurnierRepository turnierRepository) {
 	this.nutzerRepository = nutzerRepository;
 	this.turnierRepository = turnierRepository;   
+	this.turnierBracketRepository = turnierBracketRepository;
    }
 
  /**Command: Kreirt einen neuen Nutzer
@@ -141,6 +144,53 @@ public class TurnierService {
 
 	}   
    }
+   
+   public TurnierBracket turnierBracketSpeichern(Turnier turnier, TurnierBracket turnierBracket) {
+	   
+	 return  turnierBracketRepository.save(turnierBracket);
+	   
+   }
+   
+   public Turnier turnierStarten(Turnier turnier) {
+	 List<Nutzer> nutzer =  turnier.getTeilnehmer();
+	 if (!(isPowerOfTwo(nutzer.size()))) {
+
+			throw create(AnzahlTeilnehmerNoPowerOfTwoExc.class, nutzer.size());
+		}
+	 turnier.shuffleTeilnehmer();
+	 turnierRepository.save(turnier);
+	 nutzer =  turnier.getTeilnehmer();
+		for (int i = 0; i < nutzer.size(); i = i + 2) {
+			TurnierBracket turnierBracket = new TurnierBracket(nutzer.get(i).getNutzername(),
+					nutzer.get(i + 1).getNutzername());
+          turnierBracket =  turnierBracketRepository.save(turnierBracket);
+			turnier.turnierBracketHinzufuegen(turnierBracket);
+		}
+		return turnierRepository.save(turnier);
+	 
+		
+	   
+   }
+   
+	/**
+	 * Anzahl der Teilnehmer {0} ist kein Power von 2.
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
+	}
+
+   
+	/**
+	 * Prüft ob die Teilnehmer = 2^x sind. Z.b. 32 oder 64 Teilnehmer. 
+	 * @param number Number ist Teilnehmeranzahl
+	 * @return Gibt zurück ob die Teilnehmer anzahl = 2^x ist.
+	 */
+	private boolean isPowerOfTwo(int number) {
+
+		return number >= 2 && ((number & (number - 1)) == 0);
+	}
+
    
    /**
     * Entfernt den gegeben Nutzer aus dem gegebenen Turnier.

@@ -95,7 +95,14 @@ public class TurnierBracket extends EntityBase<TurnierBracket>{
 	public static class ErgebnisSchonDaExc extends multex.Exc {
 	}
 	
-		
+	
+	@Override
+	public String toString() {
+		return String.format("TurnierBracket{nutzername1='%s', nutzername2='%s', ergebnis1='%d', ergebnis2='%d', gewinner='%s', verlierer='%s'}", 
+				nutzername1, nutzername2, ergebnis1, ergebnis2, gewinner, verlierer);
+			
+	}
+	
 
 	
 

@@ -25,6 +25,12 @@ public class NutzerResource {
 	    /**Email of the Nutzer. It has to be unique, too.*/
 		public String email;
 		
+		public int gewonneneSpiele;
+		
+		public int verloreneSpiele;
+		
+		public int gewonneneTurniere;
+		
 
 	    /**Necessary for Jackson*/
 		public NutzerResource() {}
@@ -37,12 +43,15 @@ public class NutzerResource {
 	        this.nutzername = entity.getNutzername();
 	        this.email = entity.getEmail();
 	        this.passwort = entity.getPasswort();
+	        this.gewonneneSpiele = entity.getGewonneneSpiele();
+	        this.verloreneSpiele = entity.getVerloreneSpiele();
+	        this.gewonneneTurniere = entity.getGewonneneTurniere();
 	    }
 
 	    
 	    @Override
 	    public String toString() {
-	    	return String.format("Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s'}", id, name, vorname, nutzername, passwort, email);
+	    	return String.format("Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s', gewonneneSpiele='%d', verloreneSpiele='%d', gewonneneTurniere='%d'}", id, name, vorname, nutzername, passwort, email, gewonneneSpiele, verloreneSpiele, gewonneneTurniere);
 	    }
 	    
 	}

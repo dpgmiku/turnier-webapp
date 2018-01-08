@@ -8,6 +8,7 @@ import java.util.List;
 
 import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
+import turnier.webapp.domain.TurnierBracket;
 import turnier.webapp.domain.TurnierStatus;
 
 /**Data about a Turnier of a Turnier-webapp. Usable as Data Transfer Object.*/
@@ -41,6 +42,9 @@ public class TurnierResource {
 		/**All of the Teilnehmer saved in array.*/
 		public List<Nutzer> teilnehmer;
 		
+		/**All of the TurnierBrackets saved in array.*/
+		public List<TurnierBracket> turnierbrackets;
+		
 		
 
 	    /**Necessary for Jackson*/
@@ -54,6 +58,7 @@ public class TurnierResource {
 	        this.datum = entity.getDatum();
 	        this.uhrzeit = entity.getUhrzeit();
 	        this.organisator = entity.getOrganisator();
+	        this.turnierbrackets = entity.getTurnierBrackets();
 	        this.maxTeilnehmer = entity.getMaxTeilnehmer();
 	        this.turnierStatus = entity.getTurnierStatus().toString();
 	        this.teilnehmer = entity.getTeilnehmer();
@@ -62,8 +67,8 @@ public class TurnierResource {
 	    
 		@Override
 		public String toString() {
-			return String.format("Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
-					id, name, name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString());
+			return String.format("Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s', turnierBracket='%s'}",
+					id, name, name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer, turnierStatus.toString(), teilnehmer.toString(), turnierbrackets.toString());
 		}
 
 }

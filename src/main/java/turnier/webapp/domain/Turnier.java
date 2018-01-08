@@ -1,6 +1,10 @@
 package turnier.webapp.domain;
 
 import javax.persistence.Entity;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import turnier.webapp.domain.base.EntityBase;
 import turnier.webapp.domain.imports.NutzerRepository;
+import turnier.webapp.domain.imports.TurnierBracketRepository;
 import turnier.webapp.domain.imports.TurnierRepository;
 
 import static multex.MultexUtil.create;
@@ -37,13 +42,18 @@ public class Turnier extends EntityBase<Turnier> {
 	private Nutzer organisator; // Ein Organisator kann mehrere Turniere besitzen
 	private int maxTeilnehmer;
 	private TurnierStatus turnierStatus;
-	@OneToMany(fetch = FetchType.EAGER)
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany
 	@JoinColumn(name = "jc_teilnehmer")
 	private List<Nutzer> teilnehmer;
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany
+	@JoinColumn(name = "jc_turnierbracket")
 	private List<TurnierBracket> turnierBrackets;
-	// @ManyToOne
-	// private TurnierBracket turnierbaum;
 
+
+
+	//
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
 	private Turnier() {
@@ -175,34 +185,27 @@ public class Turnier extends EntityBase<Turnier> {
 		return returnString;
 		}
 
+	//  @Autowired
+	//	private transient TurnierBracketRepository turnierBracketRepository;    
 	/**
 	 * 
 	 * Startet das Turnier falls es nicht schon gestartet wurde.
 	 */
 	public void starteTurnier() {
-		if (!(isPowerOfTwo(teilnehmer.size()))) {
-
-			throw create(AnzahlTeilnehmerNoPowerOfTwoExc.class, teilnehmer.size());
-		}
 		turnierStatus = TurnierStatus.GESTARTET;
+	
+	}
+	
+	public void turnierBracketHinzufuegen(TurnierBracket turnierBracket) {
+		turnierBrackets.add(turnierBracket);
+		
+	}
+	
+	public void shuffleTeilnehmer() {
+		
 		Collections.shuffle(teilnehmer);
-		for (int i = 0; i <= teilnehmer.size(); i = i + 2) {
-			TurnierBracket turnierBracket = new TurnierBracket(teilnehmer.get(i).getNutzername(),
-					teilnehmer.get(i + 1).getNutzername());
-			turnierBrackets.add(turnierBracket);
-		}
-
 	}
 
-	/**
-	 * Prüft ob die Teilnehmer = 2^x sind. Z.b. 32 oder 64 Teilnehmer. 
-	 * @param number Number ist Teilnehmeranzahl
-	 * @return Gibt zurück ob die Teilnehmer anzahl = 2^x ist.
-	 */
-	private boolean isPowerOfTwo(int number) {
-
-		return number >= 2 && ((number & (number - 1)) == 0);
-	}
 
 
 		
@@ -237,6 +240,15 @@ public class Turnier extends EntityBase<Turnier> {
 
 	public String getDatum() {
 		return datum;
+	}
+	
+	public List<TurnierBracket> getTurnierBrackets() {
+		return turnierBrackets;
+	}
+
+
+	public void setTurnierBrackets(List<TurnierBracket> turnierBrackets) {
+		this.turnierBrackets = turnierBrackets;
 	}
 
 	public void setDatum(String datum) {
@@ -336,13 +348,6 @@ public class Turnier extends EntityBase<Turnier> {
 	public static class IstVollExc extends multex.Exc {
 	}
 
-	/**
-	 * Anzahl der Teilnehmer {0} ist kein Power von 2.
-	 * 
-	 */
-	@SuppressWarnings("serial")
-	public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
-	}
 
 	/**
 	 * Der Nutzer {0} nimmt in Turnier {1} nicht teil.

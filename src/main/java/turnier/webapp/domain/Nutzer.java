@@ -1,25 +1,12 @@
 package turnier.webapp.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
-
-import turnier.webapp.domain.Nutzer.PasswortDoesntMatchExc;
-import turnier.webapp.domain.base.EntityBase;
-import turnier.webapp.domain.imports.NutzerRepository;
-import turnier.webapp.domain.imports.TurnierRepository;
-
 import static multex.MultexUtil.create;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.persistence.Entity;
+
+import org.springframework.beans.factory.annotation.Configurable;
+
+import turnier.webapp.domain.base.EntityBase;
 
 @Configurable
 //Entweder Entity oder Service! 17-12-14 Knabe
@@ -32,6 +19,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 	private String passwort;
 	private String email;
 	private int gewonneneTurniere;
+	
 	private int gewonneneSpiele;
 	private int verloreneSpiele;
 
@@ -128,8 +116,8 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 	@Override
 	public String toString() {
-		return String.format("Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s'}",
-				getId(), name, vorname, nutzername, passwort, email);
+		return String.format("Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s', gewonneneSpiele='%d', verloreneSpiele='%d', gewonneneTurniere='%d'}",
+				getId(), name, vorname, nutzername, passwort, email,gewonneneSpiele, verloreneSpiele, gewonneneTurniere);
 	}
 
 	public String getName() {
@@ -170,6 +158,25 @@ public class Nutzer extends EntityBase<Nutzer> {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public int getGewonneneTurniere() {
+		return gewonneneTurniere;
+	}
+	public void setGewonneneTurniere(int gewonneneTurniere) {
+		this.gewonneneTurniere = gewonneneTurniere;
+	}
+	public int getGewonneneSpiele() {
+		return gewonneneSpiele;
+	}
+	public void setGewonneneSpiele(int gewonneneSpiele) {
+		this.gewonneneSpiele = gewonneneSpiele;
+	}
+	public int getVerloreneSpiele() {
+		return verloreneSpiele;
+	}
+	public void setVerloreneSpiele(int verloreneSpiele) {
+		this.verloreneSpiele = verloreneSpiele;
 	}
 
 	// innere Exception Klassen
