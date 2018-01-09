@@ -14,12 +14,18 @@ import static multex.MultexUtil.create;
 @Entity
 public class TurnierBracket extends EntityBase<TurnierBracket>{
 	
-	String nutzername1;
-	String nutzername2;
-	int ergebnis1;
-	int ergebnis2;
-    String gewinner;
-    String verlierer;
+	private String nutzername1;
+	private String nutzername2;
+	private int ergebnis1;
+	private int ergebnis2;
+ 
+
+	public void setNutzername2(String nutzername2) {
+		this.nutzername2 = nutzername2;
+	}
+
+	private String gewinner;
+    private String verlierer;
     
 	
 	/** Necessary for JPA entities internally. */
@@ -35,9 +41,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket>{
 	this.gewinner = "";
 	this.verlierer= "";
 	}
-	
-	   @Autowired
-	private transient NutzerRepository nutzerRepository;    
+  
 	   
 	public void setGewinner(int ergebnis1, int ergebnis2) {
 	if (!(gewinner.equals(""))) throw create(TurnierBracket.ErgebnisSchonDaExc.class, gewinner, verlierer);
@@ -52,10 +56,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket>{
 	gewinner = nutzername2;
 	verlierer = nutzername1;
 	}
-	Nutzer gewinnerNutzer = nutzerRepository.find(this.gewinner);
-	Nutzer verliererNutzer = nutzerRepository.find(this.verlierer);
-	gewinnerNutzer.hatGewonnen();
-	verliererNutzer.hatVerloren();
+
 	}
 	
 	public String getGewinner() {
@@ -88,6 +89,18 @@ public class TurnierBracket extends EntityBase<TurnierBracket>{
 		this.verlierer = verlierer;
 	}
 	
+	   public String getNutzername1() {
+			return nutzername1;
+		}
+
+		public void setNutzername1(String nutzername1) {
+			this.nutzername1 = nutzername1;
+		}
+
+		public String getNutzername2() {
+			return nutzername2;
+		}
+	
 	/**
 	 * Nutzer mit dem Nutzername {0} hat schon gegen {1} gewonnen
 	 */
@@ -98,8 +111,8 @@ public class TurnierBracket extends EntityBase<TurnierBracket>{
 	
 	@Override
 	public String toString() {
-		return String.format("TurnierBracket{nutzername1='%s', nutzername2='%s', ergebnis1='%d', ergebnis2='%d', gewinner='%s', verlierer='%s'}", 
-				nutzername1, nutzername2, ergebnis1, ergebnis2, gewinner, verlierer);
+		return String.format("TurnierBracket{id='%d', nutzername1='%s', nutzername2='%s', ergebnis1='%d', ergebnis2='%d', gewinner='%s', verlierer='%s'}", 
+				getId(), nutzername1, nutzername2, ergebnis1, ergebnis2, gewinner, verlierer);
 			
 	}
 	

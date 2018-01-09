@@ -160,11 +160,7 @@ public class Turnier extends EntityBase<Turnier> {
 	public void setErgebnisse(TurnierBracket turnierBracket, int ergebnis1, int ergebnis2) {
 		turnierBracket.setGewinner(ergebnis1, ergebnis2);
 		final int size = turnierBrackets.size();
-		if (size == (teilnehmer.size() - 1)) {
-			turnierStatus = TurnierStatus.BEENDET;
-			Nutzer nutzerGewinner = nutzerRepository.find(turnierBracket.getGewinner());
-            nutzerGewinner.hatTurnierGewonnen();
-		}
+		
 
 		fuegeTurnierbracketHinzu();
 	}
@@ -196,6 +192,11 @@ public class Turnier extends EntityBase<Turnier> {
 	
 	}
 	
+	public void beendeTurnier() {
+		turnierStatus = TurnierStatus.BEENDET;
+	
+	}
+	
 	public void turnierBracketHinzufuegen(TurnierBracket turnierBracket) {
 		turnierBrackets.add(turnierBracket);
 		
@@ -206,6 +207,10 @@ public class Turnier extends EntityBase<Turnier> {
 		Collections.shuffle(teilnehmer);
 	}
 
+	public TurnierBracket getTurnierBracketAtPos(int position) {
+		
+	return turnierBrackets.get(position);	
+	}
 
 
 		
@@ -215,9 +220,9 @@ public class Turnier extends EntityBase<Turnier> {
 @Override
 	public String toString() {
 		return String.format(
-				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s'}",
+				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s', turnierBrackets='%s'}",
 				getId(), name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer,
-				turnierStatus.toString(), teilnehmer.toString());
+				turnierStatus.toString(), teilnehmer.toString(), turnierBrackets.toString());
 	}
 
 	// getters and setters, selfexplanatory

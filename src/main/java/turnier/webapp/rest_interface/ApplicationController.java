@@ -154,6 +154,23 @@ public class ApplicationController {
 Turnier turnier = turnierService.turnierStarten(findTurnier);
 	    return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.ACCEPTED);
 	}
+	
+	/*starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem übergebenen nutzername der organisator von diesem Turnier ist */
+	@PutMapping("/nutzer/turnier/start/{turniername}/{position}/{erg1}/{erg2}")
+	public ResponseEntity<TurnierResource> setteErgebnisseImTurnierBracket(@PathVariable final String position,
+			@PathVariable final String turniername, @PathVariable final String erg1, @PathVariable final String erg2, final HttpMethod method, final WebRequest request) {
+		_print(method, request);
+
+	
+		Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		if (findTurnier == null) {
+			
+			throw create(TurnierArentHereExc.class, turniername);
+		}
+         turnierService.setteErgebnisse(findTurnier, Integer.parseInt(position), Integer.parseInt(erg1), Integer.parseInt(erg2));
+	    return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
+	}
+
 
 	/*entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem übergebenen turniername */
 	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}/delete")
@@ -261,6 +278,19 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		}
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);
 	}
+	
+	@GetMapping(path = "/nutzer/turnier/{turniername}/ergebnisse")
+	public ResponseEntity<String> zeigeErgebnisse(@PathVariable final String turniername, final HttpMethod method,
+			final WebRequest request) {
+		_print(method, request);
+		final Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final String response = findTurnier.getTurnierErgebnisse();
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>(
+				response,
+				HttpStatus.OK);
+		return responseEntity;
+	}
+
 	/*lösche dem Turnier mit dem übergebenen turniername, wenn der Nutzer mit dem übergebenen nutzername Organisator ist*/
 	@DeleteMapping(path = "/nutzer/{nutzername}/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> deleteTurnier(
