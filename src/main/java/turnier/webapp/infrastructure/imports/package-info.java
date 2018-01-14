@@ -1,5 +1,5 @@
-/**Contains interfaces for services required by the infrastructure package.
- * These services are implemented automatically ba Spring following the Spring Data approach.
- * Here Spring Data JPA is used.
+/**beinhaltet Interfaces für Services erforderlich bei der Infrastructure Package.
+ * Diese Services sind automatisch implementiert beim Spring mit Hilfe von Spring Data.
+ * Hier wird Spring Data JPA benutzt.
  */
 package turnier.webapp.infrastructure.imports;

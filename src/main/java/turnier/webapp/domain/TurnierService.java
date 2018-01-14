@@ -173,11 +173,11 @@ public class TurnierService {
 		}
 	}
 
-	public TurnierBracket turnierBracketSpeichern(Turnier turnier, TurnierBracket turnierBracket) {
+//	public TurnierBracket turnierBracketSpeichern(Turnier turnier, TurnierBracket turnierBracket) {
+//
+//		return turnierBracketRepository.save(turnierBracket);
 
-		return turnierBracketRepository.save(turnierBracket);
-
-	}
+//	}
 
 	public Turnier turnierStarten(Turnier turnier) {
 		List<Nutzer> nutzer = turnier.getTeilnehmer();

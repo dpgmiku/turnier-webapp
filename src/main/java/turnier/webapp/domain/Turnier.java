@@ -135,36 +135,36 @@ public class Turnier extends EntityBase<Turnier> {
 		throw create(KeinTeilnehmerInDiesemTurnierExc.class, nutzername, this.name);
 	}
 
-	private void fuegeTurnierbracketHinzu() {
-		final int size = turnierBrackets.size();
-		if (size >= (teilnehmer.size() - 1)) {
-			throw create(AlleBracketsSchonErstelltExc.class, this.name);
-		}
-		for (int i = 0; i <= size; i = i + 2) {
-			TurnierBracket turnierBracket1 = turnierBrackets.get(i);
-			TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
-			if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
-				TurnierBracket turnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
-						turnierBracket2.getGewinner());
-				turnierBrackets.add(turnierBracket);
-			}
-		}
+//	private void fuegeTurnierbracketHinzu() {
+//		final int size = turnierBrackets.size();
+//		if (size >= (teilnehmer.size() - 1)) {
+//			throw create(AlleBracketsSchonErstelltExc.class, this.name);
+//		}
+//		for (int i = 0; i <= size; i = i + 2) {
+//			TurnierBracket turnierBracket1 = turnierBrackets.get(i);
+//			TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
+//			if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
+//				TurnierBracket turnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
+//						turnierBracket2.getGewinner());
+//				turnierBrackets.add(turnierBracket);
+//			}
+//		}
+//
+//		}
+//	
 
-		}
-	
 
+	//@Autowired
+//	private transient NutzerRepository nutzerRepository;
 
-	@Autowired
-	private transient NutzerRepository nutzerRepository;
-
-	public void setErgebnisse(TurnierBracket turnierBracket, int ergebnis1, int ergebnis2) {
-		turnierBracket.setGewinner(ergebnis1, ergebnis2);
-		final int size = turnierBrackets.size();
-		
-
-		fuegeTurnierbracketHinzu();
-	}
-	
+//	public void setErgebnisse(TurnierBracket turnierBracket, int ergebnis1, int ergebnis2) {
+//		turnierBracket.setGewinner(ergebnis1, ergebnis2);
+//		final int size = turnierBrackets.size();
+//		
+//
+//		fuegeTurnierbracketHinzu();
+//	}
+//	
 	public String getTurnierErgebnisse() {
 		if (!(turnierStatus == TurnierStatus.BEENDET)) {
 		throw create(TurnierIstNochNichtBeendetExc.class, this.name, this.turnierStatus);	

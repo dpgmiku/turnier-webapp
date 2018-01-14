@@ -10,11 +10,8 @@ package turnier.webapp.infrastructure.imports;
 
 import turnier.webapp.domain.Nutzer;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.List;
 
 
@@ -30,17 +27,7 @@ public interface ImportedNutzerJpaRepository extends JpaRepository<Nutzer, Long>
     List<Nutzer> findAllByOrderByNutzernameAsc();
 
 	Nutzer findOneByEmail(String email);
-	
-//	@Transactional
-//	@Modifying
-//	@Query("update Nutzer n set n.email = ?1 where n.id = ?2")
-//	void setEmailById(String email, Long id);
-//    
-//	@Transactional
-//	@Modifying
-//	@Query("update Nutzer n set n.passwort = ?1 where n.id = ?2")
-//	void setPasswortById(String passwort, Long id);
-    
+	    
 	@Transactional
 	void deleteById(Long id);
 	

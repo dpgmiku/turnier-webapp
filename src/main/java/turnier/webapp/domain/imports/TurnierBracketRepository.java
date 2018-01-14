@@ -24,8 +24,8 @@ import turnier.webapp.domain.TurnierBracket;
 	     */
 	//	List<TurnierBracket> findTurnierBracketVonTurnier(Turnier turnier);
 				
-	    /**Deletes all {@link TurnierBracket} objects. Useful for Test Cases with an empty database*/
-	  //  void deleteAll();
+	   /**löscht alle {@link TurnierBracket} Objekte. Brauchbar für Test Cases mit einem leeren DB*/
+	   void deleteAll();
 	    
 	    /**Gives the {@link TurnierBracket} a unique, higher ID and saves the turnierBracket.
 	     * @return the modified instance*/
