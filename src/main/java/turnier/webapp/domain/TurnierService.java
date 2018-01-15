@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import turnier.webapp.domain.Turnier.AlleBracketsSchonErstelltExc;
+import turnier.webapp.domain.imports.AdminRepository;
 import turnier.webapp.domain.imports.NutzerRepository;
 import turnier.webapp.domain.imports.TurnierBracketRepository;
 import turnier.webapp.domain.imports.TurnierRepository;
@@ -33,6 +34,7 @@ public class TurnierService {
 	private final NutzerRepository nutzerRepository;
 	private final TurnierRepository turnierRepository;
 	private final TurnierBracketRepository turnierBracketRepository;
+	private final AdminRepository adminRepository;
 
 	/**
 	 * Konstruktor für den TurnierService
@@ -41,15 +43,40 @@ public class TurnierService {
 	 *            Nimmt sich das Nutzer Repository Interface
 	 * @param turnierRepository
 	 *            Nimmt sich das Turnier Repository Interface
+	 * @param adminRepository
+	 *            Nimmt sich das Admin Repository Interface
+	 * @param turnierBrackRepository
+	 *            Nimmt sich das TurnierBracket Repository Interface
 	 */
 	@Autowired
 	public TurnierService(final NutzerRepository nutzerRepository,
-			final TurnierBracketRepository turnierBracketRepository, final TurnierRepository turnierRepository) {
+			final TurnierBracketRepository turnierBracketRepository, final TurnierRepository turnierRepository, final AdminRepository adminRepository) {
 		this.nutzerRepository = nutzerRepository;
 		this.turnierRepository = turnierRepository;
 		this.turnierBracketRepository = turnierBracketRepository;
+		this.adminRepository = adminRepository;
 	}
 
+	public Admin adminSpeichern(final String adminname, final String passwort) {
+		if (!(passwortLaengePruefen(passwort))) {	
+			throw create(NeuesPasswortNotAllowedExc.class, passwort, adminname);
+		}
+		Admin findAdmin = adminRepository.find(adminname);
+		if (findAdmin != null) {
+			create(AdminnameSchonHinterlegtExc.class, adminname, findAdmin.getId());
+		};
+		Admin admin = new Admin(adminname,passwort);
+		return adminRepository.save(admin);	
+	}
+	
+	private Boolean passwortLaengePruefen(final String passwort) {
+		final int passwortLength = passwort.length();
+		if (passwortLength <= 5 || passwortLength >= 255) {
+			return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Command: Kreirt einen neuen Nutzer
 	 * 
@@ -74,28 +101,35 @@ public class TurnierService {
 	 *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
 	 * 
 	 */
-	// TODO Fehlerbehandlung wie bei EntferneTeilnehmer
+	
+	private Boolean emailAufGueltigkeitPruefen(final String email) {
+		final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+				Pattern.CASE_INSENSITIVE);
+		final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+		return (matcher.find());
+		
+	}
+	
 	public Nutzer nutzerSpeichern(final String name, final String vorname, final String nutzername,
 			final String passwort, final String email) {
-		final int passwortLength = passwort.length();
-		if (passwortLength > 5 && passwortLength < 255) {
-			final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-					Pattern.CASE_INSENSITIVE);
-			final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-			if (matcher.find()) {
-				Nutzer findNutzer = findNutzerByEmail(email);
-				if (findNutzer == null) {
-					Nutzer findNutzerNutzername = findNutzerByNutzername(nutzername);
-					if (findNutzerNutzername == null) {
-						return nutzerRepository.save(new Nutzer(name, vorname, nutzername, passwort, email));
-					} else
-						throw create(BenutzernameSchonHinterlegtExc.class, nutzername, findNutzerNutzername.getId());
-				} else
-					throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
-			} else
-				throw create(ThatsNotAnEmailExc.class, email);
-		} else
+		if (!(passwortLaengePruefen(passwort))) {
+		
 			throw create(NeuesPasswortNotAllowedExc.class, passwort, nutzername);
+		}
+			if (!(emailAufGueltigkeitPruefen(email))) {
+				throw create(ThatsNotAnEmailExc.class, email);
+			}
+			final Nutzer findNutzer = findNutzerByEmail(email);
+				if (findNutzer != null) {
+					throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
+				}
+				final Nutzer findNutzerNutzername = findNutzerByNutzername(nutzername);
+					if (findNutzerNutzername != null) {
+						throw create(BenutzernameSchonHinterlegtExc.class, nutzername, findNutzerNutzername.getId());
+					
+		} 
+					return nutzerRepository.save(new Nutzer(name, vorname, nutzername, passwort, email));
+
 	}
 
 	/**
@@ -112,14 +146,14 @@ public class TurnierService {
 	 */
 	public Nutzer updateNutzerWithPassword(final Nutzer nutzer, final String altesPasswort,
 			final String neuesPasswort) {
-
-		final int passwortLaenge = neuesPasswort.length();
-		if (passwortLaenge > 5 && passwortLaenge < 255) {
-			nutzer.passwortAendern(altesPasswort, neuesPasswort);
-			return nutzerRepository.save(nutzer);
+     if (!(passwortLaengePruefen(neuesPasswort))) {
+    	 
+    		throw create(NeuesPasswortNotAllowedExc.class, neuesPasswort, nutzer.getNutzername());
 		}
-		throw create(NeuesPasswortNotAllowedExc.class, neuesPasswort, nutzer.getNutzername());
 
+		nutzer.passwortAendern(altesPasswort, neuesPasswort);
+			return nutzerRepository.save(nutzer);
+		
 	}
 
 	/**
@@ -155,29 +189,25 @@ public class TurnierService {
 	 */
 	public void updateEmail(final Nutzer nutzer, final String passwort, final String email)
 			throws ThatsNotAnEmailExc, EmailSchonHinterlegtExc {
-		{
-			final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-					Pattern.CASE_INSENSITIVE);
-			final Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-			if (matcher.find()) {
-				Nutzer findNutzer = nutzerRepository.findEmail(email);
-				if (findNutzer == null) {
-					nutzer.emailAendern(email, passwort);
-					nutzerRepository.save(nutzer);
-
-				} else
-					throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
-			} else
-				throw create(ThatsNotAnEmailExc.class, email);
-
+		if (!(emailAufGueltigkeitPruefen(email))) {
+			throw create(ThatsNotAnEmailExc.class, email);
 		}
+		
+				Nutzer findNutzer = nutzerRepository.findEmail(email);
+				if (findNutzer != null) {
+					throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
+				} 
+			
+				nutzer.emailAendern(email, passwort);
+				nutzerRepository.save(nutzer);
 	}
 
-//	public TurnierBracket turnierBracketSpeichern(Turnier turnier, TurnierBracket turnierBracket) {
-//
-//		return turnierBracketRepository.save(turnierBracket);
+	// public TurnierBracket turnierBracketSpeichern(Turnier turnier, TurnierBracket
+	// turnierBracket) {
+	//
+	// return turnierBracketRepository.save(turnierBracket);
 
-//	}
+	// }
 
 	public Turnier turnierStarten(Turnier turnier) {
 		List<Nutzer> nutzer = turnier.getTeilnehmer();
@@ -200,50 +230,47 @@ public class TurnierService {
 	}
 
 	public void setteErgebnisse(Turnier turnier, int position, int ergebnis1, int ergebnis2) {
-		if (turnier.getTurnierStatus() != TurnierStatus.GESTARTET ) {
-			throw create(TurnierStatusFailExc.class, turnier.getTurnierStatus());	
+		if (turnier.getTurnierStatus() != TurnierStatus.GESTARTET) {
+			throw create(TurnierStatusFailExc.class, turnier.getTurnierStatus());
 		}
-	   TurnierBracket turnierBracket = turnier.getTurnierBracketAtPos(position);
-	   turnierBracket.setGewinner(ergebnis1, ergebnis2);
+		TurnierBracket turnierBracket = turnier.getTurnierBracketAtPos(position);
+		turnierBracket.setGewinner(ergebnis1, ergebnis2);
 		Nutzer gewinnerNutzer = nutzerRepository.find(turnierBracket.getGewinner());
 		Nutzer verliererNutzer = nutzerRepository.find(turnierBracket.getVerlierer());
 		gewinnerNutzer.hatGewonnen();
 		verliererNutzer.hatVerloren();
-	   nutzerRepository.save(gewinnerNutzer);
-	   nutzerRepository.save(verliererNutzer);
-	   turnierBracketRepository.save(turnierBracket);
-	   List<TurnierBracket> turnierBrackets = turnier.getTurnierBrackets();
-	   final int size = turnierBrackets.size();
-	  if (size >= (turnier.getTeilnehmer().size() - 1)) {
-		        turnier.beendeTurnier();
-				Nutzer nutzerGewinner = nutzerRepository.find(turnierBracket.getGewinner());
-	            nutzerGewinner.hatTurnierGewonnen();
-	            nutzerRepository.save(nutzerGewinner);
-			}	
-	  else 
-	  {
-	  for(int i = 0;i<size;i=i+2)
-	{
-		TurnierBracket turnierBracket1 = turnierBrackets.get(i);
-		TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
-		if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
-			TurnierBracket newTurnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
-					turnierBracket2.getGewinner());
-			newTurnierBracket = turnierBracketRepository.save(newTurnierBracket);
-			turnier.turnierBracketHinzufuegen(newTurnierBracket);
+		nutzerRepository.save(gewinnerNutzer);
+		nutzerRepository.save(verliererNutzer);
+		turnierBracketRepository.save(turnierBracket);
+		List<TurnierBracket> turnierBrackets = turnier.getTurnierBrackets();
+		final int size = turnierBrackets.size();
+		if (size >= (turnier.getTeilnehmer().size() - 1)) {
+			turnier.beendeTurnier();
+			Nutzer nutzerGewinner = nutzerRepository.find(turnierBracket.getGewinner());
+			nutzerGewinner.hatTurnierGewonnen();
+			nutzerRepository.save(nutzerGewinner);
+		} else {
+			for (int i = 0; i < size; i = i + 2) {
+				TurnierBracket turnierBracket1 = turnierBrackets.get(i);
+				TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
+				if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
+					TurnierBracket newTurnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
+							turnierBracket2.getGewinner());
+					newTurnierBracket = turnierBracketRepository.save(newTurnierBracket);
+					turnier.turnierBracketHinzufuegen(newTurnierBracket);
+				}
+				turnierRepository.save(turnier);
+			}
 		}
-		turnierRepository.save(turnier);
+
 	}
-	  }
 
-}
-
-/**
- * Anzahl der Teilnehmer {0} ist kein Power von 2.
- * 
- */
-@SuppressWarnings("serial")
-public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
+	/**
+	 * Anzahl der Teilnehmer {0} ist kein Power von 2.
+	 * 
+	 */
+	@SuppressWarnings("serial")
+	public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
 	}
 
 	/**
@@ -466,7 +493,7 @@ public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
 	}
 
 	/**
-	 * Neues Passwort {0} für den Nutzername {1} ist kürzer als 6 Zeichen oder
+	 * Neues Passwort {0} für {1} ist kürzer als 6 Zeichen oder
 	 * länger als 255 Zeichen.
 	 */
 	@SuppressWarnings("serial")
@@ -487,6 +514,12 @@ public static class AnzahlTeilnehmerNoPowerOfTwoExc extends multex.Exc {
 	@SuppressWarnings("serial")
 	public static class BenutzernameSchonHinterlegtExc extends multex.Exc {
 	}
+	
+	/** Es existiert schon ein Admin mit diesem Adminname {0} mit dem ID {1} */
+	@SuppressWarnings("serial")
+	public static class AdminnameSchonHinterlegtExc extends multex.Exc {
+	}
+
 
 	/** Es existiert schon ein Turnier mit diesem Turniername {0} mit dem ID {1} */
 	@SuppressWarnings("serial")
