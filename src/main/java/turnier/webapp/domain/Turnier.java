@@ -81,6 +81,19 @@ public class Turnier extends EntityBase<Turnier> {
 		// this.turnierbaum = null;
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
+	
+	
+	public void fuerAdminTurnierAendern(final String name, final String adresse, final String datum, final String uhrzeit,  final int maxTeilnehmer) {
+	if (!(turnierStatus == TurnierStatus.OFFEN)) {
+		throw create(TuernierAendernNichtZugelassen.class, this.name, this.turnierStatus.toString());
+	}
+	this.name = name;
+	this.adresse = adresse;
+	this.datum = datum;
+	this.uhrzeit = uhrzeit;
+	this.maxTeilnehmer = maxTeilnehmer;
+		
+	}
 
 	/**
 	 * Fügt ein Teilnehmer dem Turnier hinzu.
@@ -314,6 +327,15 @@ public class Turnier extends EntityBase<Turnier> {
 	 */
 	@SuppressWarnings("serial")
 	public static class TurnierIstNochNichtBeendetExc extends multex.Exc {
+	}
+	
+	/**
+	 * 
+	 * Admin, Du darfst der Turnier {0} nicht mehr ändern, weil er sich gerade befindet im Status {1}
+	 *
+	 */
+	@SuppressWarnings("serial")
+	public static class TuernierAendernNichtZugelassen extends multex.Exc {
 	}
 	
 	/**

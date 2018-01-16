@@ -106,7 +106,24 @@ public class Nutzer extends EntityBase<Nutzer> {
 		if (passwortVerifizieren(passwort)) {
 		this.email=neueEmail;	    
 	}
-}
+   }
+ 	
+ 	/**ändert die Nutzer Properties von dem Nutzer
+ 	 * @param name neuer Name
+ 	 * @param vorname neuer Vorname
+ 	 * @param nutzername neuer Nutzername
+ 	 * @param passwort neuer Passwort
+ 	 * @param email neue Email
+ 	 */
+ 	 
+    public void fuerAdminNutzerAendern(final String name, final String vorname, final String nutzername, final String passwort, final String email) {
+  	  this.name = name;
+  	  this.vorname = vorname;
+  	  this.nutzername = nutzername;
+  	  this.email =email;
+  	  this.passwort = passwort;
+  	  
+    }
 	
 
 	

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 import multex.Exc;
+import turnier.webapp.domain.Admin;
 import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
 import turnier.webapp.domain.TurnierService;
@@ -46,9 +47,9 @@ public class ApplicationController {
 
 	private final String className = getClass().getSimpleName();
 
-	//TODO Teilnehmer hinzufügen soll POST sein nicht PUT
-	//TODO Teilnehmer entfernen soll DELETE sein nicht PUT
-	
+	// TODO Teilnehmer hinzufügen soll POST sein nicht PUT
+	// TODO Teilnehmer entfernen soll DELETE sein nicht PUT
+
 	@Autowired
 	public ApplicationController(final TurnierService turnierService) {
 		this.turnierService = turnierService;
@@ -77,9 +78,123 @@ public class ApplicationController {
 		return responseEntity;
 	}
 
+	// For the nutzer role all URIs under /admin:
+	@PostMapping("/admin/")
+	public ResponseEntity<AdminResource> createAdmin(@RequestBody final AdminResource adminResource,
+			final HttpMethod method, final WebRequest request) {
+		_print(method, request);
+		if (adminResource.id != null) {
+			throw create(AdminCreateWithIdExc.class, adminResource.adminname, adminResource.id);
+		}
+		final Admin adminSave = turnierService.adminSpeichern(adminResource.adminname, adminResource.passwort);
+
+		return new ResponseEntity<>(new AdminResource(adminSave), HttpStatus.CREATED);
+
+	}
+
+	@PutMapping("/admin/{adminname}/nutzer/{nutzername}")
+	public ResponseEntity<NutzerResource> changeNutzer(@RequestBody final NutzerResource nutzerResource,
+			@PathVariable final String adminname, @PathVariable final String nutzername, final HttpMethod method,
+			final WebRequest request) {
+		_print(method, request);
+		if (nutzerResource.id != null) {
+			throw create(NutzerCreateWithIdExc.class, nutzerResource.nutzername, nutzerResource.id);
+		}
+		String name = nutzerResource.name;
+		String vorname = nutzerResource.vorname;
+		String neuerNutzername = nutzerResource.nutzername;
+		String passwort = nutzerResource.passwort;
+		String email = nutzerResource.email;
+		Nutzer nutzerBevor = turnierService.findNutzerByNutzername(nutzername);
+		if (nutzerBevor == null) {
+			throw create(NutzerArentHereExc.class, nutzername);
+		}
+
+		if (name == null) {
+
+			name = nutzerBevor.getName();
+		}
+
+		if (vorname == null) {
+
+			vorname = nutzerBevor.getVorname();
+		}
+
+		if (neuerNutzername == null) {
+
+			neuerNutzername = nutzerBevor.getNutzername();
+		}
+
+		if (passwort == null) {
+
+			passwort = nutzerBevor.getPasswort();
+		}
+
+		if (email == null) {
+			email = nutzerBevor.getEmail();
+		}
+
+		turnierService.aendereNutzer(adminname, nutzername, name, vorname, nutzername, passwort, email);
+		final Nutzer nutzerSave = turnierService.findNutzerByNutzername(nutzerResource.name);
+
+		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.ACCEPTED);
+
+	}
+
+	@PutMapping("/admin/{adminname}/turnier/{turniername}")
+	public ResponseEntity<TurnierResource> changeTurnier(@RequestBody final TurnierResource turnierResource,
+			@PathVariable final String adminname, @PathVariable final String turniername, final HttpMethod method,
+			final WebRequest request) {
+		_print(method, request);
+		if (turnierResource.id != null) {
+			throw create(TurnierCreateWithIdExc.class, turnierResource.name, turnierResource.id);
+		}
+		final Turnier turnierBevor = turnierService.findTurnierByName(turniername);
+		if (turnierBevor == null) {
+			throw create(TurnierArentHereExc.class, turniername);
+		}
+		String neuerName = turnierResource.name;
+		String adresse = turnierResource.adresse;
+		String datum = turnierResource.datum;
+		String uhrzeit = turnierResource.uhrzeit;
+		Integer maxTeilnehmer = turnierResource.maxTeilnehmer;
+		
+		if (neuerName == null) {
+			neuerName = turnierBevor.getName();
+		}
+		
+		if (adresse == null ) {
+			adresse = turnierBevor.getAdresse();
+		}
+		if (datum == null) {
+			datum = turnierBevor.getDatum();
+		}
+		if (uhrzeit == null) {
+			uhrzeit = turnierBevor.getUhrzeit();	
+		}
+		
+		if (maxTeilnehmer == null) {
+			maxTeilnehmer = turnierBevor.getMaxTeilnehmer();
+			
+		}
+		
+		turnierService.turnierAendern(adminname, turniername, neuerName, adresse, datum, uhrzeit, maxTeilnehmer);
+		
+		final Turnier turnierSave = turnierService.findTurnierByName(neuerName);
+
+		return new ResponseEntity<>(new TurnierResource(turnierSave), HttpStatus.ACCEPTED);
+
+	}
+
+	/**
+	 * The admin to be created with adminname {0} must not have an ID, but has {1}
+	 */
+	public static class AdminCreateWithIdExc extends multex.Exc {
+	}
+
 	// For the nutzer role all URIs under /nutzer:
 
-	/* füge ein neuer Nutzer Objekt in unserem DB*/
+	/* füge ein neuer Nutzer Objekt in unserem DB */
 
 	@PostMapping("/nutzer/")
 	public ResponseEntity<NutzerResource> createNutzer(@RequestBody final NutzerResource nutzerResource,
@@ -88,7 +203,7 @@ public class ApplicationController {
 		if (nutzerResource.id != null) {
 			throw create(NutzerCreateWithIdExc.class, nutzerResource.nutzername, nutzerResource.id);
 		}
-		Nutzer nutzerSave = turnierService.nutzerSpeichern(nutzerResource.name, nutzerResource.vorname,
+		final Nutzer nutzerSave = turnierService.nutzerSpeichern(nutzerResource.name, nutzerResource.vorname,
 				nutzerResource.nutzername, nutzerResource.passwort, nutzerResource.email);
 		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.CREATED);
 	}
@@ -99,7 +214,10 @@ public class ApplicationController {
 	public static class NutzerCreateWithIdExc extends multex.Exc {
 	}
 
-	/* fügt ein neuer Turnier Objekt mit dem  Nutzer mit dem übergebenen nutzername als Organisator*/  
+	/*
+	 * fügt ein neuer Turnier Objekt mit dem Nutzer mit dem übergebenen nutzername
+	 * als Organisator
+	 */
 	@PostMapping("/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource> createNutzer(@RequestBody final TurnierResource turnierResource,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
@@ -117,7 +235,10 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.CREATED);
 	}
 
-	/*fügt teilnehmer mit dem übergebenen nutzername im Turnier mit übergebenen turniername hinzu*/
+	/*
+	 * fügt teilnehmer mit dem übergebenen nutzername im Turnier mit übergebenen
+	 * turniername hinzu
+	 */
 	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}")
 	public ResponseEntity<TurnierResource> addTeilnehnmerToTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
@@ -131,8 +252,11 @@ public class ApplicationController {
 		findTurnier.anTurnierAnmelden(findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
-	
-	/*starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem übergebenen nutzername der organisator von diesem Turnier ist */
+
+	/*
+	 * starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem
+	 * übergebenen nutzername der organisator von diesem Turnier ist
+	 */
 	@PutMapping("/nutzer/turnier/start/{turniername}/{nutzername}/")
 	public ResponseEntity<TurnierResource> starteTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
@@ -144,41 +268,47 @@ public class ApplicationController {
 		}
 		Turnier findTurnier = turnierService.findTurnierByName(turniername);
 		if (findTurnier == null) {
-			
+
 			throw create(TurnierArentHereExc.class, turniername);
 		}
-	    if(!(findTurnier.getOrganisator().equals(findNutzer))){
-	     final  String organisator = findTurnier.getOrganisator().getName();
-	    	throw create(NotYourTurnierExc.class, nutzername, turniername, organisator);
-	    }
-Turnier turnier = turnierService.turnierStarten(findTurnier);
-	    return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.ACCEPTED);
+		if (!(findTurnier.getOrganisator().equals(findNutzer))) {
+			final String organisator = findTurnier.getOrganisator().getName();
+			throw create(NotYourTurnierExc.class, nutzername, turniername, organisator);
+		}
+		Turnier turnier = turnierService.turnierStarten(findTurnier);
+		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.ACCEPTED);
 	}
-	
-	/*starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem übergebenen nutzername der organisator von diesem Turnier ist */
+
+	/*
+	 * starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem
+	 * übergebenen nutzername der organisator von diesem Turnier ist
+	 */
 	@PutMapping("/nutzer/turnier/start/{turniername}/{position}/{erg1}/{erg2}")
 	public ResponseEntity<TurnierResource> setteErgebnisseImTurnierBracket(@PathVariable final String position,
-			@PathVariable final String turniername, @PathVariable final String erg1, @PathVariable final String erg2, final HttpMethod method, final WebRequest request) {
+			@PathVariable final String turniername, @PathVariable final String erg1, @PathVariable final String erg2,
+			final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 
-	
 		Turnier findTurnier = turnierService.findTurnierByName(turniername);
 		if (findTurnier == null) {
-			
+
 			throw create(TurnierArentHereExc.class, turniername);
 		}
-         turnierService.setteErgebnisse(findTurnier, Integer.parseInt(position), Integer.parseInt(erg1), Integer.parseInt(erg2));
-	    return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
+		turnierService.setteErgebnisse(findTurnier, Integer.parseInt(position), Integer.parseInt(erg1),
+				Integer.parseInt(erg2));
+		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 
-
-	/*entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem übergebenen turniername */
+	/*
+	 * entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem
+	 * übergebenen turniername
+	 */
 	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}/delete")
 	public ResponseEntity<TurnierResource> entferneTeilnehnmerAusTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 		Turnier findTurnierByName = turnierService.findTurnierByName(turniername);
-		Nutzer  findNutzer = findTurnierByName.teilnehmerSuchen(nutzername);
+		Nutzer findNutzer = findTurnierByName.teilnehmerSuchen(nutzername);
 		findTurnierByName.entferneTeilnehmer(findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnierByName), HttpStatus.ACCEPTED);
 	}
@@ -211,7 +341,8 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		}
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
-   /*finde alle nutzer Objekte im DB*/
+
+	/* finde alle nutzer Objekte im DB */
 	@GetMapping(path = "/nutzer/")
 	public ResponseEntity<NutzerResource[]> findNutzers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -222,7 +353,8 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		}
 		return _nutzersToResources(nutzers);
 	}
-/*finde alle turnier Objekte im DB*/
+
+	/* finde alle turnier Objekte im DB */
 	@GetMapping(path = "/nutzer/turnier/")
 	public ResponseEntity<TurnierResource[]> findTurniers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -234,7 +366,10 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		return _turniersToResources(turniers);
 	}
 
-/*finde alle Turniere Objekte im DB, wo der Nutzer mit dem übergebenen nutzername der Organisator ist.*/
+	/*
+	 * finde alle Turniere Objekte im DB, wo der Nutzer mit dem übergebenen
+	 * nutzername der Organisator ist.
+	 */
 	@GetMapping(path = "/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource[]> findOrganisatorTurniers(@PathVariable final String nutzername,
 			final HttpMethod method, final WebRequest request) {
@@ -252,20 +387,22 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		return _turniersToResources(turniers);
 	}
 
-	/*hilfmethode zum transformation von nutzer objekt ins Nutzer Resource*/
+	/* hilfmethode zum transformation von nutzer objekt ins Nutzer Resource */
 	private ResponseEntity<NutzerResource[]> _nutzersToResources(List<Nutzer> nutzers) {
 		final Stream<NutzerResource> result = nutzers.stream().map(c -> new NutzerResource(c));
 		final NutzerResource[] resultArray = result.toArray(size -> new NutzerResource[size]);
 		return new ResponseEntity<>(resultArray, HttpStatus.OK);
 	}
-	/*hilfmethode zum transformation von turnier objekt ins Turnier Resource*/
+
+	/* hilfmethode zum transformation von turnier objekt ins Turnier Resource */
 	private ResponseEntity<TurnierResource[]> _turniersToResources(List<Turnier> nutzers) {
 		final Stream<TurnierResource> result = nutzers.stream().map(c -> new TurnierResource(c));
 		final TurnierResource[] resultArray = result.toArray(size -> new TurnierResource[size]);
 		return new ResponseEntity<>(resultArray, HttpStatus.OK);
 
 	}
-    /*gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück*/
+
+	/* gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück */
 	@GetMapping(path = "/nutzer/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> findTurnier(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
@@ -278,43 +415,41 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		}
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(path = "/nutzer/turnier/{turniername}/ergebnisse")
 	public ResponseEntity<String> zeigeErgebnisse(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
 		_print(method, request);
 		final Turnier findTurnier = turnierService.findTurnierByName(turniername);
 		final String response = findTurnier.getTurnierErgebnisse();
-		final ResponseEntity<String> responseEntity = new ResponseEntity<>(
-				response,
-				HttpStatus.OK);
+		final ResponseEntity<String> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
 		return responseEntity;
 	}
 
-	/*lösche dem Turnier mit dem übergebenen turniername, wenn der Nutzer mit dem übergebenen nutzername Organisator ist*/
+	/*
+	 * lösche dem Turnier mit dem übergebenen turniername, wenn der Nutzer mit dem
+	 * übergebenen nutzername Organisator ist
+	 */
 	@DeleteMapping(path = "/nutzer/{nutzername}/turnier/{turniername}")
-	public ResponseEntity<TurnierResource> deleteTurnier(
-			@PathVariable final String nutzername,
-			@PathVariable final String turniername,
-			final HttpMethod method, final WebRequest request) {
+	public ResponseEntity<TurnierResource> deleteTurnier(@PathVariable final String nutzername,
+			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
 		// "dummy@dummy.de");
-		
+
 		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
 		if (findNutzer == null) {
-			
+
 			throw create(NutzerArentHereExc.class, nutzername);
 		}
 		Turnier findTurnier = turnierService.findTurnierByName(turniername);
 		if (findTurnier == null) {
-		throw create(TurnierArentHereExc.class, turniername);			
+			throw create(TurnierArentHereExc.class, turniername);
 		}
 		turnierService.loescheEigenesTurnier(findNutzer, findTurnier);
 
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-
 
 	// change the email of the given nutzername as parameter
 	@PutMapping(path = "/nutzer/email/{nutzername}")
@@ -347,7 +482,7 @@ Turnier turnier = turnierService.turnierStarten(findTurnier);
 		findNutzer = turnierService.updateNutzerWithPassword(findNutzer, command.verifyPasswd, command.newPassword);
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
-	
+
 	/** {0} It's not your turnier. Owner of {1} is {2} */
 	public static class NotYourTurnierExc extends multex.Exc {
 	}

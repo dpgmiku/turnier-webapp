@@ -8,6 +8,22 @@ import turnier.webapp.domain.base.EntityBase;
 @Entity
 public class Admin extends EntityBase<Admin> {
 	
+	public String getAdminname() {
+		return adminname;
+	}
+
+	public void setAdminname(String adminname) {
+		this.adminname = adminname;
+	}
+
+	public String getPasswort() {
+		return passwort;
+	}
+
+	public void setPasswort(String passwort) {
+		this.passwort = passwort;
+	}
+
 	private String adminname;
 	private String passwort;
 
