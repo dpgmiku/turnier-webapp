@@ -157,7 +157,7 @@ public class ApplicationController {
 		String adresse = turnierResource.adresse;
 		String datum = turnierResource.datum;
 		String uhrzeit = turnierResource.uhrzeit;
-		Integer maxTeilnehmer = turnierResource.maxTeilnehmer;
+		int maxTeilnehmer = turnierResource.maxTeilnehmer;
 		
 		if (neuerName == null) {
 			neuerName = turnierBevor.getName();
@@ -173,7 +173,7 @@ public class ApplicationController {
 			uhrzeit = turnierBevor.getUhrzeit();	
 		}
 		
-		if (maxTeilnehmer == null) {
+		if (maxTeilnehmer == 0) {
 			maxTeilnehmer = turnierBevor.getMaxTeilnehmer();
 			
 		}
