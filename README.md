@@ -17,7 +17,7 @@ Dieses Projekt benutzt:
 - JUnit 4
 - The Exception Handling and Reporting Framework MulTEx
 
-Detailierte infos finden Sie im Datei 'pom.xml'.
+Detailierte infos finden Sie in der Datei 'pom.xml'.
 
 Mit Hilfe vom Command `mvn clean test` in der Konsole werden alle notwendige Libraries geholt, das Projekt wird kompiliert, Ausnahmenachrichten werden gesammelt und Tests werden durchgefuehrt.
 
