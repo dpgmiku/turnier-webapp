@@ -187,7 +187,7 @@ public class ApplicationController {
 	}
 
 	/**
-	 * The admin to be created with adminname {0} must not have an ID, but has {1}
+	 * Admin {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1} uebergeben
 	 */
 	public static class AdminCreateWithIdExc extends multex.Exc {
 	}
@@ -209,7 +209,7 @@ public class ApplicationController {
 	}
 
 	/**
-	 * The nutzer to be created with nutzername {0} must not have an ID, but has {1}
+	 * Nutzer {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1} uebergeben
 	 */
 	public static class NutzerCreateWithIdExc extends multex.Exc {
 	}
@@ -483,15 +483,15 @@ public class ApplicationController {
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
-	/** {0} It's not your turnier. Owner of {1} is {2} */
+	/** {0} Es ist nicht dein Turnier. Veranstalter vom {1} ist {2} */
 	public static class NotYourTurnierExc extends multex.Exc {
 	}
 
-	/** The nutzer with the nutzername {0} doesn't exist in our db */
+	/** Nutzer mit diesem Name {0} existiert nicht in unserem DB */
 	public static class NutzerArentHereExc extends multex.Exc {
 	}
 
-	/** The nutzer with the turnierrname {0} doesn't exist in our db */
+	/** Turnier mit diesem Name {0} existiert nicht in unserem DB */
 	public static class TurnierArentHereExc extends multex.Exc {
 	}
 
@@ -503,7 +503,7 @@ public class ApplicationController {
 		System.out.printf("%s %s %s\n", className, method, request);
 	}
 
-	/** The turnier to be created with name {0} must not have an ID, but has {1} */
+	/** Turnier {0} sollte kein ID-Parameter übergeben werden, wurde ihn aber {1} uebergeben */
 	public static class TurnierCreateWithIdExc extends multex.Exc {
 	}
 
