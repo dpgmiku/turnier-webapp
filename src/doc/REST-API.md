@@ -16,7 +16,7 @@
 | GET    | /nutzer/{nutzername}/turnier/    | Returns all Turnier Objects with nutzer with given nutzername as organisator |
 | GET    | /nutzer/turnier/{turniername}    | Returns Turnier Object as JSON with given turniername |
 | GET    | /nutzer/turnier/{turniername}/ergebnisse | Returns String with ranked players, the first place is on the top  |
-| DELETE | /nutzer/{nutzername}/turnier/{turniername} | Delete turnier with given turniername onlz if a nutzer with given nutzername is the oranisator of this turnier |
+| DELETE | /nutzer/{nutzername}/turnier/{turniername} | Delete turnier with given turniername only if a nutzer with given nutzername is the organisator of this turnier |
 | PUT    | /nutzer/email/{nutzername}       | Change email of nutzer with given nutzername, password verify by Email Change Command |
 | PUT    | /nutzer/password/{nutzername}    | Change password of nutzer with given nutzername, password verify by Password Change Command |
 |        |                                  | Operations for Role **admin**             |
