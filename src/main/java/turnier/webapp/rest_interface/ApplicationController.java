@@ -158,28 +158,28 @@ public class ApplicationController {
 		String datum = turnierResource.datum;
 		String uhrzeit = turnierResource.uhrzeit;
 		int maxTeilnehmer = turnierResource.maxTeilnehmer;
-		
+
 		if (neuerName == null) {
 			neuerName = turnierBevor.getName();
 		}
-		
-		if (adresse == null ) {
+
+		if (adresse == null) {
 			adresse = turnierBevor.getAdresse();
 		}
 		if (datum == null) {
 			datum = turnierBevor.getDatum();
 		}
 		if (uhrzeit == null) {
-			uhrzeit = turnierBevor.getUhrzeit();	
+			uhrzeit = turnierBevor.getUhrzeit();
 		}
-		
+
 		if (maxTeilnehmer == 0) {
 			maxTeilnehmer = turnierBevor.getMaxTeilnehmer();
-			
+
 		}
-		
+
 		turnierService.turnierAendern(adminname, turniername, neuerName, adresse, datum, uhrzeit, maxTeilnehmer);
-		
+
 		final Turnier turnierSave = turnierService.findTurnierByName(neuerName);
 
 		return new ResponseEntity<>(new TurnierResource(turnierSave), HttpStatus.ACCEPTED);
@@ -187,7 +187,8 @@ public class ApplicationController {
 	}
 
 	/**
-	 * Admin {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1} uebergeben
+	 * Admin {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
+	 * uebergeben
 	 */
 	public static class AdminCreateWithIdExc extends multex.Exc {
 	}
@@ -209,7 +210,8 @@ public class ApplicationController {
 	}
 
 	/**
-	 * Nutzer {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1} uebergeben
+	 * Nutzer {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
+	 * uebergeben
 	 */
 	public static class NutzerCreateWithIdExc extends multex.Exc {
 	}
@@ -503,7 +505,10 @@ public class ApplicationController {
 		System.out.printf("%s %s %s\n", className, method, request);
 	}
 
-	/** Turnier {0} sollte kein ID-Parameter übergeben werden, wurde ihn aber {1} uebergeben */
+	/**
+	 * Turnier {0} sollte kein ID-Parameter übergeben werden, wurde ihn aber {1}
+	 * uebergeben
+	 */
 	public static class TurnierCreateWithIdExc extends multex.Exc {
 	}
 

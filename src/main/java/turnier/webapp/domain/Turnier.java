@@ -342,7 +342,7 @@ public class Turnier extends EntityBase<Turnier> {
 	public void setTurnierStatus(TurnierStatus turnierStatus) {
 		this.turnierStatus = turnierStatus;
 	}
-	
+
 	/**
 	 * Gibt die Attribute des Turnier als String aus.
 	 */
@@ -353,16 +353,16 @@ public class Turnier extends EntityBase<Turnier> {
 				getId(), name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer,
 				turnierStatus.toString(), teilnehmer.toString(), turnierBrackets.toString());
 	}
-	
-	//Exceptions
-	
+
+	// Exceptions
+
 	/**
 	 * Turnier {0} wurde noch nicht beendet. Aktueller Status: {1}.
 	 */
 	@SuppressWarnings("serial")
 	public static class TurnierIstNochNichtBeendetExc extends multex.Exc {
 	}
-	
+
 	/**
 	 * Diese Stelle {0} gibt es nicht. Mögliche Werte nur zw {0} und {1} möglich!.
 	 */
@@ -372,8 +372,8 @@ public class Turnier extends EntityBase<Turnier> {
 
 	/**
 	 * 
-	 * Admin, Du darfst der Turnier {0} nicht mehr ändern, weil er sich gerade
-	 * im Status {1} befindet. 
+	 * Admin, Du darfst der Turnier {0} nicht mehr ändern, weil er sich gerade im
+	 * Status {1} befindet.
 	 *
 	 */
 	@SuppressWarnings("serial")
@@ -395,7 +395,7 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class IstVollExc extends multex.Exc {
 	}
-	
+
 	/**
 	 * Der Nutzer {0} nimmt in Turnier {1} nicht teil.
 	 * 
@@ -403,7 +403,7 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class KeinTeilnehmerInDiesemTurnierExc extends multex.Exc {
 	}
-	
+
 	/**
 	 * Nutzer{0} könnte nicht mehr aus dem Turnier {1} entfernt werden, denn {2}
 	 * 
@@ -411,7 +411,5 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class EntferneTeilnehmerNichtZugelassenExc extends multex.Exc {
 	}
-
-
 
 }

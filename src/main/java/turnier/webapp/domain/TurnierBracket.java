@@ -3,15 +3,17 @@ package turnier.webapp.domain;
 import javax.persistence.Entity;
 import turnier.webapp.domain.base.EntityBase;
 import static multex.MultexUtil.create;
+
 /**
- * TurnierBracketentität mit zwei Teilnehmernutzernamen, zwei Ergebnissenfelder, einem Gewinner und einem Verlierer.
+ * TurnierBracketentität mit zwei Teilnehmernutzernamen, zwei Ergebnissenfelder,
+ * einem Gewinner und einem Verlierer.
  */
 @Entity
 public class TurnierBracket extends EntityBase<TurnierBracket> {
 
-	/** Name vom ersten Nutzer*/
+	/** Name vom ersten Nutzer */
 	private String nutzername1;
-	/** Name vom zweiten Nutzer*/
+	/** Name vom zweiten Nutzer */
 	private String nutzername2;
 	/** Ergebnis vom ersten Nutzer */
 	private int ergebnis1;
@@ -22,16 +24,18 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 	/** Name vom Verlierer */
 	private String verlierer;
 
-
 	/** Necessary for JPA entities internally. */
 	@SuppressWarnings("unused")
 	private TurnierBracket() {
 	};
+
 	/**
-	 * 	/**
-	 * Konstruktor für TurnierBracket Objekt
-	 * @param nutzername1 Name vom ersten Nutzer
-	 * @param nutzername2 Name vom zweiten Nutzer
+	 * /** Konstruktor für TurnierBracket Objekt
+	 * 
+	 * @param nutzername1
+	 *            Name vom ersten Nutzer
+	 * @param nutzername2
+	 *            Name vom zweiten Nutzer
 	 */
 
 	public TurnierBracket(String nutzername1, String nutzername2) {
@@ -45,9 +49,13 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 
 	/**
 	 * vergleicht beide Ergebnisse und entscheidet, wer gewonnen und verloren hat
-	 * @param ergebnis1 Ergebnis vom ersten Nutzer
-	 * @param ergebnis2 Ergebnis vom zweiten Nutzer
-	 * @throws ErgebnisSchonDaExc Diese TurnierRunde wurde schon entschieden
+	 * 
+	 * @param ergebnis1
+	 *            Ergebnis vom ersten Nutzer
+	 * @param ergebnis2
+	 *            Ergebnis vom zweiten Nutzer
+	 * @throws ErgebnisSchonDaExc
+	 *             Diese TurnierRunde wurde schon entschieden
 	 */
 	public void setGewinner(int ergebnis1, int ergebnis2) throws ErgebnisSchonDaExc {
 		if (!(gewinner.equals("")))
@@ -64,7 +72,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 
 	}
 
-	//getter und setter, selfexplanatory
+	// getter und setter, selfexplanatory
 	public String getGewinner() {
 
 		return gewinner;
@@ -119,7 +127,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 
 	}
 
-	//Exception 
+	// Exception
 	/**
 	 * Nutzer mit dem Nutzername {0} hat schon gegen {1} gewonnen
 	 */

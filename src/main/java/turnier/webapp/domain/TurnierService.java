@@ -80,19 +80,29 @@ public class TurnierService {
 		return adminRepository.save(admin);
 	}
 
-	// Nutzer	
-	/**Command: Kreirt einen neuen Nutzer
+	// Nutzer
+	/**
+	 * Command: Kreirt einen neuen Nutzer
 	 * 
-	 * @param name Der Name vom Nutzer
-	 * @param vorname Der Vorname vom Nutzer
-	 * @param nutzername Der einzigartige Name vom Nutzer
-	 * @param passwort Das Posswort vom Nutzer
-	 * @param email Das Email vom Nutzer
+	 * @param name
+	 *            Der Name vom Nutzer
+	 * @param vorname
+	 *            Der Vorname vom Nutzer
+	 * @param nutzername
+	 *            Der einzigartige Name vom Nutzer
+	 * @param passwort
+	 *            Das Posswort vom Nutzer
+	 * @param email
+	 *            Das Email vom Nutzer
 	 * @return nutzer Gibt der erstellten Nutzer zurück.
-	 * @throws NeuesPasswortNotAllowedExc passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
-	 * @throws ThatsNotAnEmailExc email entpricht nicht die Email Norm	
-	 * @throws EmailSchonHinterlegtExc email hat schon ein anderer Benutzer hinterlegt
-	 * @throws BenutzernameSchonHinterlegtExc benutzername befindet sich schon im Datenbank
+	 * @throws NeuesPasswortNotAllowedExc
+	 *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
+	 * @throws ThatsNotAnEmailExc
+	 *             email entpricht nicht die Email Norm
+	 * @throws EmailSchonHinterlegtExc
+	 *             email hat schon ein anderer Benutzer hinterlegt
+	 * @throws BenutzernameSchonHinterlegtExc
+	 *             benutzername befindet sich schon im Datenbank
 	 */
 	public Nutzer nutzerSpeichern(final String name, final String vorname, final String nutzername,
 			final String passwort, final String email) throws NeuesPasswortNotAllowedExc, ThatsNotAnEmailExc,
@@ -220,10 +230,15 @@ public class TurnierService {
 	}
 
 	/**
-	 * Command: Updatet die E-Mail Adresse des Nutzers {@link Nutzer} gegen einer neuen E-Mail Adresse
-	 * @param nutzer Nutzer, der die Email-Adresse ändern will
-	 * @param passwort passwort zur Verifizierung
-	 * @param email neue Email auf die man das ändern will
+	 * Command: Updatet die E-Mail Adresse des Nutzers {@link Nutzer} gegen einer
+	 * neuen E-Mail Adresse
+	 * 
+	 * @param nutzer
+	 *            Nutzer, der die Email-Adresse ändern will
+	 * @param passwort
+	 *            passwort zur Verifizierung
+	 * @param email
+	 *            neue Email auf die man das ändern will
 	 * @throws ThatsNotAnEmailExc
 	 * @throws EmailSchonHinterlegtExc
 	 */
