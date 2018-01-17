@@ -134,8 +134,8 @@ public class ApplicationController {
 			email = nutzerBevor.getEmail();
 		}
 
-		turnierService.aendereNutzer(adminname, nutzername, name, vorname, nutzername, passwort, email);
-		final Nutzer nutzerSave = turnierService.findNutzerByNutzername(nutzerResource.name);
+		turnierService.aendereNutzer(adminname, nutzername, name, vorname, neuerNutzername, passwort, email);
+		final Nutzer nutzerSave = turnierService.findNutzerByNutzername(neuerNutzername);
 
 		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.ACCEPTED);
 
@@ -463,7 +463,7 @@ public class ApplicationController {
 			throw create(NutzerArentHereExc.class, nutzername);
 
 		}
-		turnierService.updateEmail(findNutzer, command.verifyPasswd, command.newEmail);
+		turnierService.emailAendern(findNutzer, command.verifyPasswd, command.newEmail);
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
@@ -479,7 +479,7 @@ public class ApplicationController {
 			throw create(NutzerArentHereExc.class, nutzername);
 
 		}
-		findNutzer = turnierService.updateNutzerWithPassword(findNutzer, command.verifyPasswd, command.newPassword);
+		findNutzer = turnierService.nutzerPasswortAendern(findNutzer, command.verifyPasswd, command.newPassword);
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
@@ -495,82 +495,6 @@ public class ApplicationController {
 	public static class TurnierArentHereExc extends multex.Exc {
 	}
 
-	//
-	// //For the client role all URIs under /client:
-	//
-	// @PostMapping("/client/account")
-	// public ResponseEntity<AccountAccessResource> createAccount(
-	// @RequestBody final String accountName,
-	// final HttpMethod method, final WebRequest request
-	// ){
-	// _print(method, request);
-	// final Client client = _findClient(request);
-	// final AccountAccess r = client.createAccount(accountName);
-	// final AccountAccessResource result = new AccountAccessResource(r);
-	// return new ResponseEntity<>(result, HttpStatus.CREATED);
-	// }
-	//
-	// /*Resource for a coarse grained business process according to
-	// https://www.thoughtworks.com/de/insights/blog/rest-api-design-resource-modeling*/
-	// @PostMapping("/client/deposit")
-	// public ResponseEntity<Void> deposit(@RequestBody final DepositCommand
-	// command,
-	// final HttpMethod method, final WebRequest request
-	// ){
-	// _print(method, request);
-	// final Client client = _findClient(request);
-	// final Account destinationAccount =
-	// client.findAccount(command.accountId).get();
-	// final Amount amount = new Amount(command.amount);
-	// client.deposit(destinationAccount, amount);
-	// return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	// }
-	//
-	// /*Resource for a coarse grained business process according to
-	// https://www.thoughtworks.com/de/insights/blog/rest-api-design-resource-modeling*/
-	// @PostMapping("/client/transfer")
-	// public ResponseEntity<AccountResource> transfer(@RequestBody final
-	// TransferCommand command,
-	// final HttpMethod method, final WebRequest request
-	// ){
-	// _print(method, request);
-	// final Client client = _findClient(request);
-	// final Account sourceAccount =
-	// client.findAccount(command.sourceAccountId).get();
-	// final Account destinationAccount =
-	// client.findAccount(command.destinationAccountId).get();
-	// final Amount amount = new Amount(command.amount);
-	// client.transfer(sourceAccount, destinationAccount, amount);
-	// final AccountResource result = new AccountResource(sourceAccount);
-	// return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
-	// }
-	//
-	// /*Resource for a coarse grained business process according to
-	// https://www.thoughtworks.com/de/insights/blog/rest-api-design-resource-modeling*/
-	// @PostMapping("/client/manager")
-	// public ResponseEntity<AccountAccessResource> addAccountManager(
-	// @RequestBody final AddAccountManagerCommand command,
-	// final HttpMethod method, final WebRequest request
-	// ){
-	// _print(method, request);
-	// final Client client = _findClient(request);
-	// final Account account = client.findAccount(command.accountId).get();
-	// final Client manager = bankService.findClient(command.username).get();
-	// final AccountAccessResource result = new
-	// AccountAccessResource(client.addAccountManager(account, manager));
-	// return new ResponseEntity<>(result, HttpStatus.CREATED);
-	// }
-	//
-	// @GetMapping("/client/account")
-	// public ResponseEntity<String> accountsReport(
-	// final HttpMethod method, final WebRequest request
-	// ){
-	// _print(method, request);
-	// final Client client = _findClient(request);
-	// final String result = client.accountsReport();
-	// return new ResponseEntity<>(result, HttpStatus.OK);
-	// }
-	//
 	/**
 	 * Prints a message containing the current class name, the HTTP method, and
 	 * infos about the current request.
@@ -583,56 +507,4 @@ public class ApplicationController {
 	public static class TurnierCreateWithIdExc extends multex.Exc {
 	}
 
-	//
-	// /**Returns a random birth date ranging from 18 years before now to 100 years
-	// before now.*/
-	// private LocalDate _randomClientBirthDate() {
-	// final long nowEpochDay = LocalDate.now().toEpochDay();
-	// final int minYears = 18;
-	// final int maxYears = 100;
-	// final long minEpochDay = nowEpochDay - 365*maxYears;
-	// final long maxEpochDay = nowEpochDay - 365*minYears;
-	// //See
-	// https://stackoverflow.com/questions/34051291/generate-a-random-localdate-with-java-time
-	// final long randomEpochDay = ThreadLocalRandom.current().nextLong(minEpochDay,
-	// maxEpochDay);
-	// return LocalDate.ofEpochDay(randomEpochDay);
-	// }
-	//
-	// private ResponseEntity<ClientResource[]> _clientsToResources(final
-	// List<Client> clients) {
-	// final Stream<ClientResource> result = clients.stream().map(c -> new
-	// ClientResource(c));
-	// final ClientResource[] resultArray = result.toArray(size -> new
-	// ClientResource[size]);
-	// return new ResponseEntity<>(resultArray, HttpStatus.OK);
-	// }
-	//
-	// /**Finds the Client for the username, which has been authenticated with this
-	// web request.
-	// * @throws NoClientForUserExc There is no client object with the username of
-	// the authenticated user of this web request.
-	// */
-	// private Client _findClient(final WebRequest request) {
-	// final String username = request.getRemoteUser();
-	// return _findClient(username);
-	// }
-	//
-	// /**Finds the Client for the given username.
-	// * @throws NoClientForUserExc There is no client object with the given
-	// username.
-	// */
-	// private Client _findClient(final String username) {
-	// final Optional<Client> optionalClient = bankService.findClient(username);
-	// if(!optionalClient.isPresent()) {
-	// throw create(NoClientForUserExc.class, username);
-	// }
-	// final Client client = optionalClient.get();
-	// return client;
-	// }
-	//
-	// /**There is no Client object for the username {0}.*/
-	// public static class NoClientForUserExc extends Exc{}
-	//
-	//
 }

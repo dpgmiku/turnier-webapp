@@ -232,7 +232,7 @@ public class TurnierServiceTest {
 		final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
 				"miku@miku.pl");
 		assertNotNull(michael.getId());
-		final Nutzer michael2 = turnierService.updateNutzerWithPassword(michael, "notyourbusiness",
+		final Nutzer michael2 = turnierService.nutzerPasswortAendern(michael, "notyourbusiness",
 				"istdochyourbusiness");
 		assertEquals(michael.getId(), michael2.getId());
 		assertEquals(michael.getName(), michael2.getName());
@@ -242,21 +242,21 @@ public class TurnierServiceTest {
 		assertEquals(michael.getEmail(), michael2.getEmail());
 		// I'm trying to provoke an exception by givin the false passwd
 		try {
-			final Nutzer michaelFalsePasswd = turnierService.updateNutzerWithPassword(michael, "notyourbusiness",
+			final Nutzer michaelFalsePasswd = turnierService.nutzerPasswortAendern(michael, "notyourbusiness",
 					"yoyoyoyo");
 			assertEquals(michael2, michaelFalsePasswd);
 			fail("Nutzer.PasswortDoesntMatchExc expected");
 		} catch (Nutzer.PasswortDoesntMatchExc expected) {
 		}
 		try {
-			final Nutzer michaelNewPasswdToShort = turnierService.updateNutzerWithPassword(michael,
+			final Nutzer michaelNewPasswdToShort = turnierService.nutzerPasswortAendern(michael,
 					"istdochyourbusiness", "a");
 			assertEquals(michael2, michaelNewPasswdToShort);
 			fail("TurnierService.NeuesPasswortNotAllowedExc expected");
 		} catch (TurnierService.NeuesPasswortNotAllowedExc expected) {
 		}
 		try {
-			final Nutzer michaelNewPasswdToLong = turnierService.updateNutzerWithPassword(michael,
+			final Nutzer michaelNewPasswdToLong = turnierService.nutzerPasswortAendern(michael,
 					"istdochyourbusiness", new String(new char[255]).replace("\0", "1"));
 			assertEquals(michael2, michaelNewPasswdToLong);
 			fail("TurnierService.NeuesPasswortNotAllowedExc expected");
@@ -264,14 +264,14 @@ public class TurnierServiceTest {
 		}
 		// two exception at one time..
 		try {
-			final Nutzer michaelNewPasswdToLongAndOldPasswdFalse = turnierService.updateNutzerWithPassword(michael,
+			final Nutzer michaelNewPasswdToLongAndOldPasswdFalse = turnierService.nutzerPasswortAendern(michael,
 					"sadjaoisdjs", new String(new char[275]).replace("\0", "1"));
 			assertEquals(michael2, michaelNewPasswdToLongAndOldPasswdFalse);
 			fail("TurnierService.NeuesPasswortNotAllowedExc expected");
 		} catch (TurnierService.NeuesPasswortNotAllowedExc expected) {
 		}
 		// can i still change my passwd after all of this exceptions?
-		final Nutzer michael3 = turnierService.updateNutzerWithPassword(michael, "istdochyourbusiness",
+		final Nutzer michael3 = turnierService.nutzerPasswortAendern(michael, "istdochyourbusiness",
 				"istdochnichtyourbusiness");
 		assertEquals(michael.getId(), michael3.getId());
 		assertEquals(michael.getName(), michael3.getName());
@@ -469,7 +469,7 @@ public class TurnierServiceTest {
 		assertNotNull(michael.getId());
 		;
 		// everything is fine
-		turnierService.updateEmail(michael, "notyourbusiness", "mikuyo@mikuyo.de");
+		turnierService.emailAendern(michael, "notyourbusiness", "mikuyo@mikuyo.de");
 		final Nutzer michael3 = turnierService.findNutzerByNutzername(michael.getNutzername());
 		assertEquals(michael.getId(), michael3.getId());
 		assertEquals(michael.getName(), michael3.getName());
@@ -479,55 +479,55 @@ public class TurnierServiceTest {
 		assertEquals("mikuyo@mikuyo.de", michael.getEmail(), michael3.getEmail());
 		// email is not an email exceptions
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", ",");
+			turnierService.emailAendern(michael, "notyourbusiness", ",");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", "@");
+			turnierService.emailAendern(michael, "notyourbusiness", "@");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", "@adfa.pl");
+			turnierService.emailAendern(michael, "notyourbusiness", "@adfa.pl");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", ".@.");
+			turnierService.emailAendern(michael, "notyourbusiness", ".@.");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", "");
+			turnierService.emailAendern(michael, "notyourbusiness", "");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", "miku@");
+			turnierService.emailAendern(michael, "notyourbusiness", "miku@");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", "@miku");
+			turnierService.emailAendern(michael, "notyourbusiness", "@miku");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		try {
-			turnierService.updateEmail(michael, "notyourbusiness", "miku@miku");
+			turnierService.emailAendern(michael, "notyourbusiness", "miku@miku");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		// im trying to provoke passwddoesntmatchexc
 		try {
-			turnierService.updateEmail(michael, "dfasdfas", "kubacki.michal@yahoo.de");
+			turnierService.emailAendern(michael, "dfasdfas", "kubacki.michal@yahoo.de");
 			assertEquals("mikuyo@mikuyo.de", michael.getEmail());
 			fail("Nutzer.PasswortDoesntMatchExc expected");
 		} catch (Nutzer.PasswortDoesntMatchExc expected) {
 		}
 		// im trying to provoke EmailSchonHinterlegtExc
 		try {
-			turnierService.updateEmail(maciej, "notyourbusiness", "mikuyo@mikuyo.de");
+			turnierService.emailAendern(maciej, "notyourbusiness", "mikuyo@mikuyo.de");
 			assertEquals("dekized@deki.pl", maciej.getEmail());
 			fail("TurnierService.EmailSchonHinterlegtExc expected");
 		} catch (TurnierService.EmailSchonHinterlegtExc expected) {
@@ -536,12 +536,12 @@ public class TurnierServiceTest {
 		// two exceptions at the same time, it should throws passwortdoesntmatchexc
 		// cause it's more important
 		try {
-			turnierService.updateEmail(michael, "noyourbusiness", "asdsad");
+			turnierService.emailAendern(michael, "noyourbusiness", "asdsad");
 			fail("TurnierService.ThatsNotAnEmailExc expected");
 		} catch (TurnierService.ThatsNotAnEmailExc expected) {
 		}
 		// everything is still working fine after throwing all of this exceptions
-		turnierService.updateEmail(michael, "notyourbusiness", "goodmail@mail.de");
+		turnierService.emailAendern(michael, "notyourbusiness", "goodmail@mail.de");
 		final Nutzer michaelworkingfine = turnierService.findNutzerByNutzername(michael.getNutzername());
 		assertEquals(michael.getId(), michaelworkingfine.getId());
 		assertEquals(michael.getName(), michaelworkingfine.getName());

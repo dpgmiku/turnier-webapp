@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import turnier.webapp.domain.Nutzer.PasswortDoesntMatchExc;
 import turnier.webapp.domain.base.EntityBase;
 import turnier.webapp.domain.imports.NutzerRepository;
 import turnier.webapp.domain.imports.TurnierBracketRepository;
@@ -32,26 +33,37 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Turnierentität mit Name, Adresse, Datum, Uhrzeit, Organisator, maxTeilnehmer,
+ * turnierStatus, teilnehmer, turneirBracets Eigenschaften.
+ */
 @Entity
 public class Turnier extends EntityBase<Turnier> {
+	/** Name vom Turnier */
 	private String name;
+	/** Adresse vom Turnier */
 	private String adresse;
+	/** Datum vom Turnier */
 	private String datum;
+	/** Uhrzeit vom Turnier */
 	private String uhrzeit;
+	/** Organisator vom Turnier */
 	@ManyToOne
 	private Nutzer organisator; // Ein Organisator kann mehrere Turniere besitzen
+	/** maximale Anzahl der Teilnehmernutzer */
 	private int maxTeilnehmer;
+	/** Status vom Turnier */
 	private TurnierStatus turnierStatus;
+	/** Teilnehmerliste */
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@OneToMany
 	@JoinColumn(name = "jc_teilnehmer")
 	private List<Nutzer> teilnehmer;
+	/** Turnierbracketliste, wird nach dem Starten vom Turnier gefüllt */
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@OneToMany
 	@JoinColumn(name = "jc_turnierbracket")
 	private List<TurnierBracket> turnierBrackets;
-
-
 
 	//
 	/** Necessary for JPA entities internally. */
@@ -59,15 +71,21 @@ public class Turnier extends EntityBase<Turnier> {
 	private Turnier() {
 	};
 
-	
 	/**
 	 * Konstruktor für das Turnier
-	 * @param name Name vom Turnier
-	 * @param adresse Adresse vom Turnier
-	 * @param datum Datum wann das Turnier stattfinden soll.
-	 * @param uhrzeit Uhrzeit wann das Turnier stattfindet.
-	 * @param organisator Der Organisator des Turniers.
-	 * @param maxTeilnehmer Die Anzahl an erlaubten Teilnehmer
+	 * 
+	 * @param name
+	 *            Name vom Turnier
+	 * @param adresse
+	 *            Adresse vom Turnier
+	 * @param datum
+	 *            Datum wann das Turnier stattfinden soll.
+	 * @param uhrzeit
+	 *            Uhrzeit wann das Turnier stattfindet.
+	 * @param organisator
+	 *            Der Organisator des Turniers.
+	 * @param maxTeilnehmer
+	 *            Die Anzahl an erlaubten Teilnehmer
 	 */
 	public Turnier(String name, String adresse, String datum, String uhrzeit, Nutzer organisator, int maxTeilnehmer) {
 		this.name = name;
@@ -81,25 +99,46 @@ public class Turnier extends EntityBase<Turnier> {
 		// this.turnierbaum = null;
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
-	
-	
-	public void fuerAdminTurnierAendern(final String name, final String adresse, final String datum, final String uhrzeit,  final int maxTeilnehmer) {
-	if (!(turnierStatus == TurnierStatus.OFFEN)) {
-		throw create(TuernierAendernNichtZugelassen.class, this.name, this.turnierStatus.toString());
-	}
-	this.name = name;
-	this.adresse = adresse;
-	this.datum = datum;
-	this.uhrzeit = uhrzeit;
-	this.maxTeilnehmer = maxTeilnehmer;
-		
+
+	/**
+	 * Ändert die Eigenschaften vom Turnier
+	 * 
+	 * @param name
+	 *            neuer Turniername
+	 * @param adresse
+	 *            neue Adresse
+	 * @param datum
+	 *            neues Datum
+	 * @param uhrzeit
+	 *            neue Uhrzeit
+	 * @param maxTeilnehmer
+	 *            neue max. Anzahl der Teilnehmer
+	 */
+
+	public void fuerAdminTurnierAendern(final String name, final String adresse, final String datum,
+			final String uhrzeit, final int maxTeilnehmer) {
+		if (!(turnierStatus == TurnierStatus.OFFEN)) {
+			throw create(TuernierAendernNichtZugelassen.class, this.name, this.turnierStatus.toString());
+		}
+		this.name = name;
+		this.adresse = adresse;
+		this.datum = datum;
+		this.uhrzeit = uhrzeit;
+		this.maxTeilnehmer = maxTeilnehmer;
+
 	}
 
 	/**
 	 * Fügt ein Teilnehmer dem Turnier hinzu.
-	 * @param teilnehmer Der Teilnehmer der zum Turnier hingefügt wird.
+	 * 
+	 * @param teilnehmer
+	 *            Der Teilnehmer der zum Turnier hingefügt wird.
+	 * @throws FuegeTeilnehmerNichtZugelassenExc
+	 *             TurnierStatus ist nicht mehr auf offen gesetzt
+	 * @throws IstVollExc
+	 *             max Anzahl der Teilnehmer wurde schon erreicht.
 	 */
-	public void anTurnierAnmelden(Nutzer teilnehmer) {
+	public void anTurnierAnmelden(Nutzer teilnehmer) throws FuegeTeilnehmerNichtZugelassenExc, IstVollExc {
 
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
 			throw create(FuegeTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
@@ -115,6 +154,7 @@ public class Turnier extends EntityBase<Turnier> {
 
 	/**
 	 * Prüft ob das Turnier voll ist.
+	 * 
 	 * @return ein Boolean ob das Turnier voll ist oder nicht.
 	 */
 	private Boolean istVoll() {
@@ -124,10 +164,14 @@ public class Turnier extends EntityBase<Turnier> {
 
 	/**
 	 * Entfernt ein Teilnehmer aus dem Turnier
-	 * @param teilnehmer Der Teilnehmer der aus dem Turnier entfernt wird.
+	 * 
+	 * @param teilnehmer
+	 *            Der Teilnehmer der aus dem Turnier entfernt wird.
+	 * @throws EntferneTeilnehmerNichtZugelassenExc
+	 *             TurnierStatus ist nicht mehr auf offen gesetzt
 	 */
-	public void entferneTeilnehmer(Nutzer teilnehmer) {
-		if (turnierStatus == TurnierStatus.BEENDET || turnierStatus == TurnierStatus.GESTARTET) {
+	public void entferneTeilnehmer(Nutzer teilnehmer) throws EntferneTeilnehmerNichtZugelassenExc {
+		if (!(turnierStatus == TurnierStatus.OFFEN)) {
 			throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
 					turnierStatus.toString());
 		}
@@ -136,10 +180,14 @@ public class Turnier extends EntityBase<Turnier> {
 
 	/**
 	 * Sucht und gibt ein Teilnehmer zurück der in diesem Turnier angemeldet ist.
-	 * @param nutzername Der Nutzername des Teilnehmers nachdem gesucht wird.
+	 * 
+	 * @param nutzername
+	 *            Der Nutzername des Teilnehmers nachdem gesucht wird.
 	 * @return Gibt den, falls gefundenden, Nutzer zurück.
+	 * @throws KeinTeilnehmerInDiesemTurnierExc
+	 *             Teilnehmernutzer wurde nicht gefunden
 	 */
-	public Nutzer teilnehmerSuchen(String nutzername) {
+	public Nutzer teilnehmerSuchen(String nutzername) throws KeinTeilnehmerInDiesemTurnierExc {
 		for (Nutzer nutzer : teilnehmer) {
 			if (nutzer.getNutzername().equals(nutzername))
 
@@ -148,94 +196,77 @@ public class Turnier extends EntityBase<Turnier> {
 		throw create(KeinTeilnehmerInDiesemTurnierExc.class, nutzername, this.name);
 	}
 
-//	private void fuegeTurnierbracketHinzu() {
-//		final int size = turnierBrackets.size();
-//		if (size >= (teilnehmer.size() - 1)) {
-//			throw create(AlleBracketsSchonErstelltExc.class, this.name);
-//		}
-//		for (int i = 0; i <= size; i = i + 2) {
-//			TurnierBracket turnierBracket1 = turnierBrackets.get(i);
-//			TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
-//			if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
-//				TurnierBracket turnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
-//						turnierBracket2.getGewinner());
-//				turnierBrackets.add(turnierBracket);
-//			}
-//		}
-//
-//		}
-//	
-
-
-	//@Autowired
-//	private transient NutzerRepository nutzerRepository;
-
-//	public void setErgebnisse(TurnierBracket turnierBracket, int ergebnis1, int ergebnis2) {
-//		turnierBracket.setGewinner(ergebnis1, ergebnis2);
-//		final int size = turnierBrackets.size();
-//		
-//
-//		fuegeTurnierbracketHinzu();
-//	}
-//	
-	public String getTurnierErgebnisse() {
+	/**
+	 * gibt die Ergebnisse als String zurück, wenn das Turnier schon beendet wurde
+	 * 
+	 * @return Liste als String mit allen Teilnehmernergebnissen. Der beste Platz
+	 *         ist ganz oben
+	 * @throws TurnierIstNochtNichtBeendetExc
+	 *             Turnier wurde noch nicht beendet.
+	 */
+	public String getTurnierErgebnisse() throws TurnierIstNochNichtBeendetExc {
 		if (!(turnierStatus == TurnierStatus.BEENDET)) {
-		throw create(TurnierIstNochNichtBeendetExc.class, this.name, this.turnierStatus);	
+			throw create(TurnierIstNochNichtBeendetExc.class, this.name, this.turnierStatus);
 		}
 		int turnierBracketLaenge = turnierBrackets.size();
-		String gewinner = turnierBrackets.get(turnierBracketLaenge-1).getGewinner();
-		String verlierer =turnierBrackets.get(turnierBracketLaenge-1).getVerlierer();
-		String returnString = gewinner+ "\n"+verlierer+"\n";
-		for(int i = turnierBrackets.size()-2; i>=0; i--) {
-	    TurnierBracket turnierPaar = turnierBrackets.get(i);   
-	    String verliererSchleife = turnierPaar.getVerlierer();
-		returnString = returnString + verliererSchleife + "\n"; 
+		String gewinner = turnierBrackets.get(turnierBracketLaenge - 1).getGewinner();
+		String verlierer = turnierBrackets.get(turnierBracketLaenge - 1).getVerlierer();
+		String returnString = gewinner + "\n" + verlierer + "\n";
+		for (int i = turnierBrackets.size() - 2; i >= 0; i--) {
+			TurnierBracket turnierPaar = turnierBrackets.get(i);
+			String verliererSchleife = turnierPaar.getVerlierer();
+			returnString = returnString + verliererSchleife + "\n";
 		}
 		return returnString;
-		}
+	}
 
-	//  @Autowired
-	//	private transient TurnierBracketRepository turnierBracketRepository;    
 	/**
-	 * 
-	 * Startet das Turnier falls es nicht schon gestartet wurde.
+	 * Turnierstatus wird auf gestartet gesetzt.
 	 */
 	public void starteTurnier() {
 		turnierStatus = TurnierStatus.GESTARTET;
-	
+
 	}
-	
+
+	/**
+	 * Turnierstatus wird auf beendet gesetzt.
+	 */
 	public void beendeTurnier() {
 		turnierStatus = TurnierStatus.BEENDET;
-	
+
 	}
-	
+
+	/**
+	 * TurnierBracket wird in der TurnierBracketliste hinzugefuegt
+	 * 
+	 * @param turnierBracket
+	 *            neues TurnierBracket wird in der Liste hinzugefuegt
+	 */
 	public void turnierBracketHinzufuegen(TurnierBracket turnierBracket) {
 		turnierBrackets.add(turnierBracket);
-		
+
 	}
-	
+
+	/**
+	 * Teilnehmer wird geschuffelt
+	 */
 	public void shuffleTeilnehmer() {
-		
+
 		Collections.shuffle(teilnehmer);
 	}
 
-	public TurnierBracket getTurnierBracketAtPos(int position) {
-		
-	return turnierBrackets.get(position);	
-	}
-
-
-		
 	/**
-	 * Gibt die Attribute des Turnier als String aus.
+	 * gibt das TurnierBracket an der Stelle zurück
+	 * 
+	 * @param position
+	 *            Stelle
+	 * @return turnierBracket an dieser Stelle
 	 */
-@Override
-	public String toString() {
-		return String.format(
-				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s', turnierBrackets='%s'}",
-				getId(), name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer,
-				turnierStatus.toString(), teilnehmer.toString(), turnierBrackets.toString());
+	public TurnierBracket getTurnierBracketAtPos(int position) {
+		if (position < 0 || position >= turnierBrackets.size()) {
+			throw create(DieseStelleGibtEsNichtExc.class, position, turnierBrackets.size() - 1);
+		}
+		return turnierBrackets.get(position);
 	}
 
 	// getters and setters, selfexplanatory
@@ -259,11 +290,10 @@ public class Turnier extends EntityBase<Turnier> {
 	public String getDatum() {
 		return datum;
 	}
-	
+
 	public List<TurnierBracket> getTurnierBrackets() {
 		return turnierBrackets;
 	}
-
 
 	public void setTurnierBrackets(List<TurnierBracket> turnierBrackets) {
 		this.turnierBrackets = turnierBrackets;
@@ -305,14 +335,6 @@ public class Turnier extends EntityBase<Turnier> {
 		this.teilnehmer = teilnehmer;
 	}
 
-	// public TurnierBracket getTurnierbaum() {
-	// return turnierbaum;
-	// }
-
-	// public void setTurnierbaum(TurnierBracket turnierbaum) {
-	// this.turnierbaum = turnierbaum;
-	// }
-
 	public TurnierStatus getTurnierStatus() {
 		return turnierStatus;
 	}
@@ -320,43 +342,42 @@ public class Turnier extends EntityBase<Turnier> {
 	public void setTurnierStatus(TurnierStatus turnierStatus) {
 		this.turnierStatus = turnierStatus;
 	}
-
 	
 	/**
-	 *Turnier {0} wurde noch nicht beendet. Aktueller Status: {1}.
+	 * Gibt die Attribute des Turnier als String aus.
+	 */
+	@Override
+	public String toString() {
+		return String.format(
+				"Turnier{id=%d, name='%s', adresse='%s', datum='%s', uhrzeit='%s', organisator='%s, maxTeilnehmer=%d, turnierstatus='%s', teilnehmer='%s', turnierBrackets='%s'}",
+				getId(), name, adresse, datum.toString(), uhrzeit.toString(), organisator.toString(), maxTeilnehmer,
+				turnierStatus.toString(), teilnehmer.toString(), turnierBrackets.toString());
+	}
+	
+	//Exceptions
+	
+	/**
+	 * Turnier {0} wurde noch nicht beendet. Aktueller Status: {1}.
 	 */
 	@SuppressWarnings("serial")
 	public static class TurnierIstNochNichtBeendetExc extends multex.Exc {
 	}
 	
 	/**
+	 * Diese Stelle {0} gibt es nicht. Mögliche Werte nur zw {0} und {1} möglich!.
+	 */
+	@SuppressWarnings("serial")
+	public static class DieseStelleGibtEsNichtExc extends multex.Exc {
+	}
+
+	/**
 	 * 
-	 * Admin, Du darfst der Turnier {0} nicht mehr ändern, weil er sich gerade befindet im Status {1}
+	 * Admin, Du darfst der Turnier {0} nicht mehr ändern, weil er sich gerade
+	 * im Status {1} befindet. 
 	 *
 	 */
 	@SuppressWarnings("serial")
 	public static class TuernierAendernNichtZugelassen extends multex.Exc {
-	}
-	
-	/**
-	 * Es wurden schon alle Brackets im Turnier {0} erstellt.
-	 */
-	@SuppressWarnings("serial")
-	public static class AlleBracketsSchonErstelltExc extends multex.Exc {
-	}
-
-	/** Nutzername {0} existiert im Turnier {1} nicht */
-	@SuppressWarnings("serial")
-	public static class NutzernameNichtImTurnierExc extends multex.Exc {
-	}
-
-	/**
-	 * Anzahl der Teilnehmer {0} . Es gibe keine Teilnehmer oder nur einen
-	 * (mindestens 2 Teilnehmer erforderlich, bitte fügen Sie mehrere Teilnehmer
-	 * hinzu
-	 */
-	@SuppressWarnings("serial")
-	public static class ZuWenigTeilnehmerExc extends multex.Exc {
 	}
 
 	/**
@@ -374,8 +395,7 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class IstVollExc extends multex.Exc {
 	}
-
-
+	
 	/**
 	 * Der Nutzer {0} nimmt in Turnier {1} nicht teil.
 	 * 
@@ -383,7 +403,7 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class KeinTeilnehmerInDiesemTurnierExc extends multex.Exc {
 	}
-
+	
 	/**
 	 * Nutzer{0} könnte nicht mehr aus dem Turnier {1} entfernt werden, denn {2}
 	 * 
@@ -391,5 +411,7 @@ public class Turnier extends EntityBase<Turnier> {
 	@SuppressWarnings("serial")
 	public static class EntferneTeilnehmerNichtZugelassenExc extends multex.Exc {
 	}
+
+
 
 }

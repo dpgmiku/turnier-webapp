@@ -31,8 +31,8 @@ import turnier.webapp.domain.TurnierBracket;
 	    /**Finds all {@link Turnier}s and returns them ordered by descending name.*/
 	    //List<TurnierBracket> findAll();
 
-	    /**Deletes {@link TurnierBracket} object with given Id*/
-		//void delete(Long id);
+	    /**Deletes {@link TurnierBracket} object*/
+		void delete(TurnierBracket turnierBracket);
 
 	}
 

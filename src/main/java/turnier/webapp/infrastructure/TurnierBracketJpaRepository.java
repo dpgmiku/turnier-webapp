@@ -29,4 +29,9 @@ public class TurnierBracketJpaRepository implements TurnierBracketRepository {
 		impl.deleteAll();
 	}
 
+	@Override
+	public void delete(TurnierBracket turnierBracket) {
+impl.delete(turnierBracket);		
+	}
+
 }

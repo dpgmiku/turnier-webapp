@@ -20,7 +20,10 @@ public abstract class EntityBase<T extends EntityBase<T>> {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
 
-    /**Returns the identity of this entity object.*/
+    /**
+     *  Id getter
+     * @return Returns the identity of this entity object.
+     * */
     public Long getId(){return id;}
 
     

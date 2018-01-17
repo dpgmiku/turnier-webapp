@@ -14,6 +14,7 @@ public interface ImportedTurnierBracketJpaRepository  extends JpaRepository<Turn
 	void deleteAll();
 
 	
+    void delete(TurnierBracket turnierBracket);
 
 
 }

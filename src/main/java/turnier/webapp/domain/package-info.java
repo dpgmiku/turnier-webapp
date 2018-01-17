@@ -1,2 +1,2 @@
-/**The domain model of the application*/
+/**Domainmodel der Turnier-WebApp*/
 package turnier.webapp.domain;
