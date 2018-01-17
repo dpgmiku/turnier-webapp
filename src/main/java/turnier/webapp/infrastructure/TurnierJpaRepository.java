@@ -1,9 +1,7 @@
 package turnier.webapp.infrastructure;
 
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Service;
 import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
 import turnier.webapp.domain.imports.TurnierRepository;
-import turnier.webapp.infrastructure.imports.ImportedNutzerJpaRepository;
 import turnier.webapp.infrastructure.imports.ImportedTurnierJpaRepository;
 /**A Repository for Nutzer entities implemented with Spring Data JPA.
  * @author se2 letzte Gruppe

@@ -1,11 +1,7 @@
 
 	package turnier.webapp.domain.imports;
 
-	import java.util.Optional;
-	import java.util.List;
 
-	import turnier.webapp.domain.Nutzer;
-	import turnier.webapp.domain.Turnier;
 import turnier.webapp.domain.TurnierBracket;
 
 

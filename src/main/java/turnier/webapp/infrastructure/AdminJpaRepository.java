@@ -20,13 +20,13 @@ import turnier.webapp.infrastructure.imports.ImportedAdminJpaRepository;
 public class AdminJpaRepository implements AdminRepository {
 
 	private final ImportedAdminJpaRepository impl;
-
-	// Für alle Parameter werden typmaessig passende Beans (Komponenten) gesucht
-	// oder erzeugt
+	
 	@Autowired
 	public AdminJpaRepository(final ImportedAdminJpaRepository impl) {
 		this.impl = impl;
 	}
+	
+	
 
 	@Override
 	public Admin find(String adminname) {

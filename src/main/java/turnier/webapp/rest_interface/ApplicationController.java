@@ -303,7 +303,7 @@ public class ApplicationController {
 	 * entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem
 	 * übergebenen turniername
 	 */
-	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}/delete")
+	@DeleteMapping("/nutzer/turnier/{turniername}/{nutzername}/delete")
 	public ResponseEntity<TurnierResource> entferneTeilnehnmerAusTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);

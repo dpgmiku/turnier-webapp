@@ -2,6 +2,8 @@ package turnier.webapp.infrastructure.imports;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import turnier.webapp.domain.Admin;
 
 /**Required Spring JPA repository for Admins. The methods are named according to the Spring Data JPA convention.
@@ -12,7 +14,7 @@ import turnier.webapp.domain.Admin;
  *for deleteById @see <a href="https://stackoverflow.com/questions/23723025/spring-data-delete-by-is-supported">Transactional is needed for delation by</a>
  */
 
-public interface ImportedAdminJpaRepository {
+public interface ImportedAdminJpaRepository extends JpaRepository<Admin, Long>{
 
     /**Deletes all Admins. Useful for test scenarios in order to start with an empty Nutzer set*/
 	 void deleteAll();
