@@ -68,14 +68,14 @@ Diese Port-Nummer muessen Sie sich merken.
 - Tests werden in einem leeren in-memory Derby Datenbank durchgefuehrt.
 - Test Coverage Report generiert bei [JaCoCo Maven plugin](http://www.eclemma.org/jacoco/trunk/doc/maven.html) in der Datei [target/site/jacoco-ut/index.html](file:target/site/jacoco-ut/index.html).
 
-### Wo finde ich die Ausnahmenachrichten?
+## Wo finde ich die Ausnahmenachrichten?
 In der Datei `MessageText.properties`. Editierbare Originaldatei mit festen Nachrichten befinden sich im `src/main/resource`
 Maven Phase 'compile' kopiert diese Datei ins `target/classes/`.
 In der naechster Phase `process-classes` Ausnahmenachrichten sind aus dem JavaDoc Kommentaren von allen Ausnahmen unter `src/main/java/` durch `ExceptionMessagesDoclet`, die fuer das `maven-javadoc-plugin` konfiguriert wurde, extrahiert.
 Diese werden danach in der Nachrichentextdatei `target/classes/` hinzugefuegt.
 Dieses Prozess ist aus dem m2e Lifecycle Mapping in der `pom.xml`-Datei ausgeschlossen.
 
-### Wo finde ich alle Rest Endpoints?
+## Wo finde ich alle Rest Endpoints?
 In der Datei `src/doc/REST-API.md`. (auf Englisch). 
 
 ## Zukunftsplaene
