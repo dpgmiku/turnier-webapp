@@ -604,29 +604,26 @@ public class TurnierServiceTest {
 		assertNotNull(turnier);
 		final Turnier turnier2 = turnierService.turnierErstellen("turniertwo", "wyszynskiego 2", "20.2.207", "15:30",
 				michael, 32);
-		 final List<Turnier> turnierFound =
-		 turnierService.findeTurnierMitVeranstalter(michael);
-		 assertEquals(2, turnierFound.size());
-		 final Turnier turnierFirst = turnierFound.get(0);
-		 assertEquals(turnier, turnierFirst);
-		 assertEquals(turnier.getId(), turnierFirst.getId());
-		 assertEquals(turnier.getName(), turnierFirst.getName());
-		 assertEquals(turnier.getDatum(), turnierFirst.getDatum());
-		 assertEquals(michael, turnierFirst.getOrganisator());
-		 assertEquals(turnier.getTeilnehmer().isEmpty(),
-		 turnierFirst.getTeilnehmer().isEmpty());
-		 assertEquals(turnier.getMaxTeilnehmer(), turnierFirst.getMaxTeilnehmer());
-		 assertEquals(turnier.getUhrzeit(), turnierFirst.getUhrzeit());
-		 final Turnier turnierSecond = turnierFound.get(1);
-		 assertEquals(turnier2, turnierSecond);
-		 assertEquals(turnier2.getId(), turnierSecond.getId());
-		 assertEquals(turnier2.getName(), turnierSecond.getName());
-		 assertEquals(turnier2.getDatum(), turnierSecond.getDatum());
-		 assertEquals(michael, turnierSecond.getOrganisator());
-		 assertEquals(turnier2.getTeilnehmer().isEmpty(),
-		 turnierSecond.getTeilnehmer().isEmpty());
-		 assertEquals(turnier2.getMaxTeilnehmer(), turnierSecond.getMaxTeilnehmer());
-		 assertEquals(turnier2.getUhrzeit(), turnierSecond.getUhrzeit());
+		final List<Turnier> turnierFound = turnierService.findeTurnierMitVeranstalter(michael);
+		assertEquals(2, turnierFound.size());
+		final Turnier turnierFirst = turnierFound.get(0);
+		assertEquals(turnier, turnierFirst);
+		assertEquals(turnier.getId(), turnierFirst.getId());
+		assertEquals(turnier.getName(), turnierFirst.getName());
+		assertEquals(turnier.getDatum(), turnierFirst.getDatum());
+		assertEquals(michael, turnierFirst.getOrganisator());
+		assertEquals(turnier.getTeilnehmer().isEmpty(), turnierFirst.getTeilnehmer().isEmpty());
+		assertEquals(turnier.getMaxTeilnehmer(), turnierFirst.getMaxTeilnehmer());
+		assertEquals(turnier.getUhrzeit(), turnierFirst.getUhrzeit());
+		final Turnier turnierSecond = turnierFound.get(1);
+		assertEquals(turnier2, turnierSecond);
+		assertEquals(turnier2.getId(), turnierSecond.getId());
+		assertEquals(turnier2.getName(), turnierSecond.getName());
+		assertEquals(turnier2.getDatum(), turnierSecond.getDatum());
+		assertEquals(michael, turnierSecond.getOrganisator());
+		assertEquals(turnier2.getTeilnehmer().isEmpty(), turnierSecond.getTeilnehmer().isEmpty());
+		assertEquals(turnier2.getMaxTeilnehmer(), turnierSecond.getMaxTeilnehmer());
+		assertEquals(turnier2.getUhrzeit(), turnierSecond.getUhrzeit());
 
 	}
 

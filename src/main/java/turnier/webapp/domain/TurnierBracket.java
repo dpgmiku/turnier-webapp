@@ -93,30 +93,12 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 		return ergebnis2;
 	}
 
-	public void setGewinner(final String gewinner) {
-
-		this.gewinner = gewinner;
-	}
-
-	public void setVerlierer(final String verlierer) {
-
-		this.verlierer = verlierer;
-	}
-
 	public String getNutzername1() {
 		return nutzername1;
 	}
 
-	public void setNutzername1(final String nutzername1) {
-		this.nutzername1 = nutzername1;
-	}
-
 	public String getNutzername2() {
 		return nutzername2;
-	}
-
-	public void setNutzername2(final String nutzername2) {
-		this.nutzername2 = nutzername2;
 	}
 
 	@Override

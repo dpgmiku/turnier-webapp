@@ -295,24 +295,59 @@ public class TurnierTest {
 		}
 	}
 
+	@Test
 	public void testGetTurnierErgebnisse() {
-		final Nutzer organisator = new Nutzer("Kubacki", "Michal", "miku", "password", "miq@miq.pl");
-		organisator.setId((long) 1);
-		final Turnier turnier = new Turnier("turniername", "wyszynskiego 2", "20.12.2017", "13.40", organisator, 4);
-		try {
-			turnier.getTurnierErgebnisse();
-			fail("Turnier.TurnierIstNochNichtBeendetExc excepted");
-		} catch (Turnier.TurnierIstNochNichtBeendetExc expected) {
+		{
+			final Nutzer organisator = new Nutzer("Kubacki", "Michal", "miku", "password", "miq@miq.pl");
+			organisator.setId((long) 1);
+			final Turnier turnier = new Turnier("turniername", "wyszynskiego 2", "20.12.2017", "13.40", organisator, 4);
+			try {
+				turnier.getTurnierErgebnisse();
+				fail("Turnier.TurnierIstNochNichtBeendetExc expected");
+			} catch (Turnier.TurnierIstNochNichtBeendetExc expected) {
+			}
+			turnier.anTurnierAnmelden(organisator);
+			final Nutzer teilnehmer = new Nutzer("Kubacki", "Michal", "miku2", "password", "miq2@miq.pl");
+			turnier.anTurnierAnmelden(teilnehmer);
+			turnier.starteTurnier();
+			final TurnierBracket turnierBracket = new TurnierBracket("miku", "miku2");
+			turnier.turnierBracketHinzufuegen(turnierBracket);
+			turnierBracket.setGewinner(3, 2);
+			turnier.beendeTurnier();
+			final String ergebnis = turnier.getTurnierErgebnisse();
+			assertEquals("miku\nmiku2\n", ergebnis);
 		}
-		turnier.anTurnierAnmelden(organisator);
-		final Nutzer teilnehmer = new Nutzer("Kubacki", "Michal", "miku2", "password", "miq2@miq.pl");
-		turnier.anTurnierAnmelden(teilnehmer);
-		turnier.starteTurnier();
-		final TurnierBracket turnierBracket = new TurnierBracket("miku", "miku2");
-		turnier.turnierBracketHinzufuegen(turnierBracket);
-		turnierBracket.setGewinner(3, 2);
-		turnier.beendeTurnier();
-		assertEquals("miku\nmiku2\n", turnier.getTurnierErgebnisse());
+		{
+			final Nutzer organisator = new Nutzer("Kubacki", "Michal", "miku", "password", "miq@miq.pl");
+			organisator.setId((long) 1);
+			final Turnier turnier = new Turnier("turniername", "wyszynskiego 2", "20.12.2017", "13.40", organisator, 4);
+			try {
+				turnier.getTurnierErgebnisse();
+				fail("Turnier.TurnierIstNochNichtBeendetExc expected");
+			} catch (Turnier.TurnierIstNochNichtBeendetExc expected) {
+			}
+			turnier.anTurnierAnmelden(organisator);
+			final Nutzer teilnehmer = new Nutzer("Kubacki", "Michal", "miku3", "password", "miq3@miq.pl");
+			final Nutzer teilnehmerzwei = new Nutzer("Kubacki", "Michal", "miku4", "password", "miq4@miq.pl");
+			final Nutzer teilnehmerdrei = new Nutzer("Kubacki", "Michal", "miku5", "password", "miq5@miq.pl");
+			turnier.anTurnierAnmelden(teilnehmer);
+			turnier.anTurnierAnmelden(teilnehmerzwei);
+			turnier.anTurnierAnmelden(teilnehmerdrei);
+			turnier.starteTurnier();
+			final TurnierBracket turnierBracket = new TurnierBracket("miku", "miku3");
+			final TurnierBracket turnierBracketZwei = new TurnierBracket("miku4", "miku5");
+			final TurnierBracket turnierBracketDrei = new TurnierBracket("miku", "miku4");
+			turnier.turnierBracketHinzufuegen(turnierBracket);
+			turnier.turnierBracketHinzufuegen(turnierBracketZwei);
+			turnier.turnierBracketHinzufuegen(turnierBracketDrei);
+			turnierBracket.setGewinner(3, 2);
+			turnierBracketZwei.setGewinner(3, 2);
+			turnierBracketDrei.setGewinner(3, 2);
+			turnier.beendeTurnier();
+			final String ergebnis = turnier.getTurnierErgebnisse();
+			assertEquals("miku\nmiku4\nmiku5\nmiku3\n", ergebnis);
+
+		}
 
 	}
 
@@ -432,7 +467,7 @@ public class TurnierTest {
 		assertTrue(turnier.getTeilnehmer().contains(organisator));
 		assertTrue(turnier.getTeilnehmer().contains(teilnehmer));
 	}
-	
+
 	@Test
 	public void testGetTurnierBracketAtPos() {
 		final Nutzer organisator = new Nutzer("Kubacki", "Michal", "miku", "password", "miq@miq.pl");
@@ -451,7 +486,7 @@ public class TurnierTest {
 		turnierBracket.setGewinner(3, 2);
 		assertEquals(1, turnier.getTurnierBrackets().size());
 		assertTrue(turnier.getTurnierBrackets().contains(turnierBracket));
-        assertEquals(turnierBracket, turnier.getTurnierBracketAtPos(0));
+		assertEquals(turnierBracket, turnier.getTurnierBracketAtPos(0));
 		final TurnierBracket turnierBracketzwei = new TurnierBracket("miku3", "miku4");
 		turnierBracketzwei.setId(((long) 2));
 		turnier.turnierBracketHinzufuegen(turnierBracketzwei);
@@ -460,7 +495,17 @@ public class TurnierTest {
 		turnierBracketzwei.setGewinner(3, 2);
 		assertEquals(2, turnier.getTurnierBrackets().size());
 		assertTrue(turnier.getTurnierBrackets().contains(turnierBracketzwei));
-        assertEquals(turnierBracketzwei, turnier.getTurnierBracketAtPos(1));
+		assertEquals(turnierBracketzwei, turnier.getTurnierBracketAtPos(1));
+		try {
+			turnier.getTurnierBracketAtPos(-4);
+			fail("Turnier.DieseStelleGibtEsNichtExc expected");
+		} catch (Turnier.DieseStelleGibtEsNichtExc expected) {
+		}
+		try {
+			turnier.getTurnierBracketAtPos(40);
+			fail("Turnier.DieseStelleGibtEsNichtExc expected");
+		} catch (Turnier.DieseStelleGibtEsNichtExc expected) {
+		}
 
 	}
 }

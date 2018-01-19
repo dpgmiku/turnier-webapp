@@ -244,9 +244,13 @@ public class Turnier extends EntityBase<Turnier> {
 	 * 
 	 * @param position
 	 *            Stelle
+	 * 
 	 * @return turnierBracket an dieser Stelle
+	 * @throws DieseStelleGibtEsNichtExc
+	 *             Diese Stelle existiert in TurnierBracket Liste nicht
 	 */
-	public TurnierBracket getTurnierBracketAtPos(final int position) {
+
+	public TurnierBracket getTurnierBracketAtPos(final int position) throws DieseStelleGibtEsNichtExc {
 		if (position < 0 || position >= turnierBrackets.size()) {
 			throw create(DieseStelleGibtEsNichtExc.class, position, turnierBrackets.size() - 1);
 		}
@@ -259,16 +263,8 @@ public class Turnier extends EntityBase<Turnier> {
 		return name;
 	}
 
-	public void setName(final String name) {
-		this.name = name;
-	}
-
 	public String getAdresse() {
 		return adresse;
-	}
-
-	public void setAdresse(final String adresse) {
-		this.adresse = adresse;
 	}
 
 	public String getDatum() {
@@ -279,44 +275,20 @@ public class Turnier extends EntityBase<Turnier> {
 		return turnierBrackets;
 	}
 
-	public void setTurnierBrackets(final List<TurnierBracket> turnierBrackets) {
-		this.turnierBrackets = turnierBrackets;
-	}
-
-	public void setDatum(final String datum) {
-		this.datum = datum;
-	}
-
 	public String getUhrzeit() {
 		return uhrzeit;
-	}
-
-	public void setUhrzeit(String uhrzeit) {
-		this.uhrzeit = uhrzeit;
 	}
 
 	public Nutzer getOrganisator() {
 		return organisator;
 	}
 
-	public void setOrganisator(final Nutzer organisator) {
-		this.organisator = organisator;
-	}
-
 	public int getMaxTeilnehmer() {
 		return maxTeilnehmer;
 	}
 
-	public void setMaxTeilnehmer(final int maxTeilnehmer) {
-		this.maxTeilnehmer = maxTeilnehmer;
-	}
-
 	public List<Nutzer> getTeilnehmer() {
 		return teilnehmer;
-	}
-
-	public void setTeilnehmer(final ArrayList<Nutzer> teilnehmer) {
-		this.teilnehmer = teilnehmer;
 	}
 
 	public TurnierStatus getTurnierStatus() {

@@ -53,7 +53,6 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 *            Einzigartiges Email vom Nutzer
 	 */
 	public Nutzer(final String name, final String vorname, final String nutzername, final String passwort, final String email) {
-
 		this.setName(name);
 		this.setVorname(vorname);
 		this.setNutzername(nutzername);
@@ -89,15 +88,12 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 *            altes Passwort
 	 * @param neuesPasswort
 	 *            neues Passwort
-	 * @throws PasswortIstFalschExc
-	 *             Passwort stimmt nicht mit dem gespeicherten Passwort im DB
-	 *             überein
 	 */
 	public void passwortAendern(final String altesPasswort, final String neuesPasswort) throws PasswortIstFalschExc {
-		if (passwortVerifizieren(altesPasswort)) {
+		if ((passwortVerifizieren(altesPasswort))) {
 			this.passwort = neuesPasswort;
-
 		}
+
 	}
 
 	/**
@@ -128,13 +124,12 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 *            neue Email Addresse
 	 * @param passwort
 	 *            Passwort zur Verifizierung
-	 * @throws PasswortIstFalschExc
-	 *             Passwort stimmt nicht mit dem gespeicherten im DB überein
 	 */
 	public void emailAendern(final String neueEmail, final String passwort) throws PasswortIstFalschExc {
 		if (passwortVerifizieren(passwort)) {
 			this.email = neueEmail;
 		}
+
 	}
 
 	/**
@@ -208,24 +203,12 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return gewonneneTurniere;
 	}
 
-	public void setGewonneneTurniere(final int gewonneneTurniere) {
-		this.gewonneneTurniere = gewonneneTurniere;
-	}
-
 	public int getGewonneneSpiele() {
 		return gewonneneSpiele;
 	}
 
-	public void setGewonneneSpiele(final int gewonneneSpiele) {
-		this.gewonneneSpiele = gewonneneSpiele;
-	}
-
 	public int getVerloreneSpiele() {
 		return verloreneSpiele;
-	}
-
-	public void setVerloreneSpiele(final int verloreneSpiele) {
-		this.verloreneSpiele = verloreneSpiele;
 	}
 
 	@Override
