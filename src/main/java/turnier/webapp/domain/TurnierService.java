@@ -516,11 +516,13 @@ public class TurnierService {
 	 */
 	public void anTurnierAnmelden(final Turnier turnier, final Nutzer nutzer)
 			throws DuBistSchonAngemeldetExc, TurnierStatusFailExc {
-		if (turnier.getTeilnehmer().contains(nutzer))
+		if (turnier.getTeilnehmer().contains(nutzer)) {
 			throw create(DuBistSchonAngemeldetExc.class, nutzer.getNutzername(), turnier.getName());
+		}
 		final TurnierStatus turnierStatus = turnier.getTurnierStatus();
-		if (turnierStatus != TurnierStatus.OFFEN)
+		if (turnierStatus != TurnierStatus.OFFEN) {
 			throw create(TurnierStatusFailExc.class, turnier.getName(), turnierStatus.toString());
+		}
 		turnier.anTurnierAnmelden(nutzer);
 		turnierRepository.save(turnier);
 	}

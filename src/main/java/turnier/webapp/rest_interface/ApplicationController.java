@@ -235,7 +235,7 @@ public class ApplicationController {
 			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
 		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
-		findTurnier.anTurnierAnmelden(findNutzer);
+		turnierService.anTurnierAnmelden(findTurnier, findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 

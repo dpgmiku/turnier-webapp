@@ -9,16 +9,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-
 import turnier.webapp.domain.base.EntityBase;
 
 import static multex.MultexUtil.create;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 
 /**
  * Turnierentität mit Name, Adresse, Datum, Uhrzeit, Organisator, maxTeilnehmer,
@@ -74,7 +71,8 @@ public class Turnier extends EntityBase<Turnier> {
 	 * @param maxTeilnehmer
 	 *            Die Anzahl an erlaubten Teilnehmer
 	 */
-	public Turnier(final String name, final String adresse, final String datum, final String uhrzeit, final Nutzer organisator, final int maxTeilnehmer) {
+	public Turnier(final String name, final String adresse, final String datum, final String uhrzeit,
+			final Nutzer organisator, final int maxTeilnehmer) {
 		this.name = name;
 		this.adresse = adresse;
 		this.datum = datum;
