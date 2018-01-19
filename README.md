@@ -66,7 +66,7 @@ Diese Port-Nummer muessen Sie sich merken.
 - Internationalisierbare, parameterisierbare Ausnahmenachrichten
 - Faengt jeder Ausnahmenachricht in die referenzierte Sprache direkt als JavaDoc Kommentar auf
 - Tests werden in einem leeren in-memory Derby Datenbank durchgefuehrt.
-- Test Coverage Report generiert bei [JaCoCo Maven plugin](http://www.eclemma.org/jacoco/trunk/doc/maven.html) in der Datei [target/site/jacoco-ut/index.html](file:target/site/jacoco-ut/index.html).
+- Test Coverage Report generiert mit dem [JaCoCo Maven plugin](http://www.eclemma.org/jacoco/trunk/doc/maven.html) in der Datei [target/site/jacoco-ut/index.html](file:target/site/jacoco-ut/index.html).
 
 ## Wo finde ich die Ausnahmenachrichten?
 In der Datei `MessageText.properties`. Editierbare Originaldatei mit festen Nachrichten befinden sich im `src/main/resource`
