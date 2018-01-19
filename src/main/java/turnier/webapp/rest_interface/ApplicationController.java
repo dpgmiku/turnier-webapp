@@ -86,6 +86,11 @@ public class ApplicationController {
 
 	/**
 	 * ändert die Eigenschaften des Nutzers
+	 * 
+	 * @param adminname
+	 *            Der Name vom Admin wird im Pfad eingebeben
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
 	 */
 	@PutMapping("/admin/{adminname}/nutzer/{nutzername}")
 	public ResponseEntity<NutzerResource> changeNutzer(@RequestBody final NutzerResource nutzerResource,
@@ -138,6 +143,11 @@ public class ApplicationController {
 
 	/**
 	 * ändert Eigenschaften des Turniers
+	 * 
+	 * @param adminname
+	 *            Der Name vom Admin wird im Pfad eingegeben.
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
 	 */
 	@PutMapping("/admin/{adminname}/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> changeTurnier(@RequestBody final TurnierResource turnierResource,
@@ -203,6 +213,9 @@ public class ApplicationController {
 	/**
 	 * fügt ein neuer Turnier Objekt mit dem Nutzer mit dem übergebenen nutzername
 	 * als Veranstalter hinzu
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
 	 */
 	@PostMapping("/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource> createNutzer(@RequestBody final TurnierResource turnierResource,
@@ -224,6 +237,11 @@ public class ApplicationController {
 	/**
 	 * fügt teilnehmer mit dem übergebenen nutzername im Turnier mit übergebenen
 	 * turniername hinzu
+	 * 
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
 	 */
 	@PutMapping("/nutzer/turnier/{turniername}/{nutzername}")
 	public ResponseEntity<TurnierResource> addTeilnehnmerToTurnier(@PathVariable final String nutzername,
@@ -242,6 +260,12 @@ public class ApplicationController {
 	/**
 	 * starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem
 	 * übergebenen nutzername der organisator von diesem Turnier ist
+	 * 
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
+	 * 
 	 */
 	@PutMapping("/nutzer/turnier/start/{turniername}/{nutzername}/")
 	public ResponseEntity<TurnierResource> starteTurnier(@PathVariable final String nutzername,
@@ -267,6 +291,16 @@ public class ApplicationController {
 
 	/**
 	 * übergibt die TurnierBracketErgebnisse eines Turniers
+	 * 
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
+	 * @param position
+	 *            Stelle im TurnierBracket wird im Pfad eingegeben
+	 * @param erg1
+	 *            Das Ergebnis vom ersten Nutzer wird im Pfad eingegeben
+	 * @param erg2
+	 *            Das Ergebnis vom zweiten Nutzer wird im Pfad eingegeben
+	 * 
 	 */
 	@PutMapping("/nutzer/turnier/start/{turniername}/{position}/{erg1}/{erg2}")
 	public ResponseEntity<TurnierResource> setteErgebnisseImTurnierBracket(@PathVariable final String position,
@@ -287,6 +321,11 @@ public class ApplicationController {
 	/**
 	 * entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem
 	 * übergebenen turniername
+	 * 
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
 	 */
 	@DeleteMapping("/nutzer/turnier/{turniername}/{nutzername}/delete")
 	public ResponseEntity<TurnierResource> entferneTeilnehnmerAusTurnier(@PathVariable final String nutzername,
@@ -300,6 +339,9 @@ public class ApplicationController {
 
 	/**
 	 * löscht dem Nutzer aus DB
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
 	 */
 	@DeleteMapping("/nutzer/{nutzername}")
 	public ResponseEntity<DeleteNutzerCommand> deleteNutzer(@RequestBody final DeleteNutzerCommand verifyPassword,
@@ -312,6 +354,10 @@ public class ApplicationController {
 
 	/**
 	 * gibt dem Nutzer Objekt mit dem übergebenen Nutzername zurück
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
+	 * 
 	 */
 
 	@GetMapping(path = "/nutzer/{nutzername}")
@@ -353,6 +399,10 @@ public class ApplicationController {
 	/**
 	 * finde alle Turniere Objekte im DB, wo der Nutzer mit dem übergebenen
 	 * nutzername der Organisator ist.
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer wird im Pfad eingegeben
+	 * 
 	 */
 	@GetMapping(path = "/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource[]> findOrganisatorTurniers(@PathVariable final String nutzername,
@@ -386,7 +436,12 @@ public class ApplicationController {
 
 	}
 
-	/** gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück */
+	/**
+	 * gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück
+	 * 
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
+	 */
 	@GetMapping(path = "/nutzer/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> findTurnier(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
@@ -398,7 +453,12 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);
 	}
 
-	/** zeigt Ergebnisse eines Turniers, das schon beendet ist */
+	/**
+	 * zeigt Ergebnisse eines Turniers, das schon beendet ist
+	 * 
+	 * @param turniername
+	 *            Der Name vom Turnier wird im Pfad eingegeben
+	 */
 	@GetMapping(path = "/nutzer/turnier/{turniername}/ergebnisse")
 	public ResponseEntity<String> zeigeErgebnisse(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
@@ -412,6 +472,11 @@ public class ApplicationController {
 	/**
 	 * lösche dem Turnier mit dem übergebenen turniername, wenn der Nutzer mit dem
 	 * übergebenen nutzername Organisator ist
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer
+	 * @param turniername
+	 *            Der Name vom Turnier
 	 */
 	@DeleteMapping(path = "/nutzer/{nutzername}/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> deleteTurnier(@PathVariable final String nutzername,
@@ -431,7 +496,12 @@ public class ApplicationController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	/** ändert die Emailadresse vom Nutzer */
+	/**
+	 * ändert die Emailadresse vom Nutzer
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer
+	 */
 	@PutMapping(path = "/nutzer/email/{nutzername}")
 	public ResponseEntity<NutzerResource> updateEmail(@RequestBody final EmailChangeCommand command,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
@@ -445,7 +515,12 @@ public class ApplicationController {
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
-	/** ändert das Passwort vom Nutzer */
+	/**
+	 * ändert das Passwort vom Nutzer
+	 * 
+	 * @param nutzername
+	 *            Der Name vom Nutzer
+	 */
 	@PutMapping(path = "/nutzer/password/{nutzername}")
 	public ResponseEntity<NutzerResource> updatePassword(@RequestBody final PasswordChangeCommand command,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {

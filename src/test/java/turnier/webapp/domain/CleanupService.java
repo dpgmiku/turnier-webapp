@@ -25,6 +25,15 @@ class CleanupService {
 	/**
 	 * kreirt einen Aufräumservice mit Hilfe von den erforderlichen Repositories von
 	 * Ports und Adapters Pattern
+	 * 
+	 * @param nutzerRepository
+	 *            Repository von Nutzerentitäten
+	 * @param turnierRepository
+	 *            Repository von Turnierentitäten
+	 * @param adminRepository
+	 *            Repository von Adminentitäten
+	 * @param turnierBracketRepository
+	 *            Repository von TurnierBracketentitäten
 	 */
 	@Autowired
 	public CleanupService(final NutzerRepository nutzerRepository, final TurnierRepository turnierRepository,

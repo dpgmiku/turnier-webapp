@@ -18,8 +18,8 @@ public interface TurnierRepository {
 	 * gib zurück ein {@link Turnier} Objekt mit dem übergebenen adminname, wenn es
 	 * existiert.
 	 * 
-	 * @param adminname
-	 *            Der Name vom gesuchten Turnire
+	 * @param name
+	 *            Der Name vom gesuchten Turnier
 	 * @return das gefundene Turnier Objekt
 	 */
 	Turnier find(String name);

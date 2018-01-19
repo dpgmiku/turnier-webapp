@@ -185,7 +185,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 * 
 	 * @return Liste als String mit allen Teilnehmernergebnissen. Der beste Platz
 	 *         ist ganz oben
-	 * @throws TurnierIstNochtNichtBeendetExc
+	 * @throws TurnierIstNochNichtBeendetExc
 	 *             Turnier wurde noch nicht beendet.
 	 */
 	public String getTurnierErgebnisse() throws TurnierIstNochNichtBeendetExc {

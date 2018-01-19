@@ -39,7 +39,7 @@ public class TurnierService {
 	 *            Nimmt sich das Turnier Repository Interface
 	 * @param adminRepository
 	 *            Nimmt sich das Admin Repository Interface
-	 * @param turnierBrackRepository
+	 * @param turnierBracketRepository
 	 *            Nimmt sich das TurnierBracket Repository Interface
 	 */
 	@Autowired
@@ -91,13 +91,13 @@ public class TurnierService {
 	 * @param nutzername
 	 *            Der einzigartige Name vom Nutzer
 	 * @param passwort
-	 *            Das Posswort vom Nutzer
+	 *            Das Passwort vom Nutzer
 	 * @param email
 	 *            Das Email vom Nutzer
 	 * @return nutzer Gibt der erstellten Nutzer zurück.
 	 * @throws NeuesPasswortNotAllowedExc
 	 *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
-	 * @throws ThatsNotAnEmailExc
+	 * @throws EsIstKeineEmailAdresseExc
 	 *             email entpricht nicht die Email Norm
 	 * @throws EmailSchonHinterlegtExc
 	 *             email hat schon ein anderer Benutzer hinterlegt
@@ -105,14 +105,14 @@ public class TurnierService {
 	 *             benutzername befindet sich schon im Datenbank
 	 */
 	public Nutzer nutzerSpeichern(final String name, final String vorname, final String nutzername,
-			final String passwort, final String email) throws NeuesPasswortNotAllowedExc, ThatsNotAnEmailExc,
+			final String passwort, final String email) throws NeuesPasswortNotAllowedExc, EsIstKeineEmailAdresseExc,
 			EmailSchonHinterlegtExc, BenutzernameSchonHinterlegtExc {
 		if (!(passwortLaengePruefen(passwort))) {
 
 			throw create(NeuesPasswortNotAllowedExc.class, passwort, nutzername);
 		}
 		if (!(emailAufGueltigkeitPruefen(email))) {
-			throw create(ThatsNotAnEmailExc.class, email);
+			throw create(EsIstKeineEmailAdresseExc.class, email);
 		}
 		final Nutzer findNutzer = findeNutzerMitEmail(email);
 		if (findNutzer != null) {
@@ -146,7 +146,7 @@ public class TurnierService {
 	 *            neue Email
 	 * @throws NeuesPasswortNotAllowedExc
 	 *             passwort ist kürzer als 6 Zeichen oder länger als 255 Zeichen
-	 * @throws ThatsNotAnEmailExc
+	 * @throws EsIstKeineEmailAdresseExc
 	 *             email entpricht nicht die Email Norm
 	 * @throws EmailSchonHinterlegtExc
 	 *             email hat schon ein anderer Benutzer hinterlegt
@@ -159,13 +159,13 @@ public class TurnierService {
 	 */
 	public void aendereNutzer(final String adminname, final String nutzername, final String name, final String vorname,
 			final String neuerNutzername, final String passwort, final String email)
-			throws NeuesPasswortNotAllowedExc, ThatsNotAnEmailExc, EmailSchonHinterlegtExc,
+			throws NeuesPasswortNotAllowedExc, EsIstKeineEmailAdresseExc, EmailSchonHinterlegtExc,
 			BenutzernameSchonHinterlegtExc, NutzerGibtEsNichtExc, AdminExistiertNichtExc {
 		if (!(passwortLaengePruefen(passwort))) {
 			throw create(NeuesPasswortNotAllowedExc.class, passwort, nutzername);
 		}
 		if (!(emailAufGueltigkeitPruefen(email))) {
-			throw create(ThatsNotAnEmailExc.class, email);
+			throw create(EsIstKeineEmailAdresseExc.class, email);
 		}
 		final Admin admin = adminRepository.find(adminname);
 		if (admin == null) {
@@ -189,7 +189,7 @@ public class TurnierService {
 	}
 
 	/**
-	 * Command: updated das Passwort vom gegebenen {@link Nutzer} mit einem neuem
+	 * Command: updated das Passwort vom gegebenen {@link Nutzer} mit einem neuen
 	 * Passwort.
 	 * 
 	 * @param nutzer
@@ -239,13 +239,13 @@ public class TurnierService {
 	 *            passwort zur Verifizierung
 	 * @param email
 	 *            neue Email auf die man das ändern will
-	 * @throws ThatsNotAnEmailExc
-	 * @throws EmailSchonHinterlegtExc
+	 * @throws EsIstKeineEmailAdresseExc Email Adresse entspricht nicht der Email-Adressen-Norm.
+	 * @throws EmailSchonHinterlegtExc Der Nutzer mit dieser Email wurde schon im unseren Datenbank gespeichert
 	 */
 	public void emailAendern(final Nutzer nutzer, final String passwort, final String email)
-			throws ThatsNotAnEmailExc, EmailSchonHinterlegtExc {
+			throws EsIstKeineEmailAdresseExc, EmailSchonHinterlegtExc {
 		if (!(emailAufGueltigkeitPruefen(email))) {
-			throw create(ThatsNotAnEmailExc.class, email);
+			throw create(EsIstKeineEmailAdresseExc.class, email);
 		}
 
 		final Nutzer findNutzer = nutzerRepository.findEmail(email);
@@ -274,7 +274,7 @@ public class TurnierService {
 			throw create(AnzahlTeilnehmerNoPowerOfTwoExc.class, nutzer.size());
 		}
 		turnier.starteTurnier();
-		turnier.shuffleTeilnehmer();
+		//turnier.shuffleTeilnehmer();
 		turnierRepository.save(turnier);
 		nutzer = turnier.getTeilnehmer();
 		for (int i = 0; i < nutzer.size(); i = i + 2) {
@@ -332,10 +332,9 @@ public class TurnierService {
 					newTurnierBracket = turnierBracketRepository.save(newTurnierBracket);
 					turnier.turnierBracketHinzufuegen(newTurnierBracket);
 				}
-				turnierRepository.save(turnier);
 			}
 		}
-
+		turnierRepository.save(turnier);
 	}
 
 	/**
@@ -577,7 +576,7 @@ public class TurnierService {
 	/**
 	 * Query: Findet alle Turniere die vom gegebenen Nutzer erstellt worden sind.
 	 * 
-	 * @param organisator
+	 * @param veranstalter
 	 *            Der Organisator wessen Turniere gelistet werden soll.
 	 * @return Gibt eine Liste von Turnieren zurück der der gegebene Nutzer erstellt
 	 *         hat.
@@ -587,7 +586,10 @@ public class TurnierService {
 		return turnierRepository.findTurniereVonNutzer(veranstalter);
 	}
 
-	/** Query: Findet alle erstellten Nutzer die nach Nutzernamen sortiert sind. */
+	/**
+	 *  Query: Findet alle erstellten Nutzer die nach Nutzernamen sortiert sind. 
+	 * @return Liste mit allen erstellten Nutzern
+	 */
 	public List<Nutzer> findeAlleNutzer() {
 		return nutzerRepository.findAll();
 	}
@@ -701,7 +703,7 @@ public class TurnierService {
 
 	/** {0} entspricht nicht der Email-Adressen-Norm. */
 	@SuppressWarnings("serial")
-	public static class ThatsNotAnEmailExc extends multex.Exc {
+	public static class EsIstKeineEmailAdresseExc extends multex.Exc {
 	}
 
 	/** Es existiert schon ein Nutzer mit dieser Email {0} mit dem ID {1} */
