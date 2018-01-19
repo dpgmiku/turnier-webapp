@@ -160,7 +160,7 @@ public class TurnierServiceTest {
 			turnierService.nutzerLoeschen(michael, michael.getPasswort());
 			// if michael Nutzer have been succesfully deleted, that's mean i can save the
 			// same michael object into the db without any exception.
-			assertNull(turnierService.findNutzerByNutzername(michael.getNutzername()));
+			assertNull(turnierService.findeNutzerMitNutzername(michael.getNutzername()));
 		}
 		{
 			final Nutzer michael = turnierService.nutzerSpeichern("kubacki", "michal", "miku", "notyourbusiness",
@@ -189,7 +189,7 @@ public class TurnierServiceTest {
 		} catch (TurnierService.EsIstNichtDeinTurnierExc excepted) {
 		}
 		assertNotNull(turnier);
-		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+		final Turnier turnierFound = turnierService.findeTurnierMitName(turnier.getName());
 		assertEquals(turnier, turnierFound);
 		assertEquals(turnier.getId(), turnierFound.getId());
 		assertEquals(turnier.getName(), turnierFound.getName());
@@ -204,14 +204,14 @@ public class TurnierServiceTest {
 		} catch (TurnierService.EsIstNichtDeinTurnierExc excepted) {
 		}
 		turnierService.loescheEigenesTurnier(michael, turnier);
-			assertNull(turnierService.findTurnierByName(turnier.getName()));
+			assertNull(turnierService.findeTurnierMitName(turnier.getName()));
 		// try to delete a turnier with a logged teilnehmer, should working fine
 		final Turnier turnierWithTeilnehmer = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207",
 				"15:30", michael, 4);
 		turnierService.anTurnierAnmelden(turnierWithTeilnehmer, michael);
 		turnierService.anTurnierAnmelden(turnierWithTeilnehmer, maciej);
 		assertNotNull(turnier);
-		final Turnier turnierWithTeilnehmerFound = turnierService.findTurnierByName(turnier.getName());
+		final Turnier turnierWithTeilnehmerFound = turnierService.findeTurnierMitName(turnier.getName());
 		assertEquals(turnierWithTeilnehmer, turnierWithTeilnehmerFound);
 		assertEquals(turnierWithTeilnehmer.getId(), turnierWithTeilnehmerFound.getId());
 		assertEquals(turnierWithTeilnehmer.getName(), turnierWithTeilnehmerFound.getName());
@@ -222,7 +222,7 @@ public class TurnierServiceTest {
 		assertEquals(turnierWithTeilnehmer.getMaxTeilnehmer(), turnierWithTeilnehmerFound.getMaxTeilnehmer());
 		assertEquals(turnierWithTeilnehmer.getUhrzeit(), turnierWithTeilnehmerFound.getUhrzeit());
 		turnierService.loescheEigenesTurnier(michael, turnierWithTeilnehmer);
-		assertNull(turnierService.findTurnierByName(turnierWithTeilnehmer.getName()));
+		assertNull(turnierService.findeTurnierMitName(turnierWithTeilnehmer.getName()));
 		
 
 	}
@@ -293,7 +293,7 @@ public class TurnierServiceTest {
 					michael, 32);
 			System.out.println(turnier.toString());
 			assertNotNull(turnier);
-			final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+			final Turnier turnierFound = turnierService.findeTurnierMitName(turnier.getName());
 			assertEquals(turnier, turnierFound);
 			assertEquals(turnier.getId(), turnierFound.getId());
 			assertEquals(turnier.getName(), turnierFound.getName());
@@ -303,7 +303,7 @@ public class TurnierServiceTest {
 			assertEquals(turnier.getMaxTeilnehmer(), turnierFound.getMaxTeilnehmer());
 			assertEquals(turnier.getUhrzeit(), turnierFound.getUhrzeit());
 		}
-		Turnier turnier = turnierService.findTurnierByName("notaname");
+		Turnier turnier = turnierService.findeTurnierMitName("notaname");
 		assertNull(turnier);
 
 	}
@@ -318,7 +318,7 @@ public class TurnierServiceTest {
 			assertNotNull(turnier);
 			final Turnier turnier2 = turnierService.turnierErstellen("turniertwo", "wyszynskiego 2", "20.2.207",
 					"15:30", michael, 32);
-			final List<Turnier> turnierFound = turnierService.findTurniers();
+			final List<Turnier> turnierFound = turnierService.findeAlleTurniere();
 			final Turnier turnierFirst = turnierFound.get(0);
 			assertEquals(turnier, turnierFirst);
 			assertEquals(turnier.getId(), turnierFirst.getId());
@@ -350,7 +350,7 @@ public class TurnierServiceTest {
 		final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
 				michael, 4);
 		assertNotNull(turnier);
-		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+		final Turnier turnierFound = turnierService.findeTurnierMitName(turnier.getName());
 		assertEquals(turnier, turnierFound);
 		assertEquals(turnier.getId(), turnierFound.getId());
 		assertEquals(turnier.getName(), turnierFound.getName());
@@ -389,7 +389,7 @@ public class TurnierServiceTest {
 		final Turnier turnier = turnierService.turnierErstellen("turnier", "wyszynskiego 2", "20.2.207", "15:30",
 				michael, 4);
 		assertNotNull(turnier);
-		final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+		final Turnier turnierFound = turnierService.findeTurnierMitName(turnier.getName());
 		assertEquals(turnier, turnierFound);
 		assertEquals(turnier.getId(), turnierFound.getId());
 		assertEquals(turnier.getName(), turnierFound.getName());
@@ -470,7 +470,7 @@ public class TurnierServiceTest {
 		;
 		// everything is fine
 		turnierService.emailAendern(michael, "notyourbusiness", "mikuyo@mikuyo.de");
-		final Nutzer michael3 = turnierService.findNutzerByNutzername(michael.getNutzername());
+		final Nutzer michael3 = turnierService.findeNutzerMitNutzername(michael.getNutzername());
 		assertEquals(michael.getId(), michael3.getId());
 		assertEquals(michael.getName(), michael3.getName());
 		assertEquals(michael.getVorname(), michael3.getVorname());
@@ -542,7 +542,7 @@ public class TurnierServiceTest {
 		}
 		// everything is still working fine after throwing all of this exceptions
 		turnierService.emailAendern(michael, "notyourbusiness", "goodmail@mail.de");
-		final Nutzer michaelworkingfine = turnierService.findNutzerByNutzername(michael.getNutzername());
+		final Nutzer michaelworkingfine = turnierService.findeNutzerMitNutzername(michael.getNutzername());
 		assertEquals(michael.getId(), michaelworkingfine.getId());
 		assertEquals(michael.getName(), michaelworkingfine.getName());
 		assertEquals(michael.getVorname(), michaelworkingfine.getVorname());
@@ -562,7 +562,7 @@ public class TurnierServiceTest {
 					michael, 32);
 			System.out.println(turnier.toString());
 			assertNotNull(turnier);
-			final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+			final Turnier turnierFound = turnierService.findeTurnierMitName(turnier.getName());
 			assertEquals(turnier, turnierFound);
 			assertEquals(turnier.getId(), turnierFound.getId());
 			assertEquals(turnier.getName(), turnierFound.getName());
@@ -606,7 +606,7 @@ public class TurnierServiceTest {
 			final Turnier turnier = turnierService.turnierErstellen("turniertest", "wyszynskiego 2", "20.2.207",
 					"15:30", michael, 32);
 			assertNotNull(turnier);
-			final Turnier turnierFound = turnierService.findTurnierByName(turnier.getName());
+			final Turnier turnierFound = turnierService.findeTurnierMitName(turnier.getName());
 			assertEquals(turnier, turnierFound);
 			assertEquals(turnier.getId(), turnierFound.getId());
 			assertEquals(turnier.getName(), turnierFound.getName());
@@ -625,9 +625,9 @@ public class TurnierServiceTest {
 				"miku@miku.pl");
 		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "yoyisdjfoisdjfo",
 				"maciej@maciej.pl");
-		final Nutzer nothing = turnierService.findNutzerByNutzername("blabla");
+		final Nutzer nothing = turnierService.findeNutzerMitNutzername("blabla");
 		assertNull(nothing);
-		final Nutzer michaelFound = turnierService.findNutzerByNutzername("miku");
+		final Nutzer michaelFound = turnierService.findeNutzerMitNutzername("miku");
 		assertNotNull(michaelFound);
 		assertEquals(michael.getName(), michaelFound.getName());
 		assertEquals(michael.getVorname(), michaelFound.getVorname());
@@ -643,9 +643,9 @@ public class TurnierServiceTest {
 				"miku@miku.pl");
 		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "yoyisdjfoisdjfo",
 				"maciej@maciej.pl");
-		final Nutzer nothing = turnierService.findNutzerByEmail("blabla");
+		final Nutzer nothing = turnierService.findeNutzerMitEmail("blabla");
 		assertNull(nothing);
-		final Nutzer michaelFound = turnierService.findNutzerByEmail("miku@miku.pl");
+		final Nutzer michaelFound = turnierService.findeNutzerMitEmail("miku@miku.pl");
 		assertNotNull(michaelFound);
 		assertEquals(michael.getName(), michaelFound.getName());
 		assertEquals(michael.getVorname(), michaelFound.getVorname());
@@ -661,7 +661,7 @@ public class TurnierServiceTest {
 				"miku@miku.pl");
 		final Nutzer maciej = turnierService.nutzerSpeichern("kostka", "maciej", "dekized", "yoyisdjfoisdjfo",
 				"maciej@maciej.pl");
-		List<Nutzer> nutzers = turnierService.findAllNutzers();
+		List<Nutzer> nutzers = turnierService.findeAlleNutzer();
 		assertEquals(2, nutzers.size());
 		final Nutzer michaelFound = nutzers.get(1);
 		assertNotNull(michaelFound);

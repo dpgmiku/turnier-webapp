@@ -74,7 +74,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 * @param maxTeilnehmer
 	 *            Die Anzahl an erlaubten Teilnehmer
 	 */
-	public Turnier(String name, String adresse, String datum, String uhrzeit, Nutzer organisator, int maxTeilnehmer) {
+	public Turnier(final String name, final String adresse, final String datum, final String uhrzeit, final Nutzer organisator, final int maxTeilnehmer) {
 		this.name = name;
 		this.adresse = adresse;
 		this.datum = datum;
@@ -83,7 +83,6 @@ public class Turnier extends EntityBase<Turnier> {
 		this.maxTeilnehmer = maxTeilnehmer;
 		this.teilnehmer = new ArrayList<>();
 		this.turnierBrackets = new ArrayList<>();
-		// this.turnierbaum = null;
 		setTurnierStatus(TurnierStatus.OFFEN);
 	}
 
@@ -125,7 +124,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 * @throws IstVollExc
 	 *             max Anzahl der Teilnehmer wurde schon erreicht.
 	 */
-	public void anTurnierAnmelden(Nutzer teilnehmer) throws FuegeTeilnehmerNichtZugelassenExc, IstVollExc {
+	public void anTurnierAnmelden(final Nutzer teilnehmer) throws FuegeTeilnehmerNichtZugelassenExc, IstVollExc {
 
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
 			throw create(FuegeTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
@@ -157,7 +156,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 * @throws EntferneTeilnehmerNichtZugelassenExc
 	 *             TurnierStatus ist nicht mehr auf offen gesetzt
 	 */
-	public void entferneTeilnehmer(Nutzer teilnehmer) throws EntferneTeilnehmerNichtZugelassenExc {
+	public void entferneTeilnehmer(final Nutzer teilnehmer) throws EntferneTeilnehmerNichtZugelassenExc {
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
 			throw create(EntferneTeilnehmerNichtZugelassenExc.class, teilnehmer.getNutzername(), this.name,
 					turnierStatus.toString());
@@ -174,7 +173,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 * @throws KeinTeilnehmerInDiesemTurnierExc
 	 *             Teilnehmernutzer wurde nicht gefunden
 	 */
-	public Nutzer teilnehmerSuchen(String nutzername) throws KeinTeilnehmerInDiesemTurnierExc {
+	public Nutzer teilnehmerSuchen(final String nutzername) throws KeinTeilnehmerInDiesemTurnierExc {
 		for (Nutzer nutzer : teilnehmer) {
 			if (nutzer.getNutzername().equals(nutzername))
 
@@ -195,13 +194,13 @@ public class Turnier extends EntityBase<Turnier> {
 		if (!(turnierStatus == TurnierStatus.BEENDET)) {
 			throw create(TurnierIstNochNichtBeendetExc.class, this.name, this.turnierStatus);
 		}
-		int turnierBracketLaenge = turnierBrackets.size();
-		String gewinner = turnierBrackets.get(turnierBracketLaenge - 1).getGewinner();
-		String verlierer = turnierBrackets.get(turnierBracketLaenge - 1).getVerlierer();
+		final int turnierBracketLaenge = turnierBrackets.size();
+		final String gewinner = turnierBrackets.get(turnierBracketLaenge - 1).getGewinner();
+		final String verlierer = turnierBrackets.get(turnierBracketLaenge - 1).getVerlierer();
 		String returnString = gewinner + "\n" + verlierer + "\n";
 		for (int i = turnierBrackets.size() - 2; i >= 0; i--) {
-			TurnierBracket turnierPaar = turnierBrackets.get(i);
-			String verliererSchleife = turnierPaar.getVerlierer();
+			final TurnierBracket turnierPaar = turnierBrackets.get(i);
+			final String verliererSchleife = turnierPaar.getVerlierer();
 			returnString = returnString + verliererSchleife + "\n";
 		}
 		return returnString;
@@ -229,7 +228,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 * @param turnierBracket
 	 *            neues TurnierBracket wird in der Liste hinzugefuegt
 	 */
-	public void turnierBracketHinzufuegen(TurnierBracket turnierBracket) {
+	public void turnierBracketHinzufuegen(final TurnierBracket turnierBracket) {
 		turnierBrackets.add(turnierBracket);
 
 	}
@@ -249,7 +248,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 *            Stelle
 	 * @return turnierBracket an dieser Stelle
 	 */
-	public TurnierBracket getTurnierBracketAtPos(int position) {
+	public TurnierBracket getTurnierBracketAtPos(final int position) {
 		if (position < 0 || position >= turnierBrackets.size()) {
 			throw create(DieseStelleGibtEsNichtExc.class, position, turnierBrackets.size() - 1);
 		}
@@ -262,7 +261,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -270,7 +269,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return adresse;
 	}
 
-	public void setAdresse(String adresse) {
+	public void setAdresse(final String adresse) {
 		this.adresse = adresse;
 	}
 
@@ -282,11 +281,11 @@ public class Turnier extends EntityBase<Turnier> {
 		return turnierBrackets;
 	}
 
-	public void setTurnierBrackets(List<TurnierBracket> turnierBrackets) {
+	public void setTurnierBrackets(final List<TurnierBracket> turnierBrackets) {
 		this.turnierBrackets = turnierBrackets;
 	}
 
-	public void setDatum(String datum) {
+	public void setDatum(final String datum) {
 		this.datum = datum;
 	}
 
@@ -302,7 +301,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return organisator;
 	}
 
-	public void setOrganisator(Nutzer organisator) {
+	public void setOrganisator(final Nutzer organisator) {
 		this.organisator = organisator;
 	}
 
@@ -310,7 +309,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return maxTeilnehmer;
 	}
 
-	public void setMaxTeilnehmer(int maxTeilnehmer) {
+	public void setMaxTeilnehmer(final int maxTeilnehmer) {
 		this.maxTeilnehmer = maxTeilnehmer;
 	}
 
@@ -318,7 +317,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return teilnehmer;
 	}
 
-	public void setTeilnehmer(ArrayList<Nutzer> teilnehmer) {
+	public void setTeilnehmer(final ArrayList<Nutzer> teilnehmer) {
 		this.teilnehmer = teilnehmer;
 	}
 
@@ -326,7 +325,7 @@ public class Turnier extends EntityBase<Turnier> {
 		return turnierStatus;
 	}
 
-	public void setTurnierStatus(TurnierStatus turnierStatus) {
+	public void setTurnierStatus(final TurnierStatus turnierStatus) {
 		this.turnierStatus = turnierStatus;
 	}
 

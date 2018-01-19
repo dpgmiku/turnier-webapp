@@ -38,7 +38,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 	 *            Name vom zweiten Nutzer
 	 */
 
-	public TurnierBracket(String nutzername1, String nutzername2) {
+	public TurnierBracket(final String nutzername1, final String nutzername2) {
 		this.nutzername1 = nutzername1;
 		this.nutzername2 = nutzername2;
 		this.ergebnis1 = 0;
@@ -57,7 +57,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 	 * @throws ErgebnisSchonDaExc
 	 *             Diese TurnierRunde wurde schon entschieden
 	 */
-	public void setGewinner(int ergebnis1, int ergebnis2) throws ErgebnisSchonDaExc {
+	public void setGewinner(final int ergebnis1, final int ergebnis2) throws ErgebnisSchonDaExc {
 		if (!(gewinner.equals("")))
 			throw create(TurnierBracket.ErgebnisSchonDaExc.class, gewinner, verlierer);
 		this.ergebnis1 = ergebnis1;
@@ -93,12 +93,12 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 		return ergebnis2;
 	}
 
-	public void setGewinner(String gewinner) {
+	public void setGewinner(final String gewinner) {
 
 		this.gewinner = gewinner;
 	}
 
-	public void setVerlierer(String verlierer) {
+	public void setVerlierer(final String verlierer) {
 
 		this.verlierer = verlierer;
 	}
@@ -107,7 +107,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 		return nutzername1;
 	}
 
-	public void setNutzername1(String nutzername1) {
+	public void setNutzername1(final String nutzername1) {
 		this.nutzername1 = nutzername1;
 	}
 
@@ -115,7 +115,7 @@ public class TurnierBracket extends EntityBase<TurnierBracket> {
 		return nutzername2;
 	}
 
-	public void setNutzername2(String nutzername2) {
+	public void setNutzername2(final String nutzername2) {
 		this.nutzername2 = nutzername2;
 	}
 

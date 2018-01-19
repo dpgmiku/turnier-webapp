@@ -31,7 +31,7 @@ public class Admin extends EntityBase<Admin> {
 	 * @param passwort
 	 *            Passwwort vom Admin
 	 */
-	public Admin(String adminname, String passwort) {
+	public Admin(final String adminname, final String passwort) {
 		this.adminname = adminname;
 		this.passwort = passwort;
 	}
@@ -51,7 +51,7 @@ public class Admin extends EntityBase<Admin> {
 	 * @param adminname
 	 *            - neuer Adminname
 	 */
-	public void setAdminname(String adminname) {
+	public void setAdminname(final String adminname) {
 		this.adminname = adminname;
 	}
 
@@ -70,7 +70,7 @@ public class Admin extends EntityBase<Admin> {
 	 * @param passwort
 	 *            - neuer Passwort
 	 */
-	public void setPasswort(String passwort) {
+	public void setPasswort(final String passwort) {
 		this.passwort = passwort;
 	}
 

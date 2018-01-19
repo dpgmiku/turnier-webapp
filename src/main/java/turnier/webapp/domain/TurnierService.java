@@ -72,11 +72,11 @@ public class TurnierService {
 		if (!(passwortLaengePruefen(passwort))) {
 			throw create(NeuesPasswortNotAllowedExc.class, passwort, adminname);
 		}
-		Admin findAdmin = adminRepository.find(adminname);
+		final Admin findAdmin = adminRepository.find(adminname);
 		if (findAdmin != null) {
 			throw create(AdminnameSchonHinterlegtExc.class, adminname, findAdmin.getId());
 		}
-		Admin admin = new Admin(adminname, passwort);
+		final Admin admin = new Admin(adminname, passwort);
 		return adminRepository.save(admin);
 	}
 
@@ -114,11 +114,11 @@ public class TurnierService {
 		if (!(emailAufGueltigkeitPruefen(email))) {
 			throw create(ThatsNotAnEmailExc.class, email);
 		}
-		final Nutzer findNutzer = findNutzerByEmail(email);
+		final Nutzer findNutzer = findeNutzerMitEmail(email);
 		if (findNutzer != null) {
 			throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
 		}
-		final Nutzer findNutzerNutzername = findNutzerByNutzername(nutzername);
+		final Nutzer findNutzerNutzername = findeNutzerMitNutzername(nutzername);
 		if (findNutzerNutzername != null) {
 			throw create(BenutzernameSchonHinterlegtExc.class, nutzername, findNutzerNutzername.getId());
 
@@ -171,15 +171,15 @@ public class TurnierService {
 		if (admin == null) {
 			throw create(AdminExistiertNichtExc.class, adminname);
 		}
-		final Nutzer nutzer = findNutzerByNutzername(nutzername);
+		final Nutzer nutzer = findeNutzerMitNutzername(nutzername);
 		if (nutzer == null) {
 			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
-		final Nutzer findNutzer = findNutzerByEmail(email);
+		final Nutzer findNutzer = findeNutzerMitEmail(email);
 		if (findNutzer != null && findNutzer.getId() != nutzer.getId()) {
 			throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
 		}
-		final Nutzer findNutzerNutzername = findNutzerByNutzername(neuerNutzername);
+		final Nutzer findNutzerNutzername = findeNutzerMitNutzername(neuerNutzername);
 		if (findNutzerNutzername != null && nutzer.getId() != findNutzerNutzername.getId()) {
 			throw create(BenutzernameSchonHinterlegtExc.class, neuerNutzername, findNutzerNutzername.getId());
 		}
@@ -248,7 +248,7 @@ public class TurnierService {
 			throw create(ThatsNotAnEmailExc.class, email);
 		}
 
-		Nutzer findNutzer = nutzerRepository.findEmail(email);
+		final Nutzer findNutzer = nutzerRepository.findEmail(email);
 		if (findNutzer != null) {
 			throw create(EmailSchonHinterlegtExc.class, email, findNutzer.getId());
 		}
@@ -267,7 +267,7 @@ public class TurnierService {
 	 * @throws AnzahlTeilnehmerNoPowerOfTwoExc
 	 *             Anzahl der Teilnehmer ist keine Potenz von zwei
 	 */
-	public Turnier turnierStarten(Turnier turnier) throws AnzahlTeilnehmerNoPowerOfTwoExc {
+	public Turnier turnierStarten(final Turnier turnier) throws AnzahlTeilnehmerNoPowerOfTwoExc {
 		List<Nutzer> nutzer = turnier.getTeilnehmer();
 		if (!(istPotenzVonZwei(nutzer.size()))) {
 
@@ -301,31 +301,31 @@ public class TurnierService {
 	 * @throws TurnierStatusFailExc
 	 *             turnier befindet sich nicht im Status gestartet
 	 */
-	public void setteErgebnisse(Turnier turnier, int position, int ergebnis1, int ergebnis2)
+	public void setteErgebnisse(final Turnier turnier, final int position, final int ergebnis1, final int ergebnis2)
 			throws TurnierStatusFailExc {
 		if (turnier.getTurnierStatus() != TurnierStatus.GESTARTET) {
 			throw create(TurnierStatusFailExc.class, turnier.getTurnierStatus());
 		}
-		TurnierBracket turnierBracket = turnier.getTurnierBracketAtPos(position);
+		final TurnierBracket turnierBracket = turnier.getTurnierBracketAtPos(position);
 		turnierBracket.setGewinner(ergebnis1, ergebnis2);
-		Nutzer gewinnerNutzer = nutzerRepository.find(turnierBracket.getGewinner());
-		Nutzer verliererNutzer = nutzerRepository.find(turnierBracket.getVerlierer());
+		final Nutzer gewinnerNutzer = nutzerRepository.find(turnierBracket.getGewinner());
+		final Nutzer verliererNutzer = nutzerRepository.find(turnierBracket.getVerlierer());
 		gewinnerNutzer.hatGewonnen();
 		verliererNutzer.hatVerloren();
 		nutzerRepository.save(gewinnerNutzer);
 		nutzerRepository.save(verliererNutzer);
 		turnierBracketRepository.save(turnierBracket);
-		List<TurnierBracket> turnierBrackets = turnier.getTurnierBrackets();
+		final List<TurnierBracket> turnierBrackets = turnier.getTurnierBrackets();
 		final int size = turnierBrackets.size();
 		if (size >= (turnier.getTeilnehmer().size() - 1)) {
 			turnier.beendeTurnier();
-			Nutzer nutzerGewinner = nutzerRepository.find(turnierBracket.getGewinner());
+			final Nutzer nutzerGewinner = nutzerRepository.find(turnierBracket.getGewinner());
 			nutzerGewinner.hatTurnierGewonnen();
 			nutzerRepository.save(nutzerGewinner);
 		} else {
 			for (int i = 0; i < size; i = i + 2) {
-				TurnierBracket turnierBracket1 = turnierBrackets.get(i);
-				TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
+				final TurnierBracket turnierBracket1 = turnierBrackets.get(i);
+				final TurnierBracket turnierBracket2 = turnierBrackets.get(i + 1);
 				if (!(turnierBracket1.getGewinner().equals("")) && !(turnierBracket2.getGewinner().equals(""))) {
 					TurnierBracket newTurnierBracket = new TurnierBracket(turnierBracket1.getGewinner(),
 							turnierBracket2.getGewinner());
@@ -354,11 +354,11 @@ public class TurnierService {
 	 * @throws EsIstNichtDeinTurnierExc
 	 *             Dieses Turnier hast Du nicht erstellt
 	 */
-	public void entferneTeilnehmer(Nutzer owner, Turnier turnier, Nutzer nutzer)
+	public void entferneTeilnehmer(final Nutzer owner, final Turnier turnier, final Nutzer nutzer)
 			throws TurnierGibtEsNichtExc, TeilnehmerGibtEsNichtExc, EsIstNichtDeinTurnierExc {
 		if (turnierRepository.find(turnier.getName()) == null)
 			throw create(TurnierGibtEsNichtExc.class, turnier.getName());
-		List<Nutzer> turnierTeilnehmerList = turnier.getTeilnehmer();
+		final List<Nutzer> turnierTeilnehmerList = turnier.getTeilnehmer();
 		if (!(turnierTeilnehmerList.contains(nutzer)))
 			throw create(TeilnehmerGibtEsNichtExc.class, nutzer.getNutzername(), turnier.getName());
 		if (!(owner.getNutzername().equals(turnier.getOrganisator().getNutzername())))
@@ -392,9 +392,9 @@ public class TurnierService {
 	 * @throws TurniernameSchonHinterlegtExc
 	 *             ein Turnier mit diesem Name existiert schon im DB
 	 */
-	public Turnier turnierErstellen(String name, String adresse, String datum, String uhrzeit, Nutzer nutzer,
-			int maxTeilnehmer) throws ZuVieleTeilnehmerExc, ZuWenigTeilnehmerExc, KeineRichtigeEingabenTurnierExc,
-			TurniernameSchonHinterlegtExc {
+	public Turnier turnierErstellen(final String name, final String adresse, final String datum, final String uhrzeit,
+			final Nutzer nutzer, final int maxTeilnehmer) throws ZuVieleTeilnehmerExc, ZuWenigTeilnehmerExc,
+			KeineRichtigeEingabenTurnierExc, TurniernameSchonHinterlegtExc {
 		if (maxTeilnehmer > 32)
 			throw create(ZuVieleTeilnehmerExc.class, maxTeilnehmer);
 		if (maxTeilnehmer < 2)
@@ -403,7 +403,7 @@ public class TurnierService {
 
 			throw create(KeineRichtigeEingabenTurnierExc.class, name);
 		}
-		final Turnier findTurnier = this.findTurnierByName(name);
+		final Turnier findTurnier = this.findeTurnierMitName(name);
 		if (findTurnier != null) {
 
 			throw create(TurniernameSchonHinterlegtExc.class, name, findTurnier.getId());
@@ -486,7 +486,7 @@ public class TurnierService {
 	 * @throws EsIstNichtDeinTurnierExc
 	 *             Dieses Turnier hast Du nicht erstellt
 	 */
-	public void loescheEigenesTurnier(Nutzer nutzer, Turnier turnier)
+	public void loescheEigenesTurnier(final Nutzer nutzer, final Turnier turnier)
 			throws TurnierGibtEsNichtExc, EsIstNichtDeinTurnierExc {
 		if (turnierRepository.find(turnier.getName()) == null)
 			throw create(TurnierGibtEsNichtExc.class, turnier.getName());
@@ -495,7 +495,6 @@ public class TurnierService {
 		final List<TurnierBracket> turnierBrackets = turnier.getTurnierBrackets();
 		if (!(turnierBrackets.isEmpty())) {
 			for (TurnierBracket turnierBracket : turnierBrackets) {
-
 				turnierBracketRepository.delete(turnierBracket);
 			}
 		}
@@ -515,7 +514,7 @@ public class TurnierService {
 	 * @throws TurnierStatusFailExc
 	 *             Dieses Turnier ist nicht mehr offen
 	 */
-	public void anTurnierAnmelden(Turnier turnier, Nutzer nutzer)
+	public void anTurnierAnmelden(final Turnier turnier, final Nutzer nutzer)
 			throws DuBistSchonAngemeldetExc, TurnierStatusFailExc {
 		if (turnier.getTeilnehmer().contains(nutzer))
 			throw create(DuBistSchonAngemeldetExc.class, nutzer.getNutzername(), turnier.getName());
@@ -535,7 +534,7 @@ public class TurnierService {
 	 *            soll.
 	 * @return Gibt den Nutzer, falls gefunden, zurueck.
 	 */
-	public Nutzer findNutzerByEmail(final String email) {
+	public Nutzer findeNutzerMitEmail(final String email) {
 		return nutzerRepository.findEmail(email);
 	}
 
@@ -547,7 +546,7 @@ public class TurnierService {
 	 *            soll.
 	 * @return nutzer Gibt den Nutzer, falls gefunden, zurueck.
 	 */
-	public Nutzer findNutzerByNutzername(final String nutzername) {
+	public Nutzer findeNutzerMitNutzername(final String nutzername) {
 		return nutzerRepository.find(nutzername);
 	}
 
@@ -558,7 +557,7 @@ public class TurnierService {
 	 *            Der Name des Turniers
 	 * @return Das gefundene Turnier.
 	 */
-	public Turnier findTurnierByName(final String name) {
+	public Turnier findeTurnierMitName(final String name) {
 
 		return turnierRepository.find(name);
 	}
@@ -568,7 +567,7 @@ public class TurnierService {
 	 * 
 	 * @return Gibt eine Liste von allen Turnieren zurück.
 	 */
-	public List<Turnier> findTurniers() {
+	public List<Turnier> findeAlleTurniere() {
 
 		return turnierRepository.findAll();
 	}
@@ -581,13 +580,13 @@ public class TurnierService {
 	 * @return Gibt eine Liste von Turnieren zurück der der gegebene Nutzer erstellt
 	 *         hat.
 	 */
-	public List<Turnier> findTurnierByOrganisator(final Nutzer organisator) {
+	public List<Turnier> findeTurnierMitVeranstalter(final Nutzer veranstalter) {
 
-		return turnierRepository.findTurniereVonNutzer(organisator);
+		return turnierRepository.findTurniereVonNutzer(veranstalter);
 	}
 
 	/** Query: Findet alle erstellten Nutzer die nach Nutzernamen sortiert sind. */
-	public List<Nutzer> findAllNutzers() {
+	public List<Nutzer> findeAlleNutzer() {
 		return nutzerRepository.findAll();
 	}
 
@@ -630,7 +629,7 @@ public class TurnierService {
 	 *            Nummer ist Teilnehmeranzahl
 	 * @return Gibt zurück ob Anzahl der Teilnehmer eine Potenz von zwei ist.
 	 */
-	private boolean istPotenzVonZwei(int nummer) {
+	private boolean istPotenzVonZwei(final int nummer) {
 
 		return nummer >= 2 && ((nummer & (nummer - 1)) == 0);
 	}

@@ -52,7 +52,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 * @param email
 	 *            Einzigartiges Email vom Nutzer
 	 */
-	public Nutzer(String name, String vorname, String nutzername, String passwort, String email) {
+	public Nutzer(final String name, final String vorname, final String nutzername, final String passwort, final String email) {
 
 		this.setName(name);
 		this.setVorname(vorname);
@@ -71,15 +71,15 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 * @param passwortZurVerifizierung
 	 *            zum Vergleichen mit dem gespeicherten Passwort im DB
 	 * @return passwort erfolgreich verifiziert, gibt wahr zurück, anderfalls false
-	 * @throws PasswortDoesntMatchExc
+	 * @throws PasswortIstFalschExc
 	 *             Passwort stimmt nicht mit dem gespeicherten Passwort im DB
 	 *             überein
 	 */
-	public Boolean passwortVerifizieren(String passwortZurVerifizierung) throws PasswortDoesntMatchExc {
+	public Boolean passwortVerifizieren(final String passwortZurVerifizierung) throws PasswortIstFalschExc {
 		if (this.passwort.equals(passwortZurVerifizierung)) {
 			return true;
 		} else
-			throw create(Nutzer.PasswortDoesntMatchExc.class, passwortZurVerifizierung, this.nutzername);
+			throw create(PasswortIstFalschExc.class, passwortZurVerifizierung, this.nutzername);
 	}
 
 	/**
@@ -89,11 +89,11 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 *            altes Passwort
 	 * @param neuesPasswort
 	 *            neues Passwort
-	 * @throws PasswortDoesntMatchExc
+	 * @throws PasswortIstFalschExc
 	 *             Passwort stimmt nicht mit dem gespeicherten Passwort im DB
 	 *             überein
 	 */
-	public void passwortAendern(String altesPasswort, String neuesPasswort) throws PasswortDoesntMatchExc {
+	public void passwortAendern(final String altesPasswort, final String neuesPasswort) throws PasswortIstFalschExc {
 		if (passwortVerifizieren(altesPasswort)) {
 			this.passwort = neuesPasswort;
 
@@ -128,10 +128,10 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 *            neue Email Addresse
 	 * @param passwort
 	 *            Passwort zur Verifizierung
-	 * @throws PasswortDoesntMatchExc
+	 * @throws PasswortIstFalschExc
 	 *             Passwort stimmt nicht mit dem gespeicherten im DB überein
 	 */
-	public void emailAendern(String neueEmail, String passwort) throws PasswortDoesntMatchExc {
+	public void emailAendern(final String neueEmail, final String passwort) throws PasswortIstFalschExc {
 		if (passwortVerifizieren(passwort)) {
 			this.email = neueEmail;
 		}
@@ -168,7 +168,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -176,7 +176,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return vorname;
 	}
 
-	public void setVorname(String vorname) {
+	public void setVorname(final String vorname) {
 		this.vorname = vorname;
 	}
 
@@ -184,7 +184,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return nutzername;
 	}
 
-	public void setNutzername(String nutzername) {
+	public void setNutzername(final String nutzername) {
 		this.nutzername = nutzername;
 	}
 
@@ -192,7 +192,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return passwort;
 	}
 
-	public void setPasswort(String passwort) {
+	public void setPasswort(final String passwort) {
 		this.passwort = passwort;
 	}
 
@@ -200,7 +200,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return email;
 	}
 
-	public void setEmail(String email) {
+	public void setEmail(final String email) {
 		this.email = email;
 	}
 
@@ -208,7 +208,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return gewonneneTurniere;
 	}
 
-	public void setGewonneneTurniere(int gewonneneTurniere) {
+	public void setGewonneneTurniere(final int gewonneneTurniere) {
 		this.gewonneneTurniere = gewonneneTurniere;
 	}
 
@@ -216,7 +216,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return gewonneneSpiele;
 	}
 
-	public void setGewonneneSpiele(int gewonneneSpiele) {
+	public void setGewonneneSpiele(final int gewonneneSpiele) {
 		this.gewonneneSpiele = gewonneneSpiele;
 	}
 
@@ -224,7 +224,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 		return verloreneSpiele;
 	}
 
-	public void setVerloreneSpiele(int verloreneSpiele) {
+	public void setVerloreneSpiele(final int verloreneSpiele) {
 		this.verloreneSpiele = verloreneSpiele;
 	}
 
@@ -242,7 +242,7 @@ public class Nutzer extends EntityBase<Nutzer> {
 	 * überein.
 	 */
 	@SuppressWarnings("serial")
-	public static class PasswortDoesntMatchExc extends multex.Exc {
+	public static class PasswortIstFalschExc extends multex.Exc {
 	}
 
 }

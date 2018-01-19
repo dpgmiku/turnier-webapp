@@ -76,7 +76,7 @@ public class ApplicationController {
 			final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 		if (adminResource.id != null) {
-			throw create(AdminCreateWithIdExc.class, adminResource.adminname, adminResource.id);
+			throw create(AdminMitIdErstelltExc.class, adminResource.adminname, adminResource.id);
 		}
 		final Admin adminSave = turnierService.adminSpeichern(adminResource.adminname, adminResource.passwort);
 
@@ -93,16 +93,16 @@ public class ApplicationController {
 			final WebRequest request) {
 		_print(method, request);
 		if (nutzerResource.id != null) {
-			throw create(NutzerCreateWithIdExc.class, nutzerResource.nutzername, nutzerResource.id);
+			throw create(NutzerMitIdErstelltExc.class, nutzerResource.nutzername, nutzerResource.id);
 		}
 		String name = nutzerResource.name;
 		String vorname = nutzerResource.vorname;
 		String neuerNutzername = nutzerResource.nutzername;
 		String passwort = nutzerResource.passwort;
 		String email = nutzerResource.email;
-		Nutzer nutzerBevor = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer nutzerBevor = turnierService.findeNutzerMitNutzername(nutzername);
 		if (nutzerBevor == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
 
 		if (name == null) {
@@ -130,7 +130,7 @@ public class ApplicationController {
 		}
 
 		turnierService.aendereNutzer(adminname, nutzername, name, vorname, neuerNutzername, passwort, email);
-		final Nutzer nutzerSave = turnierService.findNutzerByNutzername(neuerNutzername);
+		final Nutzer nutzerSave = turnierService.findeNutzerMitNutzername(neuerNutzername);
 
 		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.ACCEPTED);
 
@@ -145,11 +145,11 @@ public class ApplicationController {
 			final WebRequest request) {
 		_print(method, request);
 		if (turnierResource.id != null) {
-			throw create(TurnierCreateWithIdExc.class, turnierResource.name, turnierResource.id);
+			throw create(TurnierMitIdErstelltExc.class, turnierResource.name, turnierResource.id);
 		}
-		final Turnier turnierBevor = turnierService.findTurnierByName(turniername);
+		final Turnier turnierBevor = turnierService.findeTurnierMitName(turniername);
 		if (turnierBevor == null) {
-			throw create(TurnierArentHereExc.class, turniername);
+			throw create(TurnierGibtEsNichtExc.class, turniername);
 		}
 		String neuerName = turnierResource.name;
 		String adresse = turnierResource.adresse;
@@ -178,31 +178,27 @@ public class ApplicationController {
 
 		turnierService.turnierAendern(adminname, turniername, neuerName, adresse, datum, uhrzeit, maxTeilnehmer);
 
-		final Turnier turnierSave = turnierService.findTurnierByName(neuerName);
+		final Turnier turnierSave = turnierService.findeTurnierMitName(neuerName);
 
 		return new ResponseEntity<>(new TurnierResource(turnierSave), HttpStatus.ACCEPTED);
 
 	}
 
-	
-
 	// Für die Nutzer Rolle unter URI /nutzer:
 
-	/** füge ein neuer Nutzer Objekt in unserem DB hinzu*/
+	/** füge ein neuer Nutzer Objekt in unserem DB hinzu */
 
 	@PostMapping("/nutzer/")
 	public ResponseEntity<NutzerResource> createNutzer(@RequestBody final NutzerResource nutzerResource,
 			final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 		if (nutzerResource.id != null) {
-			throw create(NutzerCreateWithIdExc.class, nutzerResource.nutzername, nutzerResource.id);
+			throw create(NutzerMitIdErstelltExc.class, nutzerResource.nutzername, nutzerResource.id);
 		}
 		final Nutzer nutzerSave = turnierService.nutzerSpeichern(nutzerResource.name, nutzerResource.vorname,
 				nutzerResource.nutzername, nutzerResource.passwort, nutzerResource.email);
 		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.CREATED);
 	}
-
-
 
 	/**
 	 * fügt ein neuer Turnier Objekt mit dem Nutzer mit dem übergebenen nutzername
@@ -213,13 +209,13 @@ public class ApplicationController {
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 		if (turnierResource.id != null) {
-			throw create(TurnierCreateWithIdExc.class, turnierResource.name, turnierResource.id);
+			throw create(TurnierMitIdErstelltExc.class, turnierResource.name, turnierResource.id);
 		}
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
-		Turnier turnier = turnierService.turnierErstellen(turnierResource.name, turnierResource.adresse,
+		final Turnier turnier = turnierService.turnierErstellen(turnierResource.name, turnierResource.adresse,
 				turnierResource.datum, turnierResource.uhrzeit, findNutzer, turnierResource.maxTeilnehmer);
 
 		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.CREATED);
@@ -234,11 +230,11 @@ public class ApplicationController {
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
-		Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
 		findTurnier.anTurnierAnmelden(findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
@@ -252,20 +248,20 @@ public class ApplicationController {
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
-		Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
 		if (findTurnier == null) {
 
-			throw create(TurnierArentHereExc.class, turniername);
+			throw create(TurnierGibtEsNichtExc.class, turniername);
 		}
 		if (!(findTurnier.getOrganisator().equals(findNutzer))) {
 			final String organisator = findTurnier.getOrganisator().getName();
-			throw create(NotYourTurnierExc.class, nutzername, turniername, organisator);
+			throw create(EsIstNichtDeinTurnierExc.class, nutzername, turniername, organisator);
 		}
-		Turnier turnier = turnierService.turnierStarten(findTurnier);
+		final Turnier turnier = turnierService.turnierStarten(findTurnier);
 		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.ACCEPTED);
 	}
 
@@ -278,10 +274,10 @@ public class ApplicationController {
 			final HttpMethod method, final WebRequest request) {
 		_print(method, request);
 
-		Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
 		if (findTurnier == null) {
 
-			throw create(TurnierArentHereExc.class, turniername);
+			throw create(TurnierGibtEsNichtExc.class, turniername);
 		}
 		turnierService.setteErgebnisse(findTurnier, Integer.parseInt(position), Integer.parseInt(erg1),
 				Integer.parseInt(erg2));
@@ -296,8 +292,8 @@ public class ApplicationController {
 	public ResponseEntity<TurnierResource> entferneTeilnehnmerAusTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		Turnier findTurnierByName = turnierService.findTurnierByName(turniername);
-		Nutzer findNutzer = findTurnierByName.teilnehmerSuchen(nutzername);
+		final Turnier findTurnierByName = turnierService.findeTurnierMitName(turniername);
+		final Nutzer findNutzer = findTurnierByName.teilnehmerSuchen(nutzername);
 		findTurnierByName.entferneTeilnehmer(findNutzer);
 		return new ResponseEntity<>(new TurnierResource(findTurnierByName), HttpStatus.ACCEPTED);
 	}
@@ -305,10 +301,11 @@ public class ApplicationController {
 	/**
 	 * löscht dem Nutzer aus DB
 	 */
+	@DeleteMapping("/nutzer/{nutzername}")
 	public ResponseEntity<DeleteNutzerCommand> deleteNutzer(@RequestBody final DeleteNutzerCommand verifyPassword,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		final Nutzer deleteNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer deleteNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		turnierService.nutzerLoeschen(deleteNutzer, verifyPassword.verifyPasswd);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
@@ -321,11 +318,9 @@ public class ApplicationController {
 	public ResponseEntity<NutzerResource> findNutzer(@PathVariable final String nutzername, final HttpMethod method,
 			final WebRequest request) {
 		_print(method, request);
-		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
-		// "dummy@dummy.de");
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 
 		}
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
@@ -335,10 +330,10 @@ public class ApplicationController {
 	@GetMapping(path = "/nutzer/")
 	public ResponseEntity<NutzerResource[]> findNutzers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		final List<Nutzer> nutzers = turnierService.findAllNutzers();
+		final List<Nutzer> nutzers = turnierService.findeAlleNutzer();
 		;
-		if (nutzers == null) {
-			throw new Exc("No Nutzer Object in our DB!");
+		if (nutzers.isEmpty()) {
+			throw new Exc("Kein Nutzer Objekt im unseren DB");
 		}
 		return _nutzersToResources(nutzers);
 	}
@@ -347,10 +342,10 @@ public class ApplicationController {
 	@GetMapping(path = "/nutzer/turnier/")
 	public ResponseEntity<TurnierResource[]> findTurniers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		final List<Turnier> turniers = turnierService.findTurniers();
+		final List<Turnier> turniers = turnierService.findeAlleTurniere();
 
-		if (turniers == null) {
-			throw new Exc("No Turnier Object in our DB!");
+		if (turniers.isEmpty()) {
+			throw new Exc("Kein Turnier Objekt im unseren DB!");
 		}
 		return _turniersToResources(turniers);
 	}
@@ -363,12 +358,12 @@ public class ApplicationController {
 	public ResponseEntity<TurnierResource[]> findOrganisatorTurniers(@PathVariable final String nutzername,
 			final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		final Nutzer nutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer nutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (nutzer == null) {
 
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
-		final List<Turnier> turniers = turnierService.findTurnierByOrganisator(nutzer);
+		final List<Turnier> turniers = turnierService.findeTurnierMitVeranstalter(nutzer);
 
 		if (turniers == null) {
 			throw new Exc("No Turnier Object in our DB!");
@@ -396,9 +391,9 @@ public class ApplicationController {
 	public ResponseEntity<TurnierResource> findTurnier(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
 		_print(method, request);
-		Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
 		if (findTurnier == null) {
-			throw create(TurnierArentHereExc.class, turniername);
+			throw create(TurnierGibtEsNichtExc.class, turniername);
 		}
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);
 	}
@@ -408,7 +403,7 @@ public class ApplicationController {
 	public ResponseEntity<String> zeigeErgebnisse(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
 		_print(method, request);
-		final Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
 		final String response = findTurnier.getTurnierErgebnisse();
 		final ResponseEntity<String> responseEntity = new ResponseEntity<>(response, HttpStatus.OK);
 		return responseEntity;
@@ -422,52 +417,47 @@ public class ApplicationController {
 	public ResponseEntity<TurnierResource> deleteTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		final Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
 
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 		}
-		final Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findeTurnierMitName(turniername);
 		if (findTurnier == null) {
-			throw create(TurnierArentHereExc.class, turniername);
+			throw create(TurnierGibtEsNichtExc.class, turniername);
 		}
 		turnierService.loescheEigenesTurnier(findNutzer, findTurnier);
 
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	/**ändert die Emailadresse vom Nutzer*/
+	/** ändert die Emailadresse vom Nutzer */
 	@PutMapping(path = "/nutzer/email/{nutzername}")
 	public ResponseEntity<NutzerResource> updateEmail(@RequestBody final EmailChangeCommand command,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
-		// "dummy@dummy.de");
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 
 		}
 		turnierService.emailAendern(findNutzer, command.verifyPasswd, command.newEmail);
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
-	/**ändert das Passwort vom Nutzer*/
+	/** ändert das Passwort vom Nutzer */
 	@PutMapping(path = "/nutzer/password/{nutzername}")
 	public ResponseEntity<NutzerResource> updatePassword(@RequestBody final PasswordChangeCommand command,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
-		// "dummy@dummy.de");
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		Nutzer findNutzer = turnierService.findeNutzerMitNutzername(nutzername);
 		if (findNutzer == null) {
-			throw create(NutzerArentHereExc.class, nutzername);
+			throw create(NutzerGibtEsNichtExc.class, nutzername);
 
 		}
 		findNutzer = turnierService.nutzerPasswortAendern(findNutzer, command.verifyPasswd, command.newPassword);
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
-
 
 	/**
 	 * Prints a message containing the current class name, the HTTP method, and
@@ -481,31 +471,32 @@ public class ApplicationController {
 	 * Turnier {0} sollte kein ID-Parameter übergeben werden, wurde ihn aber {1}
 	 * uebergeben
 	 */
-	public static class TurnierCreateWithIdExc extends multex.Exc {
+	public static class TurnierMitIdErstelltExc extends multex.Exc {
 	}
+
 	/**
 	 * Admin {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
 	 * uebergeben
 	 */
-	public static class AdminCreateWithIdExc extends multex.Exc {
+	public static class AdminMitIdErstelltExc extends multex.Exc {
 	}
-	
+
 	/**
 	 * Nutzer {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
 	 * uebergeben
 	 */
-	public static class NutzerCreateWithIdExc extends multex.Exc {
+	public static class NutzerMitIdErstelltExc extends multex.Exc {
 	}
-	
+
 	/** {0} Es ist nicht dein Turnier. Veranstalter vom {1} ist {2} */
-	public static class NotYourTurnierExc extends multex.Exc {
+	public static class EsIstNichtDeinTurnierExc extends multex.Exc {
 	}
 
 	/** Nutzer mit diesem Name {0} existiert nicht in unserem DB */
-	public static class NutzerArentHereExc extends multex.Exc {
+	public static class NutzerGibtEsNichtExc extends multex.Exc {
 	}
 
 	/** Turnier mit diesem Name {0} existiert nicht in unserem DB */
-	public static class TurnierArentHereExc extends multex.Exc {
+	public static class TurnierGibtEsNichtExc extends multex.Exc {
 	}
 }
