@@ -1,6 +1,5 @@
 package turnier.webapp.domain.imports;
 
-import java.util.Optional;
 import java.util.List;
 
 import turnier.webapp.domain.Nutzer;

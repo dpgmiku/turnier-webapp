@@ -100,9 +100,9 @@ public class Turnier extends EntityBase<Turnier> {
 	 */
 
 	public void fuerAdminTurnierAendern(final String name, final String adresse, final String datum,
-			final String uhrzeit, final int maxTeilnehmer) {
+			final String uhrzeit, final int maxTeilnehmer) throws TurnierAendernNichtZugelassenExc {
 		if (!(turnierStatus == TurnierStatus.OFFEN)) {
-			throw create(TuernierAendernNichtZugelassen.class, this.name, this.turnierStatus.toString());
+			throw create(TurnierAendernNichtZugelassenExc.class, this.name, this.turnierStatus.toString());
 		}
 		this.name = name;
 		this.adresse = adresse;
@@ -361,7 +361,7 @@ public class Turnier extends EntityBase<Turnier> {
 	 *
 	 */
 	@SuppressWarnings("serial")
-	public static class TuernierAendernNichtZugelassen extends multex.Exc {
+	public static class TurnierAendernNichtZugelassenExc extends multex.Exc {
 	}
 
 	/**
