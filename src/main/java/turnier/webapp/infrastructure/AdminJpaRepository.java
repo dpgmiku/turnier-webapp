@@ -10,7 +10,7 @@ import turnier.webapp.domain.imports.AdminRepository;
 import turnier.webapp.infrastructure.imports.ImportedAdminJpaRepository;
 
 /**
- * A Repository for Admin entities implemented with Spring Data JPA.
+ * Repository für Adminentitäten, die mit Spring Data JPA implementiert wurden.
  * 
  * @author se2 letzte Gruppe
  * @since 2017-01-14
@@ -20,13 +20,11 @@ import turnier.webapp.infrastructure.imports.ImportedAdminJpaRepository;
 public class AdminJpaRepository implements AdminRepository {
 
 	private final ImportedAdminJpaRepository impl;
-	
+
 	@Autowired
 	public AdminJpaRepository(final ImportedAdminJpaRepository impl) {
 		this.impl = impl;
 	}
-	
-	
 
 	@Override
 	public Admin find(String adminname) {

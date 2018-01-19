@@ -5,33 +5,20 @@ import javax.persistence.Entity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
 
-import turnier.webapp.domain.Nutzer.PasswortDoesntMatchExc;
 import turnier.webapp.domain.base.EntityBase;
-import turnier.webapp.domain.imports.NutzerRepository;
-import turnier.webapp.domain.imports.TurnierBracketRepository;
-import turnier.webapp.domain.imports.TurnierRepository;
 
 import static multex.MultexUtil.create;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 /**
  * Turnierentität mit Name, Adresse, Datum, Uhrzeit, Organisator, maxTeilnehmer,

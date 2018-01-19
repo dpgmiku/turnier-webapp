@@ -1,9 +1,11 @@
 package turnier.webapp.rest_interface;
 
-//command to change the password and verify the old one
+/**Befehl zur Passwortänderung einer Nutzer, sein Passwort wird verifiziert.*/
 public class PasswordChangeCommand {
 
+/**das alte Passwort zur Verifizierung*/
 public String verifyPasswd;
+/**das neue Passwort*/
 public String newPassword;
 
 }

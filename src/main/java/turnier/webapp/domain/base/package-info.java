@@ -1,2 +1,2 @@
-/**Contains base classes for the domain model of the application.*/
+/**beinhaltet Grundklassen für das Domain Model vom App*/
 package turnier.webapp.domain.base;

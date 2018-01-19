@@ -2,32 +2,39 @@ package turnier.webapp.rest_interface;
 
 import turnier.webapp.domain.Admin;
 
-/**Data about a Admin of a Turnier-webapp. Usable as Data Transfer Object.*/
+/**
+ * Daten über Admin vom Turnier-Webapp. Brauchbar für Data Transfer Object.
+ */
 public class AdminResource {
 
-	  /**Unique ID of the nutzer.*/
-			public Long id;
+	/** Einzigartige ID-Nummer vom Admin */
+	public Long id;
 
-		    /**Name of the Admin.*/
-		    public String adminname;
-		    
-		    /**Passwort of the Admin.*/
-		    public String passwort;
-		    
-		    /**Necessary for Jackson*/
-			public AdminResource() {}
+	/** Der Name vom Admin. */
+	public String adminname;
 
-		    /**Constructs a NutzerResource with the data of the passed Nutzer entity.*/
-		    public AdminResource(final Admin entity) {
-		    	this.id  = entity.getId();
-		        this.adminname = entity.getAdminname();
-		        this.passwort = entity.getPasswort();
-		       
-		    }
+	/** Das Passwort vom Admin. */
+	public String passwort;
 
-		    
-		    @Override
-		    public String toString() {
-		    	return String.format("Admin{id=%d, adminname='%s', passwort='%s'}", id, adminname, passwort);
-		    }
+	/** erforderlich für Jackson */
+	public AdminResource() {
+	}
+
+	/**
+	 * kreirt AdminResource mit den Daten aus übergebenen Adminentität.
+	 * 
+	 * @param entity
+	 *            admin Objekt
+	 */
+	public AdminResource(final Admin entity) {
+		this.id = entity.getId();
+		this.adminname = entity.getAdminname();
+		this.passwort = entity.getPasswort();
+
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Admin{id=%d, adminname='%s', passwort='%s'}", id, adminname, passwort);
+	}
 }

@@ -1,9 +1,10 @@
 package turnier.webapp.rest_interface;
 
-//command to change email and verify the password
+/**Befehl zur Emailänderung einer Nutzer, sein Passwort wird verifiziert.*/
 public class EmailChangeCommand {
-
+/** Passwort von einem Nutzer Objekt zur Verifizierung */
 public String verifyPasswd;
+/**neue Email Adresse*/
 public String newEmail;
 
 }

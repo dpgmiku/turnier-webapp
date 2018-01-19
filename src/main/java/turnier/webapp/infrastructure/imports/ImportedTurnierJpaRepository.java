@@ -8,23 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
 
-
-/**Required Spring JPA repository for Turniers. The methods are named according to the Spring Data JPA convention.
- * They can be implemented by Spring during bean creation, but can be implemented independently of Spring, too.
+/**Erforderliche Spring JPA Repository für Turnier Objekten. Die Methoden wurden nach Spring Data JPA Namenkonvention benannt.
+ * Die können mit Hilfe vom Spring in der Zeit der Bean-Erstellung implementiert werden, die können aber auch unabhängig vom Spring implementiert werden.
  * @author se2 Letzte Gruppe
- * @since 2017-12-12
+ * @since 2018-01-14
  * @see <a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation">Spring Data Query Methods</a>
  *for deleteById @see <a href="https://stackoverflow.com/questions/23723025/spring-data-delete-by-is-supported">Transactional is needed for delation by</a>
  */
 
-
 public interface ImportedTurnierJpaRepository extends JpaRepository<Turnier, Long> {
 
-    /**Deletes all Nutzers. Useful for test scenarios in order to start with an empty Nutzer set*/
 	void deleteAll();
-	
+
 	Turnier findOneByName(String name);
-	
+
 	@Transactional
 	void deleteById(Long id);
 
@@ -33,7 +30,5 @@ public interface ImportedTurnierJpaRepository extends JpaRepository<Turnier, Lon
 	List<Turnier> findAllByOrderByNameAsc();
 
 	List<Turnier> findByOrganisator(Nutzer organisator);
-
-
 
 }

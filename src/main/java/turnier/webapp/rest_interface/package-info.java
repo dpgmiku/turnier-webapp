@@ -1,6 +1,9 @@
-/**The interface layer of the application.
- * This layer permits users of the application to use it.
- * Here it is implementing REST services, by which clients can use this application.
- * For simplification this layer is made transactional in class {@linkplain turnier.webapp.rest_interface.ApplicationController}. This makes an explicit application layer unnecessary.
+/**
+ * Die Interfaceschicht vom App. Diese Schicht ermöglicht den Clients diese App
+ * zu benutzen. Hier wurde Service REST implementiert, so die Clients diese App
+ * benutzen können. Für die Vereinfachung haben wir diese Schicht transactional
+ * in der Klasse
+ * {@linkplain turnier.webapp.rest_interface.ApplicationController} gemacht. So
+ * ist die explizite Applicationschicht nicht mehr erforderlich.
  */
 package turnier.webapp.rest_interface;

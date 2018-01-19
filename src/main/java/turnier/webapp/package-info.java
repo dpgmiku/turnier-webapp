@@ -1,2 +1,2 @@
-/**A sample project following Domain Driven Design with Spring Data JPA*/
+/**Beispielprojekt nach Domain Domain Driven Design mit Spring Data JPA. Abschlussabgabe fuer die Veranstaltung Software Engineering II*/
 package turnier.webapp;

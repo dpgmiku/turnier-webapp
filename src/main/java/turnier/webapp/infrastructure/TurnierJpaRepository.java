@@ -1,6 +1,5 @@
 package turnier.webapp.infrastructure;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,21 +9,26 @@ import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
 import turnier.webapp.domain.imports.TurnierRepository;
 import turnier.webapp.infrastructure.imports.ImportedTurnierJpaRepository;
-/**A Repository for Nutzer entities implemented with Spring Data JPA.
+
+/**
+ * Repository für Turnierentitäten, die mit Spring Data JPA implementiert
+ * wurden.
+ * 
  * @author se2 letzte Gruppe
  * @since 2017-10-01
  */
-//Komponente ohne Zustand, nur mit Methoden
+// Komponente ohne Zustand, nur mit Methoden
 @Service
 public class TurnierJpaRepository implements TurnierRepository {
-	
+
 	private final ImportedTurnierJpaRepository impl;
-	
-	//Für alle Parameter werden typmaessig passende Beans (Komponenten) gesucht oder erzeugt
-	   @Autowired
-	    public TurnierJpaRepository(final ImportedTurnierJpaRepository impl) {
-	        this.impl = impl;
-	    }
+
+	// Für alle Parameter werden typmaessig passende Beans (Komponenten) gesucht
+	// oder erzeugt
+	@Autowired
+	public TurnierJpaRepository(final ImportedTurnierJpaRepository impl) {
+		this.impl = impl;
+	}
 
 	@Override
 	public Turnier find(String name) {
@@ -38,7 +42,7 @@ public class TurnierJpaRepository implements TurnierRepository {
 
 	@Override
 	public void deleteAll() {
-      impl.deleteAll();		
+		impl.deleteAll();
 	}
 
 	@Override
@@ -53,10 +57,7 @@ public class TurnierJpaRepository implements TurnierRepository {
 
 	@Override
 	public void delete(Long id) {
-      impl.deleteById(id);		
+		impl.deleteById(id);
 	}
 
-
-	
-	
 }

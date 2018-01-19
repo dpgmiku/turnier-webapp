@@ -1,2 +1,2 @@
-/**Contains implementations for services required by other parts of the application.*/
+/**beinhaltet Implementierungen für die Services erforderlich für andere Teilen vom App.*/
 package turnier.webapp.infrastructure;

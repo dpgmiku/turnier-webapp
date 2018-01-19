@@ -1,39 +1,38 @@
 
-	package turnier.webapp.domain.imports;
-
+package turnier.webapp.domain.imports;
 
 import turnier.webapp.domain.TurnierBracket;
 
+/**
+ * Erforderliche Repository für {@link TurnierBracket} Objekte.
+ * 
+ * @author se2 letzte Gruppe
+ * @version 2017-01-08
+ * @since 2017-01-08
+ */
+public interface TurnierBracketRepository {
 
-	public interface TurnierBracketRepository {
-		
-		/**Required repository for {@link TurnierBracket} objects.
-		 * @author se2 letzte Gruppe
-		 * @version 2017-01-08
-		 * @since 2017-01-08
-		 */
-		
-		
-		/**Returns all of {@link Turnier} objects as list, which {@link Nutzer} organised , if existing.
-	     * @param nutzer nutzer organiser
-	     * @throws IllegalArgumentException  id is null
-	     */
-	//	List<TurnierBracket> findTurnierBracketVonTurnier(Turnier turnier);
-				
-	   /**löscht alle {@link TurnierBracket} Objekte. Brauchbar für Test Cases mit einem leeren DB*/
-	   void deleteAll();
-	    
-	    /**Gives the {@link TurnierBracket} a unique, higher ID and saves the turnierBracket.
-	     * @return the modified instance*/
-	    TurnierBracket save(TurnierBracket turnierBracket);
-	    
-	    
-	    /**Finds all {@link Turnier}s and returns them ordered by descending name.*/
-	    //List<TurnierBracket> findAll();
+	/**
+	 * löscht alle {@link TurnierBracket} Objekte. Brauchbar für Test Cases mit
+	 * einem leeren DB
+	 */
+	void deleteAll();
 
-	    /**Deletes {@link TurnierBracket} object*/
-		void delete(TurnierBracket turnierBracket);
+	/**
+	 * Gibt einem Admin eine einzigartige, größere ID und speichert dem Admin im DB.
+	 * 
+	 * @param turnierBracket
+	 *            {@link TurnierBracket} Objekt zum speichern
+	 * @return modifizierte Instanz
+	 */
+	TurnierBracket save(TurnierBracket turnierBracket);
 
-	}
+	/**
+	 * löscht dem übergebenen {@link TurnierBracket} Objekt
+	 * 
+	 * @param turnierBracket
+	 *            {@link TurnierBracket} Objetk zum löschen
+	 */
+	void delete(TurnierBracket turnierBracket);
 
-
+}

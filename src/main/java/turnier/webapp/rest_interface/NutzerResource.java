@@ -2,60 +2,62 @@ package turnier.webapp.rest_interface;
 
 import turnier.webapp.domain.Nutzer;
 
-/**Data about a Nutzer of a Turnier-webapp. Usable as Data Transfer Object.*/
+/**
+ * Daten über Nutzer vom Turnier-Webapp. Brauchbar für Data Transfer Object.
+ */
 public class NutzerResource {
-	
 
-	
-	    /**Unique ID of the nutzer.*/
-		public Long id;
+	/** Einzigartige ID-Nummer vom Nutzer */
+	public Long id;
 
-	    /**Vorname of the Nutzer.*/
-	    public String vorname;
-	    
-	    /**Name of the Nutzer.*/
-	    public String name;
-	    
-	    /**Nutzername of the Nutzer. It has to be unique, too.*/
-		public String nutzername;
+	/** Der Vorname vom Nutzer */
+	public String vorname;
 
-	    /**Passwort of the Nutzer.*/
-		public String passwort;
-		
-	    /**Email of the Nutzer. It has to be unique, too.*/
-		public String email;
-		
-		public int gewonneneSpiele;
-		
-		public int verloreneSpiele;
-		
-		public int gewonneneTurniere;
-		
+	/** Der Name vom Nutzer. */
+	public String name;
 
-	    /**Necessary for Jackson*/
-		public NutzerResource() {}
+	/** Der einzigartige Nutzername vom Nutzer */
+	public String nutzername;
 
-	    /**Constructs a NutzerResource with the data of the passed Nutzer entity.*/
-	    public NutzerResource(final Nutzer entity) {
-	    	this.id  = entity.getId();
-	        this.vorname = entity.getVorname();
-	        this.name = entity.getName();
-	        this.nutzername = entity.getNutzername();
-	        this.email = entity.getEmail();
-	        this.passwort = entity.getPasswort();
-	        this.gewonneneSpiele = entity.getGewonneneSpiele();
-	        this.verloreneSpiele = entity.getVerloreneSpiele();
-	        this.gewonneneTurniere = entity.getGewonneneTurniere();
-	    }
+	/** Das Passwort vom Nutzer. */
+	public String passwort;
 
-	    
-	    @Override
-	    public String toString() {
-	    	return String.format("Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s', gewonneneSpiele='%d', verloreneSpiele='%d', gewonneneTurniere='%d'}", id, name, vorname, nutzername, passwort, email, gewonneneSpiele, verloreneSpiele, gewonneneTurniere);
-	    }
-	    
+	/** Die einzigartige Email-Adresse vom Nutzer */
+	public String email;
+	/** Anzahl der gewonnenen Spielen der Nutzer */
+	public int gewonneneSpiele;
+	/** Anzahl der verlorenen Spielen der Nutzer */
+	public int verloreneSpiele;
+	/** Anzahl der gewonnen Turniere der Nutzer */
+	public int gewonneneTurniere;
+
+	/** erforderlich für Jackson */
+	public NutzerResource() {
 	}
 
+	/**
+	 * kreirt NutzerResource mit den Daten aus übergebenen Nutzerentität.
+	 * 
+	 * @param entity
+	 *            nutzer Objekt
+	 */
+	public NutzerResource(final Nutzer entity) {
+		this.id = entity.getId();
+		this.vorname = entity.getVorname();
+		this.name = entity.getName();
+		this.nutzername = entity.getNutzername();
+		this.email = entity.getEmail();
+		this.passwort = entity.getPasswort();
+		this.gewonneneSpiele = entity.getGewonneneSpiele();
+		this.verloreneSpiele = entity.getVerloreneSpiele();
+		this.gewonneneTurniere = entity.getGewonneneTurniere();
+	}
 
+	@Override
+	public String toString() {
+		return String.format(
+				"Nutzer{id=%d, name='%s', vorname='%s', nutzername='%s', passwort='%s', email='%s', gewonneneSpiele='%d', verloreneSpiele='%d', gewonneneTurniere='%d'}",
+				id, name, vorname, nutzername, passwort, email, gewonneneSpiele, verloreneSpiele, gewonneneTurniere);
+	}
 
-
+}

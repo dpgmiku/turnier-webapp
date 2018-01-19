@@ -1,19 +1,12 @@
 package turnier.webapp.rest_interface;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
@@ -47,9 +39,6 @@ public class ApplicationController {
 
 	private final String className = getClass().getSimpleName();
 
-	// TODO Teilnehmer hinzufügen soll POST sein nicht PUT
-	// TODO Teilnehmer entfernen soll DELETE sein nicht PUT
-
 	@Autowired
 	public ApplicationController(final TurnierService turnierService) {
 		this.turnierService = turnierService;
@@ -65,7 +54,7 @@ public class ApplicationController {
 	 * from the authenticated user.
 	 */
 
-	// For everyone (guests):
+	// Für alle:
 	//
 	@GetMapping(path = "/")
 	public ResponseEntity<String> home(final WebSecurityConfig config, final HttpMethod method,
@@ -78,7 +67,10 @@ public class ApplicationController {
 		return responseEntity;
 	}
 
-	// For the nutzer role all URIs under /admin:
+	// Für die Admin Rolle unter URI /admin:
+	/**
+	 * kreirt einen neuen Admin Objekt und speichert ihn im DB
+	 */
 	@PostMapping("/admin/")
 	public ResponseEntity<AdminResource> createAdmin(@RequestBody final AdminResource adminResource,
 			final HttpMethod method, final WebRequest request) {
@@ -92,6 +84,9 @@ public class ApplicationController {
 
 	}
 
+	/**
+	 * ändert die Eigenschaften des Nutzers
+	 */
 	@PutMapping("/admin/{adminname}/nutzer/{nutzername}")
 	public ResponseEntity<NutzerResource> changeNutzer(@RequestBody final NutzerResource nutzerResource,
 			@PathVariable final String adminname, @PathVariable final String nutzername, final HttpMethod method,
@@ -141,6 +136,9 @@ public class ApplicationController {
 
 	}
 
+	/**
+	 * ändert Eigenschaften des Turniers
+	 */
 	@PutMapping("/admin/{adminname}/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> changeTurnier(@RequestBody final TurnierResource turnierResource,
 			@PathVariable final String adminname, @PathVariable final String turniername, final HttpMethod method,
@@ -186,16 +184,11 @@ public class ApplicationController {
 
 	}
 
-	/**
-	 * Admin {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
-	 * uebergeben
-	 */
-	public static class AdminCreateWithIdExc extends multex.Exc {
-	}
+	
 
-	// For the nutzer role all URIs under /nutzer:
+	// Für die Nutzer Rolle unter URI /nutzer:
 
-	/* füge ein neuer Nutzer Objekt in unserem DB */
+	/** füge ein neuer Nutzer Objekt in unserem DB hinzu*/
 
 	@PostMapping("/nutzer/")
 	public ResponseEntity<NutzerResource> createNutzer(@RequestBody final NutzerResource nutzerResource,
@@ -209,16 +202,11 @@ public class ApplicationController {
 		return new ResponseEntity<>(new NutzerResource(nutzerSave), HttpStatus.CREATED);
 	}
 
-	/**
-	 * Nutzer {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
-	 * uebergeben
-	 */
-	public static class NutzerCreateWithIdExc extends multex.Exc {
-	}
 
-	/*
+
+	/**
 	 * fügt ein neuer Turnier Objekt mit dem Nutzer mit dem übergebenen nutzername
-	 * als Organisator
+	 * als Veranstalter hinzu
 	 */
 	@PostMapping("/nutzer/{nutzername}/turnier/")
 	public ResponseEntity<TurnierResource> createNutzer(@RequestBody final TurnierResource turnierResource,
@@ -237,7 +225,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.CREATED);
 	}
 
-	/*
+	/**
 	 * fügt teilnehmer mit dem übergebenen nutzername im Turnier mit übergebenen
 	 * turniername hinzu
 	 */
@@ -255,7 +243,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 
-	/*
+	/**
 	 * starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem
 	 * übergebenen nutzername der organisator von diesem Turnier ist
 	 */
@@ -281,9 +269,8 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(turnier), HttpStatus.ACCEPTED);
 	}
 
-	/*
-	 * starte turnier mit dem übergebenen turniername nur, wenn der Nutzer mit dem
-	 * übergebenen nutzername der organisator von diesem Turnier ist
+	/**
+	 * übergibt die TurnierBracketErgebnisse eines Turniers
 	 */
 	@PutMapping("/nutzer/turnier/start/{turniername}/{position}/{erg1}/{erg2}")
 	public ResponseEntity<TurnierResource> setteErgebnisseImTurnierBracket(@PathVariable final String position,
@@ -301,7 +288,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.ACCEPTED);
 	}
 
-	/*
+	/**
 	 * entferne teilnehmer mit dem übergebenen nutzername aus dem Turnier mit dem
 	 * übergebenen turniername
 	 */
@@ -315,21 +302,21 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnierByName), HttpStatus.ACCEPTED);
 	}
 
-	// deletes nutzer object from db with given nutzername as parameter. The given
-	// one password in Request Body must be the same as in db to make it possible
-	@DeleteMapping("/nutzer/{nutzername}")
+	/**
+	 * löscht dem Nutzer aus DB
+	 */
 	public ResponseEntity<DeleteNutzerCommand> deleteNutzer(@RequestBody final DeleteNutzerCommand verifyPassword,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
-		// "dummy@dummy.de");
-		Nutzer deleteNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer deleteNutzer = turnierService.findNutzerByNutzername(nutzername);
 		turnierService.nutzerLoeschen(deleteNutzer, verifyPassword.verifyPasswd);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	// returns nutzer Object as JSON with the given nutzername as parameter if one
-	// was found in DB
+	/**
+	 * gibt dem Nutzer Objekt mit dem übergebenen Nutzername zurück
+	 */
+
 	@GetMapping(path = "/nutzer/{nutzername}")
 	public ResponseEntity<NutzerResource> findNutzer(@PathVariable final String nutzername, final HttpMethod method,
 			final WebRequest request) {
@@ -344,7 +331,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
-	/* finde alle nutzer Objekte im DB */
+	/** finde alle nutzer Objekte im DB */
 	@GetMapping(path = "/nutzer/")
 	public ResponseEntity<NutzerResource[]> findNutzers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -356,7 +343,7 @@ public class ApplicationController {
 		return _nutzersToResources(nutzers);
 	}
 
-	/* finde alle turnier Objekte im DB */
+	/** finde alle turnier Objekte im DB */
 	@GetMapping(path = "/nutzer/turnier/")
 	public ResponseEntity<TurnierResource[]> findTurniers(final HttpMethod method, final WebRequest request) {
 		_print(method, request);
@@ -368,7 +355,7 @@ public class ApplicationController {
 		return _turniersToResources(turniers);
 	}
 
-	/*
+	/**
 	 * finde alle Turniere Objekte im DB, wo der Nutzer mit dem übergebenen
 	 * nutzername der Organisator ist.
 	 */
@@ -389,14 +376,14 @@ public class ApplicationController {
 		return _turniersToResources(turniers);
 	}
 
-	/* hilfmethode zum transformation von nutzer objekt ins Nutzer Resource */
+	/** hilfmethode zum transformation von nutzer objekt ins Nutzer Resource */
 	private ResponseEntity<NutzerResource[]> _nutzersToResources(List<Nutzer> nutzers) {
 		final Stream<NutzerResource> result = nutzers.stream().map(c -> new NutzerResource(c));
 		final NutzerResource[] resultArray = result.toArray(size -> new NutzerResource[size]);
 		return new ResponseEntity<>(resultArray, HttpStatus.OK);
 	}
 
-	/* hilfmethode zum transformation von turnier objekt ins Turnier Resource */
+	/** hilfmethode zum transformation von turnier objekt ins Turnier Resource */
 	private ResponseEntity<TurnierResource[]> _turniersToResources(List<Turnier> nutzers) {
 		final Stream<TurnierResource> result = nutzers.stream().map(c -> new TurnierResource(c));
 		final TurnierResource[] resultArray = result.toArray(size -> new TurnierResource[size]);
@@ -404,13 +391,11 @@ public class ApplicationController {
 
 	}
 
-	/* gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück */
+	/** gibt dem Turnier Objekt als JSON mit dem übergebenen turniername zurück */
 	@GetMapping(path = "/nutzer/turnier/{turniername}")
 	public ResponseEntity<TurnierResource> findTurnier(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
 		_print(method, request);
-		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
-		// "dummy@dummy.de");
 		Turnier findTurnier = turnierService.findTurnierByName(turniername);
 		if (findTurnier == null) {
 			throw create(TurnierArentHereExc.class, turniername);
@@ -418,6 +403,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new TurnierResource(findTurnier), HttpStatus.OK);
 	}
 
+	/** zeigt Ergebnisse eines Turniers, das schon beendet ist */
 	@GetMapping(path = "/nutzer/turnier/{turniername}/ergebnisse")
 	public ResponseEntity<String> zeigeErgebnisse(@PathVariable final String turniername, final HttpMethod method,
 			final WebRequest request) {
@@ -428,7 +414,7 @@ public class ApplicationController {
 		return responseEntity;
 	}
 
-	/*
+	/**
 	 * lösche dem Turnier mit dem übergebenen turniername, wenn der Nutzer mit dem
 	 * übergebenen nutzername Organisator ist
 	 */
@@ -436,15 +422,12 @@ public class ApplicationController {
 	public ResponseEntity<TurnierResource> deleteTurnier(@PathVariable final String nutzername,
 			@PathVariable final String turniername, final HttpMethod method, final WebRequest request) {
 		_print(method, request);
-		// Nutzer dummy = new Nutzer("dummy", "dummy", "dummy","dummy123213",
-		// "dummy@dummy.de");
-
-		Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
+		final Nutzer findNutzer = turnierService.findNutzerByNutzername(nutzername);
 		if (findNutzer == null) {
 
 			throw create(NutzerArentHereExc.class, nutzername);
 		}
-		Turnier findTurnier = turnierService.findTurnierByName(turniername);
+		final Turnier findTurnier = turnierService.findTurnierByName(turniername);
 		if (findTurnier == null) {
 			throw create(TurnierArentHereExc.class, turniername);
 		}
@@ -453,7 +436,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	// change the email of the given nutzername as parameter
+	/**ändert die Emailadresse vom Nutzer*/
 	@PutMapping(path = "/nutzer/email/{nutzername}")
 	public ResponseEntity<NutzerResource> updateEmail(@RequestBody final EmailChangeCommand command,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
@@ -469,7 +452,7 @@ public class ApplicationController {
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
-	// changes the password of the given nutzername as parameter
+	/**ändert das Passwort vom Nutzer*/
 	@PutMapping(path = "/nutzer/password/{nutzername}")
 	public ResponseEntity<NutzerResource> updatePassword(@RequestBody final PasswordChangeCommand command,
 			@PathVariable final String nutzername, final HttpMethod method, final WebRequest request) {
@@ -485,17 +468,6 @@ public class ApplicationController {
 		return new ResponseEntity<>(new NutzerResource(findNutzer), HttpStatus.OK);
 	}
 
-	/** {0} Es ist nicht dein Turnier. Veranstalter vom {1} ist {2} */
-	public static class NotYourTurnierExc extends multex.Exc {
-	}
-
-	/** Nutzer mit diesem Name {0} existiert nicht in unserem DB */
-	public static class NutzerArentHereExc extends multex.Exc {
-	}
-
-	/** Turnier mit diesem Name {0} existiert nicht in unserem DB */
-	public static class TurnierArentHereExc extends multex.Exc {
-	}
 
 	/**
 	 * Prints a message containing the current class name, the HTTP method, and
@@ -511,5 +483,29 @@ public class ApplicationController {
 	 */
 	public static class TurnierCreateWithIdExc extends multex.Exc {
 	}
+	/**
+	 * Admin {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
+	 * uebergeben
+	 */
+	public static class AdminCreateWithIdExc extends multex.Exc {
+	}
+	
+	/**
+	 * Nutzer {0} sollte kein ID Parameter ID übergeben werden, wurde ihn aber {1}
+	 * uebergeben
+	 */
+	public static class NutzerCreateWithIdExc extends multex.Exc {
+	}
+	
+	/** {0} Es ist nicht dein Turnier. Veranstalter vom {1} ist {2} */
+	public static class NotYourTurnierExc extends multex.Exc {
+	}
 
+	/** Nutzer mit diesem Name {0} existiert nicht in unserem DB */
+	public static class NutzerArentHereExc extends multex.Exc {
+	}
+
+	/** Turnier mit diesem Name {0} existiert nicht in unserem DB */
+	public static class TurnierArentHereExc extends multex.Exc {
+	}
 }
