@@ -17,7 +17,7 @@ Dieses Projekt benutzt:
 - JUnit 4
 - The Exception Handling and Reporting Framework MulTEx
 
-Detailierte infos finden Sie in der Datei 'pom.xml'.
+Detailierte infos finden Sie in der Datei `pom.xml`.
 
 Mit Hilfe vom Command `mvn clean test` in der Konsole werden alle notwendige Libraries geholt, das Projekt wird kompiliert, Ausnahmenachrichten werden gesammelt und Tests werden durchgefuehrt.
 
@@ -43,7 +43,7 @@ Danach koennen Sie das Maven Projekt in Ihren Java IDE importieren.
 
 ## Ausfuehren
 - Du brauchst: Das Verteilte Versionsverwaltungssystem Git, Das Build-Werkzeug Maven, am besten Die IDE "Spring Tool Suite“ (auf Eclipse aufbauend) und Google Postman zum Testen eines REST-Services.
-- `mvn cleantest` in der Konsole ausfuehren: alle notwendige Libraries werden geholt, das Projekt wird kompiliert, Ausnahmenachrichten werden gesammelt und Tests werden durchgefuehrt.
+- `mvn clean test` in der Konsole ausfuehren: alle notwendige Libraries werden geholt, das Projekt wird kompiliert, Ausnahmenachrichten werden gesammelt und Tests werden durchgefuehrt.
 - `mvn spring-boot:run` in der Konsole ausfuehren: Ausfuehrung der Produkt (einen REST-Webservice fuer das Turnier)
 - Die drittletzte Meldung sollte lauten:
  `...TomcatEmbeddedServletContainer : Tomcat started on port(s): 8080 (http)`
