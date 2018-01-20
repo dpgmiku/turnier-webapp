@@ -24,8 +24,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN_ROLE = "ADMIN";
 	private static final String NUTZER_ROLE = "NUTZER";
-	private static final String TEILNEHMER_ROLE = "TEILNEHMER";
-	private static final String GAST_ROLE = "Gast";
+
 
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,7 +33,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
              .antMatchers("/").permitAll()
             .antMatchers("/admin/**").hasRole(ADMIN_ROLE)
             .antMatchers("/nutzer/**").hasRole(NUTZER_ROLE)
-            .antMatchers("/teilnehmer/**").hasRole(TEILNEHMER_ROLE)
             .anyRequest().authenticated()
             .and().httpBasic() //Authenticate with username and password.
             //For REST services disable CSRF protection. 
@@ -54,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> inMemoryAuthentication = auth.inMemoryAuthentication();
         for(final String username: predefinedUsernames) {
         	final String role = username.equalsIgnoreCase(ADMIN_ROLE) ? ADMIN_ROLE : NUTZER_ROLE;
-			inMemoryAuthentication.withUser(username).password("").roles(role);
+			inMemoryAuthentication.withUser(username).password("yo").roles(role);
         }
     }
     
