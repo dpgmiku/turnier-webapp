@@ -320,7 +320,7 @@ public class Turnier extends EntityBase<Turnier> {
 	}
 
 	/**
-	 * Diese Stelle {0} gibt es nicht. Mögliche Werte nur zw {0} und {1} möglich!.
+	 * Diese Stelle {0} gibt es nicht. Mögliche Werte nur zw 0 und {1} möglich!.
 	 */
 	@SuppressWarnings("serial")
 	public static class DieseStelleGibtEsNichtExc extends multex.Exc {
