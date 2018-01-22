@@ -8,16 +8,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import multex.Exc;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import turnier.webapp.domain.Admin;
 import turnier.webapp.domain.Nutzer;
 import turnier.webapp.domain.Turnier;
@@ -33,6 +28,8 @@ import static multex.MultexUtil.create;
 // https://stackoverflow.com/questions/23118789/why-we-shouldnt-make-a-spring-mvc-controller-transactional
 @Transactional
 @RestController
+@EnableWebMvc
+@CrossOrigin
 public class ApplicationController {
 
 	private final TurnierService turnierService;
