@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**Configuration for securing the application.
+ * 
  * @see <a href="https://spring.io/guides/gs/securing-web/">Spring: Getting Started Guide "Securing a Web Application"</a> 
  *      for defining users with basic authentication and for access control to URIs.
  * @see <a href="http://websystique.com/spring-security/spring-security-4-method-security-using-preauthorize-postauthorize-secured-el/">Spring Security 4 Method security using @PreAuthorize,@PostAuthorize, @Secured, EL</a> 

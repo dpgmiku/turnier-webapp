@@ -21,6 +21,7 @@ import turnier.webapp.domain.TurnierService;
 import static multex.MultexUtil.create;
 
 /**
+ * 
  * A Spring Web MVC controller offering a REST service for accessing all
  * external operations of the application.
  */
